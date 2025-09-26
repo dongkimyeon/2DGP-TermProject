@@ -1,7 +1,7 @@
 import pico2d
 import SceneManager
-from title_scene import TitleScene
-from stage1_scene import Stage1Scene
+from Title_scene import TitleScene
+from Stage1_scene import Stage1Scene
 
 print("[main.py] Canvas open 시작")
 pico2d.open_canvas(SceneManager.screen_width, SceneManager.screen_height)

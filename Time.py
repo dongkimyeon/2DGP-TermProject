@@ -10,7 +10,7 @@ class Time:
         now = time.time()
         cls._delta_time = now - cls._current_time
         cls._current_time = now
-
+     
 
     @classmethod
     def DeltaTime(cls):

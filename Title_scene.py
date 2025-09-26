@@ -2,7 +2,7 @@ from pico2d import clear_canvas, update_canvas
 
 import SceneManager
 import pico2d
-from stage1_scene import Stage1Scene
+from Stage1_scene import Stage1Scene
 from Time import Time
 
 temp = 0.0
