@@ -16,32 +16,54 @@ class Player:
         self.frame_count = 0
         self.frame_timer = 0.0
         self.jump_velocity = 0
-        self.gravity = -800
+        self.gravity = -2000
         self.weapon = None
         self.left_pressed = False
         self.right_pressed = False
-        self.is_dashing = False  # 대쉬 상태 추가
-        self.dash_speed = 1500  # 대쉬 속도
-        self.dash_duration = 0.2  # 대쉬 지속 시간 (초)
-        self.dash_timer = 0.0  # 대쉬 타이머
-        self.dash_direction = (0, 0)  # 대쉬 방향 (x, y)
-        self.dash_recharge_time = 1.0  # 대쉬 재충전 시간 (초)
+        self.is_dashing = False
+        self.dash_speed = 1500
+        self.dash_duration = 0.15
+        self.dash_timer = 0.0
+        self.dash_direction = (0, 0)
+        self.dash_recharge_time = 1.0
+        self.is_jumping = False
+        self.jump_power = 600
+        self.ground_y = SceneManager.screen_height // 2
+        self.jump_count = 2
 
     def update(self):
         dt = Time.DeltaTime()
 
-        # 대쉬 중일 때
+
+        self.jump_velocity += self.gravity * dt
+        self.y += self.jump_velocity * dt
+
+        # 착지 확인
+        if self.y <= self.ground_y:
+            self.y = self.ground_y
+            self.jump_velocity = 0
+            self.is_jumping = False
+            self.jump_count = 2  # 착지 시 점프 횟수 초기화
+            if self.direction == 0 and not self.is_dashing:
+                self.state = 'idle'
+            elif self.direction != 0 and not self.is_dashing:
+                self.state = 'run'
+        else:
+            self.is_jumping = True
+            self.state = 'jump'
+
+        # 대쉬 처리
         if self.is_dashing:
             self.dash_timer -= dt
             if self.dash_timer <= 0:
                 self.is_dashing = False
-                self.state = 'idle'
+                self.state = 'jump' if self.y > self.ground_y else 'idle'
             else:
-                # 대쉬 방향으로 이동
+                # 마우스 방향으로 대쉬 (수평 및 수직)
                 self.x += self.dash_direction[0] * self.dash_speed * dt
                 self.y += self.dash_direction[1] * self.dash_speed * dt
 
-
+        # 입력 처리
         events = pico2d.get_events()
         for event in events:
             if event.type == pico2d.SDL_KEYDOWN:
@@ -49,23 +71,22 @@ class Player:
                     self.left_pressed = True
                 elif event.key == pico2d.SDLK_d:
                     self.right_pressed = True
-                elif event.key == pico2d.SDLK_SPACE:
-                    print("점프")
-                    pass
+                elif event.key == pico2d.SDLK_SPACE and self.jump_count > 0:
+                    self.jump_velocity = self.jump_power
+                    self.jump_count -= 1
+                    self.is_jumping = True
+                    self.state = 'jump'
             if event.type == pico2d.SDL_MOUSEBUTTONDOWN:
                 if event.button == pico2d.SDL_BUTTON_RIGHT and self.dash_count > 0:
-                    # 마우스 위치 가져오기
                     mouse_x, mouse_y = event.x, SceneManager.screen_height - event.y
-                    # 마우스 방향 계산
                     dx = mouse_x - self.x
                     dy = mouse_y - self.y
                     distance = math.sqrt(dx**2 + dy**2)
-                    if distance != 0:  # 0으로 나누기 방지
+                    if distance != 0:
                         self.dash_direction = (dx / distance, dy / distance)
                         self.is_dashing = True
                         self.dash_timer = self.dash_duration
                         self.dash_count -= 1
-                        self.state = 'dash'  # 대쉬 애니메이션용 상태
                         print("대쉬: 방향", self.dash_direction)
                 elif event.button == pico2d.SDL_BUTTON_LEFT:
                     print("공격")
@@ -75,27 +96,27 @@ class Player:
                 elif event.key == pico2d.SDLK_d:
                     self.right_pressed = False
 
-        # 방향 결정
-        if self.left_pressed and not self.right_pressed:
-            self.direction = -1
-            self.state = 'run'
-        elif self.right_pressed and not self.left_pressed:
-            self.direction = 1
-            self.state = 'run'
-        elif not self.left_pressed and not self.right_pressed:
-            self.direction = 0
-            self.state = 'idle'
+        # 수평 이동
+        if not self.is_dashing:
+            if self.left_pressed and not self.right_pressed:
+                self.direction = -1
+                self.state = 'run' if self.y == self.ground_y else 'jump'
+                self.x += self.direction * self.speed * dt
+            elif self.right_pressed and not self.left_pressed:
+                self.direction = 1
+                self.state = 'run' if self.y == self.ground_y else 'jump'
+                self.x += self.direction * self.speed * dt
+            else:
+                self.direction = 0
+                self.state = 'idle' if self.y == self.ground_y else 'jump'
 
-        if self.direction != 0:
-            self.x += self.direction * self.speed * dt
-
-        # 프레임 카운트
+        # 프레임 애니메이션
         self.frame_timer += dt
         if self.frame_timer > 0.1:
             self.frame_count += 1
             self.frame_timer = 0.0
 
-        # 대쉬 쿨타임 : 대쉬 카운트 1증가
+        # 대쉬 쿨타임
         if not self.is_dashing and self.dash_count < 3:
             self.dash_timer += dt
             if self.dash_timer >= self.dash_recharge_time:
@@ -109,6 +130,6 @@ class Player:
             frame = self.frame_count % frame_count
             image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x), int(self.y) + height // 2, 100, 100)
         else:
-            image.draw(int(self.x), int(self.y) + height // 2)
+            image.draw(int(self.x), int(self.y) + height // 2, 100, 100)
 
-player = Player()  # 모든 씬에서 공유할 수 있도록 전역 객체로 생성
+player = Player()
