@@ -2,28 +2,24 @@ from pico2d import clear_canvas, update_canvas
 
 import SceneManager
 import pico2d
-from Stage1_scene import Stage1Scene
 from Time import Time
+from ImageManager import ImageManager
 
 temp = 0.0
 
 class TitleScene:
     def __init__(self):
         print("[TitleScene] __init__() 호출")
-        self.backCloud = None
-        self.frontCloud = None
+        self.backCloud = ImageManager.get_image("player_idle")[0]
 
 
     def enter(self):
         print("[TitleScene] enter() - 이미지 로드")
-        self.backCloud = pico2d.load_image('resources/images/TitleScene/BackCloud.png')
-        self.frontCloud = pico2d.load_image('resources/images/TitleScene/FrontCloud.png')
 
 
     def exit(self):
         print("[TitleScene] exit() - 리소스 해제")
         del self.backCloud
-        del self.frontCloud
 
 
     def update(self):
@@ -40,5 +36,4 @@ class TitleScene:
             print("1초 경과")
 
     def render(self):
-        self.backCloud.draw(400,400)
-
+        self.backCloud.draw(100,100)
