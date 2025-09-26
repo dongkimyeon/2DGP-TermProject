@@ -1,12 +1,16 @@
 import pico2d
+from pico2d import load_image
 
 
 class ImageManager:
-    _instance = None 
+    _instance = None
 
     def __init__(self):
         self.images = {}  # 이미지 객체를 저장하는 딕셔너리
-
+        load_image("player_idle", 'resources/images/Characters/Player/Costume/Basic/player_idle.png')
+        load_image("player_run", 'resources/images/Characters/Player/Costume/Basic/player_run.png')
+        load_image("player_jump", 'resources/images/Characters/Player/Costume/Basic/player_jump.png')
+        load_image("player_die", 'resources/images/Characters/Player/Costume/Basic/player_die.png')
     @staticmethod
     def instance():
         if ImageManager._instance is None:
