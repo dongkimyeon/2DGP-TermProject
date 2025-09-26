@@ -1,4 +1,5 @@
 import pico2d
+from Time import Time
 screen_width = 1920
 screen_height = 1080
 
@@ -23,6 +24,7 @@ def load_scene(name):
 def run():
     print("[SceneManager] run() 시작")
     while active_scene:
+        Time.update()
         update()
         render()
     print("[SceneManager] run() 종료")
@@ -36,4 +38,3 @@ def render():
         pico2d.clear_canvas()
         active_scene.render()
         pico2d.update_canvas()
-
