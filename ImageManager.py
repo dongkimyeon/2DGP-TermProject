@@ -21,6 +21,8 @@ class ImageManager:
         self.load_image("player_run", 'resources/images/Characters/Player/Costume/Basic/player_run.png', 8)
         self.load_image("player_jump", 'resources/images/Characters/Player/Costume/Basic/player_jump.png', 1)
         self.load_image("player_die", 'resources/images/Characters/Player/Costume/Basic/player_die.png', 1)
+        self.load_image("backCloud", 'resources/images/TitleScene/BackCloud.png')
+        self.load_image("frontCloud", 'resources/images/TitleScene/FrontCloud.png')
 
     @staticmethod
     def load_image(name, path, frame_count=1):

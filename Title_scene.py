@@ -5,20 +5,20 @@ import pico2d
 from Time import Time
 from ImageManager import ImageManager
 
-temp = 0.0
 
 class TitleScene:
     def __init__(self):
-        print("[TitleScene] __init__() 호출")
-        self.backCloud = ImageManager.get_image("player_idle")[0]
+        print("[TitleScene] __init__()")
+        self.backCloud = ImageManager.get_image("backCloud")[0]
+        self.frontCloud = ImageManager.get_image("frontCloud")[0]
 
 
     def enter(self):
-        print("[TitleScene] enter() - 이미지 로드")
+        print("[TitleScene] enter()")
 
 
     def exit(self):
-        print("[TitleScene] exit() - 리소스 해제")
+        print("[TitleScene] exit()")
         del self.backCloud
 
 
@@ -29,11 +29,8 @@ class TitleScene:
             if event.type == pico2d.SDL_KEYDOWN and event.key == pico2d.SDLK_SPACE:
                 print("[TitleScene] 스페이스바 입력 감지, Stage1Scene으로 전환")
                 SceneManager.load_scene("Stage1Scene")
-        global temp
-        temp += Time.DeltaTime()
-        if temp > 1.0:
-            temp = 0.0
-            print("1초 경과")
+
 
     def render(self):
         self.backCloud.draw(100,100)
+        self.frontCloud.draw(200,200)

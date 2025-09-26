@@ -4,13 +4,13 @@ from Time import Time
 
 class Stage1Scene:
     def __init__(self):
-        print("[Stage1Scene] __init__() 호출")
+        print("[Stage1Scene] __init__()")
 
     def enter(self):
-        print("[Stage1Scene] enter() - 리소스 로드")
+        print("[Stage1Scene] enter()")
 
     def exit(self):
-        print("[Stage1Scene] exit() - 리소스 해제")
+        print("[Stage1Scene] exit()")
 
     def update(self):
 
@@ -22,5 +22,5 @@ class Stage1Scene:
 
 
     def render(self):
-        #print("[Stage1Scene] render() 호출")
+
         pass
