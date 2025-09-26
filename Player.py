@@ -10,7 +10,7 @@ class Player:
         self.dash_count = 3
         self.state = 'idle'
         self.x = SceneManager.screen_width // 2
-        self.y = SceneManager.screen_height // 2
+        self.y = SceneManager.screen_height // 2 + 10
         self.speed = 200
         self.direction = 0
         self.frame_count = 0
@@ -28,7 +28,7 @@ class Player:
         self.dash_recharge_time = 1.0
         self.is_jumping = False
         self.jump_power = 600
-        self.ground_y = SceneManager.screen_height // 2
+        self.ground_y = 45
         self.jump_count = 2
 
     def update(self):

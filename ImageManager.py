@@ -29,6 +29,10 @@ class ImageManager:
         self.load_image("exit_on", 'resources/images/TitleScene/ExitOn_Kor.png')
         self.load_image("play_off", 'resources/images/TitleScene/PlayOff_Kor.png')
         self.load_image("play_on", 'resources/images/TitleScene/PlayOn_Kor.png')
+        self.load_image("forest_back_Layer_0", 'resources/images/Map/ForestBackLayer0.png')
+        self.load_image("forest_back_Layer_1", 'resources/images/Map/ForestBackLayer1.png')
+        self.load_image("forest_back_Layer_2", 'resources/images/Map/ForestBackLayer2.png')
+
 
 
     @staticmethod
