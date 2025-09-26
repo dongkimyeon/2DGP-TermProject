@@ -25,6 +25,11 @@ class ImageManager:
         self.load_image("frontCloud", 'resources/images/TitleScene/FrontCloud.png')
         self.load_image("titleBackground", 'resources/images/TitleScene/background.png')
         self.load_image("mainlogo", 'resources/images/TitleScene/MainLogo.png')
+        self.load_image("exit_off", 'resources/images/TitleScene/ExitOff_Kor.png')
+        self.load_image("exit_on", 'resources/images/TitleScene/ExitOn_Kor.png')
+        self.load_image("play_off", 'resources/images/TitleScene/PlayOff_Kor.png')
+        self.load_image("play_on", 'resources/images/TitleScene/PlayOn_Kor.png')
+
 
     @staticmethod
     def load_image(name, path, frame_count=1):
