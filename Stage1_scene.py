@@ -17,11 +17,7 @@ class Stage1Scene:
 
     def update(self):
         player.update()  # 기존 Player.update()를 player.update()로 수정
-        events = pico2d.get_events()
-        for event in events:
-            if event.type == pico2d.SDL_KEYDOWN and event.key == pico2d.SDLK_SPACE:
-                print("[Stage1Scene] 스페이스바 입력 감지, TitleScene으로 전환")
-                SceneManager.load_scene("TitleScene")
+
 
 
     def render(self):
