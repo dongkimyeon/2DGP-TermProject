@@ -23,6 +23,8 @@ class ImageManager:
         self.load_image("player_die", 'resources/images/Characters/Player/Costume/Basic/player_die.png', 1)
         self.load_image("backCloud", 'resources/images/TitleScene/BackCloud.png')
         self.load_image("frontCloud", 'resources/images/TitleScene/FrontCloud.png')
+        self.load_image("titleBackground", 'resources/images/TitleScene/background.png')
+        self.load_image("mainlogo", 'resources/images/TitleScene/MainLogo.png')
 
     @staticmethod
     def load_image(name, path, frame_count=1):
@@ -30,13 +32,15 @@ class ImageManager:
         if name not in inst.images:
             img = pico2d.load_image(path)
             width = img.w if hasattr(img, 'w') else 0
-            inst.images[name] = (img, frame_count, width)
+            height = img.h if hasattr(img, 'h') else 0
+            print(f"[ImageManager] Load: {name}, w={width}, h={height}")
+            inst.images[name] = (img, frame_count, width, height)
         return inst.images[name]
 
     @staticmethod
     def get_image(name):
         inst = ImageManager.instance()
-        return inst.images.get(name, (None, 0, 0))
+        return inst.images.get(name, (None, 0, 0, 0))
 
     @staticmethod
     def unload_all():
@@ -45,5 +49,5 @@ class ImageManager:
 
 # 사용 예시:
 # ImageManager.load_image("player_idle", "경로", 6)
-# img, frame_count, width = ImageManager.get_image("player_idle")
-# width는 자동으로 img.w 값이 들어감
+# img, frame_count, width, height = ImageManager.get_image("player_idle")
+# width, height는 자동으로 img.w, img.h 값이 들어감
