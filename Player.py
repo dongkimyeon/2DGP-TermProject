@@ -34,7 +34,6 @@ class Player:
     def update(self):
         dt = Time.DeltaTime()
 
-
         self.jump_velocity += self.gravity * dt
         self.y += self.jump_velocity * dt
 
@@ -107,7 +106,7 @@ class Player:
                 self.state = 'run' if self.y == self.ground_y else 'jump'
                 self.x += self.direction * self.speed * dt
             else:
-                self.direction = 0
+                # 방향을 0으로 초기화하지 않고, 마지막 방향을 유지
                 self.state = 'idle' if self.y == self.ground_y else 'jump'
 
         # 프레임 애니메이션
@@ -128,8 +127,14 @@ class Player:
         image, frame_count, width, height = ImageManager.get_image(f"player_{self.state}")
         if frame_count > 1:
             frame = self.frame_count % frame_count
-            image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x), int(self.y) + height // 2, 100, 100)
+            if self.direction == -1:
+                image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h', int(self.x), int(self.y) + height // 2, 100, 100)
+            else:
+                image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x), int(self.y) + height // 2, 100, 100)
         else:
-            image.draw(int(self.x), int(self.y) + height // 2, 100, 100)
+            if self.direction == -1:
+                image.composite_draw(0, 'h', int(self.x), int(self.y) + height // 2, 100, 100)
+            else:
+                image.draw(int(self.x), int(self.y) + height // 2, 100, 100)
 
 player = Player()

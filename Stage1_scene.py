@@ -25,6 +25,6 @@ class Stage1Scene:
 
     def render(self):
         self.backgroundLayer0.draw(SceneManager.screen_width // 2, SceneManager.screen_height // 2, SceneManager.screen_width, SceneManager.screen_height)
-        self.backgroundLayer1.draw(SceneManager.screen_width // 2, 150, SceneManager.screen_width, SceneManager.screen_height //1.5)
-        self.backgroundLayer2.draw(SceneManager.screen_width // 2, 150, SceneManager.screen_width, SceneManager.screen_height //1.5)
+        self.backgroundLayer1.draw(SceneManager.screen_width // 2, 150, (SceneManager.screen_width) * 2.0, (SceneManager.screen_height //1.5) * 2.0)
+        self.backgroundLayer2.draw(SceneManager.screen_width // 2, 150, (SceneManager.screen_width) * 2.0 , (SceneManager.screen_height //1.5) * 2.0)
         player.render()  # 기존 Player.render()를 player.render()로 수정
