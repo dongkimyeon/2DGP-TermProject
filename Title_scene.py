@@ -1,4 +1,4 @@
-from pico2d import clear_canvas, update_canvas
+from pico2d import clear_canvas, update_canvas, close_canvas
 
 import SceneManager
 import pico2d
@@ -40,8 +40,6 @@ class TitleScene:
 
     def exit(self):
         print("[TitleScene] exit()")
-        self.backCloud = None
-        self.frontCloud = None
 
 
     def update(self):
@@ -91,7 +89,7 @@ class TitleScene:
                 if (self.screen_width // 2 - (self.exit_On_width * 10.0) // 2 <= mouse_x <= self.screen_width // 2 + (self.exit_On_width * 10.0) // 2 and
                     self.screen_height // 2 - 300 - (self.exit_On_height * 10.0) // 2 <= mouse_y <= self.screen_height // 2 - 300 + (self.exit_On_height * 10.0) // 2):
                     print("[TitleScene] Exit 버튼 클릭, 게임 종료")
-                    pico2d.quit()
+                    close_canvas()
                     exit()
 
 
