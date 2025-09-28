@@ -31,7 +31,9 @@ class Player:
         self.ground_y = 45
         self.jump_count = 2
 
+
     def update(self):
+
         dt = Time.DeltaTime()
 
         self.jump_velocity += self.gravity * dt
@@ -75,6 +77,9 @@ class Player:
                     self.jump_count -= 1
                     self.is_jumping = True
                     self.state = 'jump'
+                elif event.key == pico2d.SDLK_p:
+                    self.hp -= 10
+                    print("플레이어 체력:", self.hp)
             if event.type == pico2d.SDL_MOUSEBUTTONDOWN:
                 if event.button == pico2d.SDL_BUTTON_RIGHT and self.dash_count > 0:
                     mouse_x, mouse_y = event.x, SceneManager.screen_height - event.y
@@ -122,6 +127,8 @@ class Player:
                 self.dash_count += 1
                 self.dash_timer = 0.0
                 print("대쉬 충전: 현재 대쉬 수", self.dash_count)
+
+
 
     def render(self):
         image, frame_count, width, height = ImageManager.get_image(f"player_{self.state}")
