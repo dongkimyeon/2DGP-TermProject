@@ -5,6 +5,8 @@ from ImageManager import ImageManager
 from Player import player
 from MapManager import MapManager
 from Enemy_Banshee import Banshee
+import random
+
 
 class Stage1Scene:
     def __init__(self):
@@ -15,10 +17,13 @@ class Stage1Scene:
         self.gameobjs = []
         # MapManager 초기화
         self.map_manager = MapManager(grid_width=20, grid_height=15, tile_size=32, filename='map.txt')
-        # Banshee 인스턴스 생성 및 gameobjs에 추가
-        newBanshee = Banshee()
-        newBanshee.set_position(300, 100)
-        self.gameobjs.append(newBanshee)
+        # Banshee 10마리 랜덤 좌표로 생성
+        for _ in range(10):
+            newBanshee = Banshee()
+            rand_x = random.randint(100, 600)
+            rand_y = random.randint(100, 400)
+            newBanshee.set_position(rand_x, rand_y)
+            self.gameobjs.append(newBanshee)
 
     def enter(self):
         print("[Stage1Scene] enter()")
@@ -31,7 +36,7 @@ class Stage1Scene:
     def update(self):
 
         for obj in self.gameobjs:
-            print("obj update")
+            #print("obj update")
             obj.update()
 
         player.update()
@@ -45,7 +50,7 @@ class Stage1Scene:
         self.map_manager.render()
         # 게임 오브젝트 렌더링
         for gameobj in self.gameobjs:
-            print("gameobj render")
+            #print("gameobj render")
             gameobj.render()
         # 플레이어 렌더링
         player.render()
