@@ -33,7 +33,7 @@ class ImageManager:
         self.load_image("forest_back_Layer_1", 'resources/images/Map/ForestBackLayer1.png')
         self.load_image("forest_back_Layer_2", 'resources/images/Map/ForestBackLayer2.png')
         self.load_image("banshee_idle", 'resources/images/Enemy/Banshee/idle.png', 6)
-        self.load_image("banshee_idle_attacked", 'resources/images/Enemy/Banshee/idle_shot.png.png', 6)
+        self.load_image("banshee_idle_attacked", 'resources/images/Enemy/Banshee/idle_shot.png', 6)
         self.load_image("banshee_attack", 'resources/images/Enemy/Banshee/attack.png', 6)
         self.load_image("banshee_attack_attacked", 'resources/images/Enemy/Banshee/attack_shot.png', 6)
         self.load_image("note", "resources/images/Enemy/Bullet/note.png",4)

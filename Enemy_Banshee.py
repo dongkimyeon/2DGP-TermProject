@@ -26,21 +26,27 @@ class Banshee:
         return self.attack_power
 
     def take_damage(self, damage):
-        self.is_hit = True
-        damage_taken = damage - self.defense
-        if damage_taken < 0:
-            damage_taken = 0
-        self.health -= damage_taken
-        return damage_taken
+
+        self.health -= damage
 
     def set_position(self, x, y):
         self.x = x
         self.y = y
     def update(self):
-        pass
+        dt = Time.DeltaTime()
+
+        # 프레임 애니메이션
+        self.frame_timer += dt
+        if self.frame_timer > 0.1:
+            self.frame_count += 1
+            self.frame_timer = 0.0
+
     def render(self):
+        image, frame_count, width, height = ImageManager.get_image(f"banshee_{self.state}")
+        frame = self.frame_count % frame_count
+        if image:
+            image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x), int(self.y) + height // 2, self.width, self.height)
         pass
 
     def is_dead(self):
         return self.health <= 0
-

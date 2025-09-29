@@ -13,6 +13,9 @@ class Note:
         self.height = 0
         self.speed = 0
         self.direction = 0
+        self.frame = 0
+        self.frame_count = 0
+        self.frame_timer = 0.0
 
     def set_position(self, x, y):
         self.x = x
