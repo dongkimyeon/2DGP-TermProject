@@ -17,6 +17,28 @@ TILE_FILES = [
     'wallTile0.png', 'wallTile1.png', 'wallTile2.png', 'wallTile3.png', 'wallTile4.png',
     'wallTile5.png', 'wallTile6.png', 'wallTile7.png', 'wallTile8.png', 'backGroundTile.png'
 ]
+# 인덱스 | 타일 파일 이름
+# -------|-----------------------
+# 0      | bottomTile0.png
+# 1      | bottomTile1.png
+# 2      | bottomTile2.png
+# 3      | iceBottomTile0.png
+# 4      | iceBottomTile1.png
+# 5      | iceBottomTile2.png
+# 6      | iceFloorTile.png
+# 7      | mapDecoObj0.png
+# 8      | mapDecoObj1.png
+# 9      | mapDecoObj2.png
+# 10     | wallTile0.png
+# 11     | wallTile1.png
+# 12     | wallTile2.png
+# 13     | wallTile3.png
+# 14     | wallTile4.png
+# 15     | wallTile5.png
+# 16     | wallTile6.png
+# 17     | wallTile7.png
+# 18     | wallTile8.png
+# 19     | backGroundTile.png
 
 # 초기화
 open_canvas(WINDOW_WIDTH, WINDOW_HEIGHT)

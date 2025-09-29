@@ -10,7 +10,7 @@ class Player:
         self.dash_count = 3
         self.state = 'idle'
         self.x = SceneManager.screen_width // 2
-        self.y = SceneManager.screen_height // 2 + 10
+        self.y = SceneManager.screen_height // 2
         self.speed = 200
         self.direction = 0
         self.frame_count = 0
@@ -28,8 +28,10 @@ class Player:
         self.dash_recharge_time = 1.0
         self.is_jumping = False
         self.jump_power = 800
-        self.ground_y = 45
+        self.ground_y = 40
         self.jump_count = 2
+        self.width = 50
+        self.height = 50
 
     def update(self):
         dt = Time.DeltaTime()
@@ -132,18 +134,20 @@ class Player:
                 self.dash_timer = 0.0
                 print("대쉬 충전: 현재 대쉬 수", self.dash_count)
 
+
+
     def render(self):
         image, frame_count, width, height = ImageManager.get_image(f"player_{self.state}")
         if frame_count > 1:
             frame = self.frame_count % frame_count
             if self.direction == -1:
-                image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h', int(self.x), int(self.y) + height // 2, 100, 100)
+                image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h', int(self.x), int(self.y) + height // 2, self.width, self.height)
             else:
-                image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x), int(self.y) + height // 2, 100, 100)
+                image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x), int(self.y) + height // 2, self.width, self.height)
         else:
             if self.direction == -1:
-                image.composite_draw(0, 'h', int(self.x), int(self.y) + height // 2, 100, 100)
+                image.composite_draw(0, 'h', int(self.x), int(self.y) + height // 2, self.width, self.height)
             else:
-                image.draw(int(self.x), int(self.y) + height // 2, 100, 100)
+                image.draw(int(self.x), int(self.y) + height // 2, self.width, self.height)
 
 player = Player()
