@@ -33,6 +33,8 @@ def update():
     if active_scene:
         active_scene.update()
 
+
+
 def render():
     if active_scene:
         pico2d.clear_canvas()

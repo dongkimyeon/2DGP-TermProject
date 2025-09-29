@@ -16,28 +16,32 @@ class Player:
         self.frame_count = 0
         self.frame_timer = 0.0
         self.jump_velocity = 0
-        self.gravity = -2000
+        self.gravity = -2000  # 중력 값 약간 완화 (-2200 -> -2000)
         self.weapon = None
         self.left_pressed = False
         self.right_pressed = False
         self.is_dashing = False
-        self.dash_speed = 1500
-        self.dash_duration = 0.15
+        self.dash_speed = 1400
+        self.dash_duration = 0.175
         self.dash_timer = 0.0
         self.dash_direction = (0, 0)
         self.dash_recharge_time = 1.0
         self.is_jumping = False
-        self.jump_power = 600
+        self.jump_power = 800
         self.ground_y = 45
         self.jump_count = 2
 
-
     def update(self):
-
         dt = Time.DeltaTime()
 
-        self.jump_velocity += self.gravity * dt
-        self.y += self.jump_velocity * dt
+        # 중력 적용 (대쉬 중에는 중력 무시)
+        if not self.is_dashing:
+            self.jump_velocity += self.gravity * dt
+            self.y += self.jump_velocity * dt
+        else:
+            # 대쉬 중에는 중력 영향을 받지 않고 방향대로만 이동
+            self.x += self.dash_direction[0] * self.dash_speed * dt
+            self.y += self.dash_direction[1] * self.dash_speed * dt
 
         # 착지 확인
         if self.y <= self.ground_y:
@@ -58,11 +62,12 @@ class Player:
             self.dash_timer -= dt
             if self.dash_timer <= 0:
                 self.is_dashing = False
-                self.state = 'jump' if self.y > self.ground_y else 'idle'
-            else:
-                # 마우스 방향으로 대쉬 (수평 및 수직)
-                self.x += self.dash_direction[0] * self.dash_speed * dt
-                self.y += self.dash_direction[1] * self.dash_speed * dt
+                # 대쉬 종료 후 공중이면 점프 속도 유지
+                if self.y > self.ground_y:
+                    self.jump_velocity = max(self.jump_velocity, -400)  # 더 부드러운 하강을 위해 -500 -> -400
+                    self.state = 'jump'
+                else:
+                    self.state = 'idle'
 
         # 입력 처리
         events = pico2d.get_events()
@@ -111,7 +116,6 @@ class Player:
                 self.state = 'run' if self.y == self.ground_y else 'jump'
                 self.x += self.direction * self.speed * dt
             else:
-                # 방향을 0으로 초기화하지 않고, 마지막 방향을 유지
                 self.state = 'idle' if self.y == self.ground_y else 'jump'
 
         # 프레임 애니메이션
@@ -127,8 +131,6 @@ class Player:
                 self.dash_count += 1
                 self.dash_timer = 0.0
                 print("대쉬 충전: 현재 대쉬 수", self.dash_count)
-
-
 
     def render(self):
         image, frame_count, width, height = ImageManager.get_image(f"player_{self.state}")
