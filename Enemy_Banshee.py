@@ -22,7 +22,7 @@ class Banshee:
         self.width = 50
         self.height = 50
         self.detection_radius = 350
-        self.attack_cooldown = 3.0
+        self.attack_cooldown = 0.0
         self.note_fired = False
 
     def attack(self):
@@ -72,7 +72,7 @@ class Banshee:
                         angle = (2 * math.pi / 16) * i
                         Note().shot(self.x, self.y, angle, 300)
                     self.note_fired = True
-                    self.attack_cooldown = 3.0
+                    self.attack_cooldown = 3.0 # 쿨타임 리셋
                 if frame == frame_count - 1:
                     self.state = 'idle'
 

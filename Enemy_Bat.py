@@ -24,7 +24,7 @@ class Bat:
         self.width = 50
         self.height = 50
         self.detection_radius = 350
-        self.attack_cooldown = 2.0  # 쿨타임 1초
+        self.attack_cooldown = 0.0  # 쿨타임 1초
 
     def attack(self):
         return self.attack_power
@@ -79,7 +79,7 @@ class Bat:
             if self.attack_cooldown <= 0:
                 direction = math.atan2(dy, dx)
                 Bullet().shot(self.x, self.y, direction, 300)
-                self.attack_cooldown = 1.0  # 쿨타임 리셋
+                self.attack_cooldown = 2.0  # 쿨타임 리셋
         if self.attack_cooldown > 0:
             self.attack_cooldown -= dt
         # 프레임 애니메이션
