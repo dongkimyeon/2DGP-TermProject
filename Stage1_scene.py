@@ -8,6 +8,7 @@ from Enemy_Banshee import Banshee
 from Banshee_Attack_note import Note
 from Enemy_Bat import Bat
 from Bat_Attack_bullet import Bullet
+from Enemy_Ghost import Ghost
 import random
 
 
@@ -33,6 +34,13 @@ class Stage1Scene:
             rand_y = random.randint(100, 400)
             newBat.set_position(rand_x, rand_y)
             self.gameobjs.append(newBat)
+
+        for _ in range(2):
+            newGhost = Ghost()
+            rand_x = random.randint(100, 600)
+            rand_y = random.randint(100, 400)
+            newGhost.set_position(rand_x, rand_y)
+            self.gameobjs.append(newGhost)
 
 
     def enter(self):

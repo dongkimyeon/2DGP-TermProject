@@ -13,7 +13,7 @@ class Ghost:
         self.attack_power = 12
         self.x = 0
         self.y = 0
-        self.moveSpeed = 150  # Bat의 이동 속도(초당 픽셀)
+        self.moveSpeed = 150  # Ghost의 이동 속도(초당 픽셀)
 
         self.frame = 0
         self.frame_count = 0
@@ -47,7 +47,6 @@ class Ghost:
 
     def update(self):
         dt = Time.DeltaTime()
-
         self.move()
         # 프레임 애니메이션
         self.frame_timer += dt
