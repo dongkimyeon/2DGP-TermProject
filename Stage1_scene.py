@@ -54,6 +54,20 @@ class Stage1Scene:
             #print("obj update")
             obj.update()
         player.update()
+        self.handle_collisions()
+
+    def handle_collisions(self):
+        left_a, bottom_a, right_a, top_a = player.get_bb()
+        for obj in self.gameobjs:
+            left_b, bottom_b, right_b, top_b = obj.get_bb()
+            if left_a > right_b: continue
+            if right_a < left_b: continue
+            if top_a < bottom_b: continue
+            if bottom_a > top_b: continue
+
+            print("충돌")
+
+
 
 
 
