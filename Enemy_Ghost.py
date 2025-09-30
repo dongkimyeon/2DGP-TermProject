@@ -49,6 +49,9 @@ class Ghost:
     def take_damage(self, damage):
         self.health -= damage
 
+    def get_damage(self):
+        return self.attack_power
+
     def get_bb(self):
         half_width = self.width // 2
         half_height = self.height // 2

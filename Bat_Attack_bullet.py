@@ -13,6 +13,7 @@ class Bullet:
         self.height = 35
         self.speed = 0
         self.direction = 0
+        self.attack_power = 12
 
         self.frame_count = 0
         self.frame_timer = 0.0
@@ -25,6 +26,9 @@ class Bullet:
         half_width = self.width // 2
         half_height = self.height // 2
         return (self.x - half_width, self.y - half_height + 2 , self.x + half_width - 5, self.y + half_height )
+
+    def get_damage(self):
+        return self.attack_power
 
     def shot(self, x, y, direction, speed=300):
         self.x = x

@@ -34,6 +34,7 @@ class Player:
         self.height = 50
 
 
+
     def get_bb(self):
         half_width = self.width // 2
         half_height = self.height // 2
@@ -142,6 +143,7 @@ class Player:
 
 
     def render(self):
+        # 체력 텍스트 렌더링 (좌측 상단)
         image, frame_count, width, height = ImageManager.get_image(f"player_{self.state}")
         if frame_count > 1:
             frame = self.frame_count % frame_count
@@ -154,5 +156,8 @@ class Player:
                 image.composite_draw(0, 'h', int(self.x), int(self.y) + height // 2, self.width, self.height)
             else:
                 image.draw(int(self.x), int(self.y) + height // 2, self.width, self.height)
+
+
+
 
 player = Player()

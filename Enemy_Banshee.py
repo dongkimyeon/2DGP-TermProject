@@ -37,6 +37,9 @@ class Banshee:
         half_height = self.height // 2
         return (self.x - half_width, self.y - half_height + 7, self.x + half_width, self.y + half_height + 5)
 
+    def get_damage(self):
+        return self.attack_power
+
     def set_position(self, x, y):
         self.x = x
         self.y = y

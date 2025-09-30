@@ -53,7 +53,8 @@ class Bat:
             self.x += math.cos(angle) * 50 * dt
             self.y += math.sin(angle) * 50 * dt
 
-
+    def get_damage(self):
+        return self.attack_power
 
     def take_damage(self, damage):
         self.health -= damage

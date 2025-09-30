@@ -19,7 +19,7 @@ class Stage1Scene:
         self.gameobjs = []
         # MapManager 초기화
         self.map_manager = MapManager(grid_width=20, grid_height=15, tile_size=32, filename='map.txt')
-        # Banshee 10마리 랜덤 좌표로 생성
+
         for _ in range(2):
             newBanshee = Banshee()
             rand_x = random.randint(100, 600)
@@ -53,7 +53,9 @@ class Stage1Scene:
         for obj in self.gameobjs:
             #print("obj update")
             obj.update()
+
         player.update()
+
         self.handle_collisions()
 
     def handle_collisions(self):
@@ -65,7 +67,26 @@ class Stage1Scene:
             if top_a < bottom_b: continue
             if bottom_a > top_b: continue
 
-            print("충돌")
+            #각 객체마다 충돌처리 코드 추가
+            if isinstance(obj, Banshee):
+                print("Player collided with Banshee!")
+                player.hp -= obj.get_damage()
+
+            elif isinstance(obj, Bat):
+                print("Player collided with Bat!")
+                player.hp -= obj.get_damage()
+
+            elif isinstance(obj, Ghost):
+                print("Player collided with Ghost!")
+                player.hp -= obj.get_damage()
+
+            elif isinstance(obj, Note):
+                print("Player collided with Note!")
+                player.hp -= obj.get_damage()
+
+            elif isinstance(obj, Bullet):
+                print("Player collided with Bullet!")
+                player.hp -= obj.get_damage()
 
 
 
