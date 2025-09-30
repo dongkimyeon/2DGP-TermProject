@@ -25,6 +25,7 @@ class Bat:
         self.height = 50
         self.detection_radius = 350
         self.attack_cooldown = 0.0  # 쿨타임 1초
+        self.direction = 1
 
     def attack(self):
         return self.attack_power
@@ -36,19 +37,19 @@ class Bat:
         min_dist2 = self.min_distance ** 2
         max_dist2 = self.detection_radius ** 2
         dt = Time.DeltaTime()
+        angle = math.atan2(dy, dx)
+        if( angle > math.pi/2 or angle < -math.pi/2):
+            self.direction = -1
+        else:
+            self.direction = 1
         if dist2 < min_dist2:
             # 너무 가까우면 멀어짐
-            angle = math.atan2(dy, dx)
             self.x -= math.cos(angle) * self.moveSpeed * dt
             self.y -= math.sin(angle) * self.moveSpeed * dt
         elif dist2 > max_dist2:
-            # 너무 멀면 다가감
-            angle = math.atan2(dy, dx)
             self.x += math.cos(angle) * self.moveSpeed * dt
             self.y += math.sin(angle) * self.moveSpeed * dt
         else:
-            # 적당한 거리
-            angle = math.atan2(dy, dx)
             self.x += math.cos(angle) * 50 * dt
             self.y += math.sin(angle) * 50 * dt
 
@@ -92,7 +93,11 @@ class Bat:
         image, frame_count, width, height = ImageManager.get_image(f"bat_move")
         frame = self.frame_count % frame_count
         if image:
-            image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x), int(self.y) + height // 2, self.width, self.height)
-
+            if self.direction == 1:
+                image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x),
+                                int(self.y) + height // 2, self.width, self.height)
+            else:
+                image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h',
+                                          int(self.x), int(self.y) + height // 2, self.width, self.height)
     def is_dead(self):
         return self.health <= 0

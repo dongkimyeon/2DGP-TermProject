@@ -18,6 +18,7 @@ class Ghost:
         self.frame = 0
         self.frame_count = 0
         self.frame_timer = 0.0
+        self.direction = 1  # 1: 오른쪽, -1: 왼쪽
         self.state = 'move'  # 'move' , 'attack', 'attack_shot', 'move_shot'
         self.is_hit = False
         self.is_dead = False
@@ -36,6 +37,10 @@ class Ghost:
         if (player.x - self.x) ** 2 + (player.y - self.y) ** 2 < self.detection_radius ** 2:
             self.state = 'attack'
             angle = math.atan2(dy, dx)
+            if(angle > math.pi/2 or angle < -math.pi/2):
+                self.direction = -1
+            else:
+                self.direction = 1
             self.x += math.cos(angle) * self.moveSpeed * Time.DeltaTime()
             self.y += math.sin(angle) * self.moveSpeed * Time.DeltaTime()
         else:
@@ -66,7 +71,11 @@ class Ghost:
         image, frame_count, width, height = ImageManager.get_image(f"ghost_{self.state}")
         frame = self.frame_count % frame_count
         if image:
-            image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x), int(self.y) + height // 2, self.width, self.height)
-
+            if self.direction == 1:
+                image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x),
+                                int(self.y) + height // 2, self.width, self.height)
+            else:
+                image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h',
+                                          int(self.x), int(self.y) + height // 2, self.width, self.height)
     def is_dead(self):
         return self.health <= 0

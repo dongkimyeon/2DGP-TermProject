@@ -82,7 +82,4 @@ class ImageManager:
         inst = ImageManager.instance()
         inst.images.clear()
 
-# 사용 예시:
-# ImageManager.load_image("player_idle", "경로", 6)
-# img, frame_count, width, height = ImageManager.get_image("player_idle")
-# width, height는 자동으로 img.w, img.h 값이 들어감
+

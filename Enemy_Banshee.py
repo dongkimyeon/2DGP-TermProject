@@ -24,6 +24,7 @@ class Banshee:
         self.detection_radius = 350
         self.attack_cooldown = 0.0
         self.note_fired = False
+        self.direction = 1  # 1: 오른쪽, -1: 왼쪽
 
     def attack(self):
         return self.attack_power
@@ -41,6 +42,14 @@ class Banshee:
         self.y = y
     def update(self):
         dt = Time.DeltaTime()
+        dx = player.x - self.x
+        dy = player.y - self.y
+
+        angle = math.atan2(dy, dx)
+        if (angle > math.pi / 2 or angle < -math.pi / 2):
+            self.direction = -1
+        else:
+            self.direction = 1
 
         #플레이어 감지
         if(player.x - self.x)**2 + (player.y - self.y)**2 < self.detection_radius**2:
@@ -64,7 +73,12 @@ class Banshee:
         image, frame_count, width, height = ImageManager.get_image(f"banshee_{self.state}")
         frame = self.frame_count % frame_count
         if image:
-            image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x), int(self.y) + height // 2, self.width, self.height)
+            if self.direction == 1:
+                image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x),
+                                int(self.y) + height // 2, self.width, self.height)
+            else:
+                image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h',
+                                          int(self.x), int(self.y) + height // 2, self.width, self.height)
             if self.state == 'attack' and self.attack_cooldown <= 0:
                 if frame == frame_count - 1 and not self.note_fired:
                     # 16방향으로 Note 발사 (한 번만)
