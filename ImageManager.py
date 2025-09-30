@@ -50,6 +50,14 @@ class ImageManager:
         self.load_image("bat_bullet", "resources/images/Enemy/Bullet/smallBullet.png",5)
         self.load_image("bat_bullet_hit", "resources/images/Enemy/Bullet/smallBullet_FX.png",7)
 
+        # Ghost 이미지 로드
+        self.load_image("ghost_move", "resources/images/Enemy/Ghost/move.png",6)
+        self.load_image("ghost_attack", "resources/images/Enemy/Ghost/attack.png",3)
+
+        self.load_image("ghost_move_shot", "resources/images/Enemy/Ghost/move_shot.png",6)
+        self.load_image("ghost_attack_shot", "resources/images/Enemy/Ghost/attack_shot.png",3)
+
+
 
 
 
