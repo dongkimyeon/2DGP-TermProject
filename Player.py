@@ -37,7 +37,7 @@ class Player:
     def get_bb(self):
         half_width = self.width // 2
         half_height = self.height // 2
-        return (self.x - half_width, self.y - half_height, self.x + half_width, self.y + half_height)
+        return (self.x - half_width, self.y - half_height + 5, self.x + half_width, self.y + half_height + 5)
     def update(self):
         dt = Time.DeltaTime()
 

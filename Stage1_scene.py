@@ -26,12 +26,6 @@ class Stage1Scene:
             newBanshee.set_position(rand_x, rand_y)
             self.gameobjs.append(newBanshee)
 
-        for _ in range(10):
-            newNote = Note  ()
-            rand_x = random.randint(100, 600)
-            rand_y = random.randint(100, 400)
-            newNote.set_position(rand_x, rand_y)
-            self.gameobjs.append(newNote)
 
     def enter(self):
         print("[Stage1Scene] enter()")
