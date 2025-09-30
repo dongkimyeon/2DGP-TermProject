@@ -5,6 +5,7 @@ from ImageManager import ImageManager
 from Player import player
 from MapManager import MapManager
 from Enemy_Banshee import Banshee
+from Banshee_Attack_note import Note
 import random
 
 
@@ -25,6 +26,13 @@ class Stage1Scene:
             newBanshee.set_position(rand_x, rand_y)
             self.gameobjs.append(newBanshee)
 
+        for _ in range(10):
+            newNote = Note  ()
+            rand_x = random.randint(100, 600)
+            rand_y = random.randint(100, 400)
+            newNote.set_position(rand_x, rand_y)
+            self.gameobjs.append(newNote)
+
     def enter(self):
         print("[Stage1Scene] enter()")
         # 맵 로드는 MapManager의 __init__에서 이미 처리됨
@@ -34,12 +42,12 @@ class Stage1Scene:
         print("[Stage1Scene] exit()")
 
     def update(self):
-
         for obj in self.gameobjs:
             #print("obj update")
             obj.update()
-
         player.update()
+
+
 
     def render(self):
         # 배경 레이어 렌더링
@@ -48,9 +56,13 @@ class Stage1Scene:
         self.backgroundLayer2.draw(SceneManager.screen_width // 2, 150, SceneManager.screen_width, SceneManager.screen_height // 1.5)
         # 맵 타일 렌더링
         self.map_manager.render()
+
         # 게임 오브젝트 렌더링
         for gameobj in self.gameobjs:
             #print("gameobj render")
             gameobj.render()
+            pico2d.draw_rectangle(*gameobj.get_bb())
         # 플레이어 렌더링
         player.render()
+        pico2d.draw_rectangle(*player.get_bb())
+

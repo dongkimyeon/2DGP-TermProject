@@ -9,8 +9,8 @@ class Note:
     def __init__(self):
         self.x = 0
         self.y = 0
-        self.width = 0
-        self.height = 0
+        self.width = 35
+        self.height = 35
         self.speed = 0
         self.direction = 0
 
@@ -21,8 +21,14 @@ class Note:
         self.x = x
         self.y = y
 
+    def get_bb(self):
+        half_width = self.width // 2
+        half_height = self.height // 2
+        return (self.x - half_width, self.y - half_height + 2 , self.x + half_width - 5, self.y + half_height )
+
     def shot(self):
-        pass
+        #이 객체를 리턴
+        return self
 
     def update(self):
         dt = Time.DeltaTime()
@@ -39,6 +45,6 @@ class Note:
         if image:
             image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x),
                             int(self.y) + height // 2, self.width, self.height)
-        pass
+
 
 

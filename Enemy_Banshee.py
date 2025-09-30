@@ -28,6 +28,10 @@ class Banshee:
     def take_damage(self, damage):
 
         self.health -= damage
+    def get_bb(self):
+        half_width = self.width // 2
+        half_height = self.height // 2
+        return (self.x - half_width, self.y - half_height + 7, self.x + half_width, self.y + half_height + 5)
 
     def set_position(self, x, y):
         self.x = x
