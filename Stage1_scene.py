@@ -19,7 +19,7 @@ class Stage1Scene:
         # MapManager 초기화
         self.map_manager = MapManager(grid_width=20, grid_height=15, tile_size=32, filename='map.txt')
         # Banshee 10마리 랜덤 좌표로 생성
-        for _ in range(10):
+        for _ in range(2):
             newBanshee = Banshee()
             rand_x = random.randint(100, 600)
             rand_y = random.randint(100, 400)
