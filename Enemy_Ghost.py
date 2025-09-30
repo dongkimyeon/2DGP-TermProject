@@ -30,8 +30,16 @@ class Ghost:
         return self.attack_power
 
     def move(self):
-       pass
+        dx = player.x - self.x
+        dy = player.y - self.y
 
+        if (player.x - self.x) ** 2 + (player.y - self.y) ** 2 < self.detection_radius ** 2:
+            self.state = 'attack'
+            angle = math.atan2(dy, dx)
+            self.x += math.cos(angle) * self.moveSpeed * Time.DeltaTime()
+            self.y += math.sin(angle) * self.moveSpeed * Time.DeltaTime()
+        else:
+            self.state = 'move'
 
     def take_damage(self, damage):
         self.health -= damage
