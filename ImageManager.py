@@ -17,10 +17,12 @@ class ImageManager:
         return ImageManager._instance
 
     def _init_images(self):
+        # Player 이미지 로드
         self.load_image("player_idle", 'resources/images/Characters/Player/Costume/Basic/player_idle.png', 5)
         self.load_image("player_run", 'resources/images/Characters/Player/Costume/Basic/player_run.png', 8)
         self.load_image("player_jump", 'resources/images/Characters/Player/Costume/Basic/player_jump.png', 1)
         self.load_image("player_die", 'resources/images/Characters/Player/Costume/Basic/player_die.png', 1)
+        # TitleScene 이미지 로드
         self.load_image("backCloud", 'resources/images/TitleScene/BackCloud.png')
         self.load_image("frontCloud", 'resources/images/TitleScene/FrontCloud.png')
         self.load_image("titleBackground", 'resources/images/TitleScene/background.png')
@@ -29,14 +31,24 @@ class ImageManager:
         self.load_image("exit_on", 'resources/images/TitleScene/ExitOn_Kor.png')
         self.load_image("play_off", 'resources/images/TitleScene/PlayOff_Kor.png')
         self.load_image("play_on", 'resources/images/TitleScene/PlayOn_Kor.png')
+        # Stage1Scene 배경 이미지 로드
         self.load_image("forest_back_Layer_0", 'resources/images/Map/ForestBackLayer0.png')
         self.load_image("forest_back_Layer_1", 'resources/images/Map/ForestBackLayer1.png')
         self.load_image("forest_back_Layer_2", 'resources/images/Map/ForestBackLayer2.png')
+
+        # Banshee 이미지 로드
         self.load_image("banshee_idle", 'resources/images/Enemy/Banshee/idle.png', 6)
         self.load_image("banshee_idle_attacked", 'resources/images/Enemy/Banshee/idle_shot.png', 6)
         self.load_image("banshee_attack", 'resources/images/Enemy/Banshee/attack.png', 6)
         self.load_image("banshee_attack_attacked", 'resources/images/Enemy/Banshee/attack_shot.png', 6)
         self.load_image("note", "resources/images/Enemy/Bullet/note.png",4)
+        self.load_image("note_hit", "resources/images/Enemy/Bullet/note_FX.png",6)
+
+        # Bat 이미지 로드
+        self.load_image("bat_move", "resources/images/Enemy/Bat/Normal/move.png" ,6)
+        self.load_image("bat_move_attacked", "resources/images/Enemy/Bat/Normal/move_shot.png",6)
+        self.load_image("bat_bullet", "resources/images/Enemy/Bullet/smallBullet.png",5)
+        self.load_image("bat_bullet_hit", "resources/images/Enemy/Bullet/smallBullet_FX.png",7)
 
 
 

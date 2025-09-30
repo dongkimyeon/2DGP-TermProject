@@ -6,6 +6,8 @@ from Player import player
 from MapManager import MapManager
 from Enemy_Banshee import Banshee
 from Banshee_Attack_note import Note
+from Enemy_Bat import Bat
+from Bat_Attack_bullet import Bullet
 import random
 
 
@@ -25,6 +27,12 @@ class Stage1Scene:
             rand_y = random.randint(100, 400)
             newBanshee.set_position(rand_x, rand_y)
             self.gameobjs.append(newBanshee)
+        for _ in range(2):
+            newBat = Bat()
+            rand_x = random.randint(100, 600)
+            rand_y = random.randint(100, 400)
+            newBat.set_position(rand_x, rand_y)
+            self.gameobjs.append(newBat)
 
 
     def enter(self):
