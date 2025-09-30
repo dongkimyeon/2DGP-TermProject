@@ -28,7 +28,29 @@ class Bat:
 
     def attack(self):
         return self.attack_power
-  
+
+    def move(self):
+        dx = player.x - self.x
+        dy = player.y - self.y
+        dist2 = dx * dx + dy * dy
+        min_dist2 = self.min_distance ** 2
+        max_dist2 = self.detection_radius ** 2
+        dt = Time.DeltaTime()
+        if dist2 < min_dist2:
+            # 너무 가까우면 멀어짐
+            angle = math.atan2(dy, dx)
+            self.x -= math.cos(angle) * self.moveSpeed * dt
+            self.y -= math.sin(angle) * self.moveSpeed * dt
+        elif dist2 > max_dist2:
+            # 너무 멀면 다가감
+            angle = math.atan2(dy, dx)
+            self.x += math.cos(angle) * self.moveSpeed * dt
+            self.y += math.sin(angle) * self.moveSpeed * dt
+        else:
+            # 적당한 거리
+            angle = math.atan2(dy, dx)
+            self.x += math.cos(angle) * 50 * dt
+            self.y += math.sin(angle) * 50 * dt
 
 
 
