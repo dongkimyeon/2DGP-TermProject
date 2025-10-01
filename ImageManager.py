@@ -38,24 +38,32 @@ class ImageManager:
 
         # Banshee 이미지 로드
         self.load_image("banshee_idle", 'resources/images/Enemy/Banshee/idle.png', 6)
-        self.load_image("banshee_idle_attacked", 'resources/images/Enemy/Banshee/idle_shot.png', 6)
+        self.load_image("banshee_idle_shot", 'resources/images/Enemy/Banshee/idle_shot.png', 6)
         self.load_image("banshee_attack", 'resources/images/Enemy/Banshee/attack.png', 6)
-        self.load_image("banshee_attack_attacked", 'resources/images/Enemy/Banshee/attack_shot.png', 6)
+        self.load_image("banshee_attack_shot", 'resources/images/Enemy/Banshee/attack_shot.png', 6)
         self.load_image("note", "resources/images/Enemy/Bullet/note.png",4)
         self.load_image("note_hit", "resources/images/Enemy/Bullet/note_FX.png",6)
 
         # Bat 이미지 로드
         self.load_image("bat_move", "resources/images/Enemy/Bat/Normal/move.png" ,6)
-        self.load_image("bat_move_attacked", "resources/images/Enemy/Bat/Normal/move_shot.png",6)
+        self.load_image("bat_move_shot", "resources/images/Enemy/Bat/Normal/move_shot.png",6)
         self.load_image("bat_bullet", "resources/images/Enemy/Bullet/smallBullet.png",5)
         self.load_image("bat_bullet_hit", "resources/images/Enemy/Bullet/smallBullet_FX.png",7)
 
         # Ghost 이미지 로드
         self.load_image("ghost_move", "resources/images/Enemy/Ghost/move.png",6)
         self.load_image("ghost_attack", "resources/images/Enemy/Ghost/attack.png",3)
-
         self.load_image("ghost_move_shot", "resources/images/Enemy/Ghost/move_shot.png",6)
         self.load_image("ghost_attack_shot", "resources/images/Enemy/Ghost/attack_shot.png",3)
+
+        # Skel 이미지 로드
+        self.load_image("skel_idle", "resources/images/Enemy/Skel/Big_Normal/idle.png",5)
+        self.load_image("skel_idle_shot", "resources/images/Enemy/Skel/Big_Normal/idle_shot.png",5)
+        self.load_image("skel_move", "resources/images/Enemy/Skel/Big_Normal/move.png",6)
+        self.load_image("skel_move_shot", "resources/images/Enemy/Skel/Big_Normal/move_shot.png",6)
+        self.load_image("skel_attack", "resources/images/Enemy/Skel/Big_Normal/attack.png",12)
+        self.load_image("skel_attack_shot", "resources/images/Enemy/Skel/Big_Normal/attack_shot.png",12)
+
 
 
 
