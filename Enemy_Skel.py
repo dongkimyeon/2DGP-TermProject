@@ -108,18 +108,17 @@ class Skel:
         if image:
             if self.direction == 1:
                 if(self.state == 'attack'):
-                    image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x + 22),
-                                    int(self.y) + height // 2, self.width * 2.0, self.height * 1.6)
+                    image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x + 22 * 1.5),
+                                    int(self.y + 15) + height // 2, (self.width * 2.0) * 1.5, (self.height * 1.6) * 1.5)
                 else:
                     image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x),
-                                    int(self.y) + height // 2 - 8, self.width, self.height)
+                                    int(self.y) + height // 2 , self.width * 1.5, self.height * 1.5)
             else:
                 if (self.state == 'attack'):
                     image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h',
-                                              int(self.x - 22), int(self.y) + height // 2, self.width * 2.0,
-                                              self.height * 1.6)
+                                              int(self.x - 22 * 1.5), int(self.y + 15) + height // 2, (self.width * 2.0) * 1.5, (self.height * 1.6) * 1.5)
                 else:
                     image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h',
-                                          int(self.x ), int(self.y) + height // 2 - 8, self.width, self.height)
+                                          int(self.x ), int(self.y) + height // 2, self.width * 1.5, self.height * 1.5)
     def is_dead(self):
         return self.health <= 0
