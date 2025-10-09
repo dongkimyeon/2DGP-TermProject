@@ -36,6 +36,7 @@ class Player:
         self.height = 50
         self.weapon = Katana(self)
         self.katana_effect = KatanaEffect(self)
+        self.chargingGage = 0.0
 
     def get_bb(self):
         half_width = self.width // 2
@@ -122,6 +123,7 @@ class Player:
                         self.dash_count -= 1
                 elif event.button == pico2d.SDL_BUTTON_LEFT:
                     print("공격")
+                    self.chargingGage += 0.1
                     self.katana_effect.start()
             if event.type == pico2d.SDL_KEYUP:
                 if event.key == pico2d.SDLK_a:

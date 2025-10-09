@@ -34,7 +34,7 @@ class KatanaEffect:
                 self.active = False
 
         # 위치와 각도 갱신
-        offset_radius = 30
+        offset_radius = 40
         angle = self.player.weapon.angle  # 라디안 값
         self.x = self.player.x + offset_radius * math.cos(angle)
         self.y = self.player.y + offset_radius * math.sin(angle)
@@ -43,6 +43,11 @@ class KatanaEffect:
     def render(self):
         if not self.active:
             return
-
         image, frame_count, width, height = ImageManager.get_image("katana_effect")
-        image.clip_composite_draw(self.frame_count * (width // frame_count), 0, width//frame_count , height, self.angle, 'none', self.x, self.y, width//frame_count , height)
+        if self.player.direction == 1:
+            image.clip_composite_draw(self.frame_count * (width // frame_count), 0, width // frame_count, height,
+                                      self.angle, 'none', self.x, self.y, width // frame_count, height)
+        else:
+            image.clip_composite_draw(self.frame_count * (width // frame_count), 0, width // frame_count, height,
+                                      self.angle, 'v', self.x, self.y, width // frame_count, height)
+
