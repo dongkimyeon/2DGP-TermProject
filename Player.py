@@ -80,6 +80,16 @@ class Player:
         # 입력 처리
         events = pico2d.get_events()
         for event in events:
+
+
+
+            if event.type == pico2d.SDL_MOUSEMOTION:
+                mouse_x = event.x
+                mouse_y = SceneManager.screen_height - event.y
+                dx = mouse_x - self.x
+                dy = mouse_y - self.y
+                distance = math.sqrt(dx ** 2 + dy ** 2)
+                self.direction = -1 if dx < 0 else 1 if dx > 0 else self.direction
             if event.type == pico2d.SDL_KEYDOWN:
                 if event.key == pico2d.SDLK_a:
                     self.left_pressed = True
@@ -94,20 +104,21 @@ class Player:
                     self.hp -= 10
                     print("플레이어 체력:", self.hp)
             if event.type == pico2d.SDL_MOUSEBUTTONDOWN:
+                mouse_x = event.x
+                mouse_y = SceneManager.screen_height - event.y
+                dx = mouse_x - self.x
+                dy = mouse_y - self.y
+                distance = math.sqrt(dx ** 2 + dy ** 2)
                 if event.button == pico2d.SDL_BUTTON_RIGHT and self.dash_count > 0:
-                    mouse_x, mouse_y = event.x, SceneManager.screen_height - event.y
-                    dx = mouse_x - self.x
-                    dy = mouse_y - self.y
-                    distance = math.sqrt(dx**2 + dy**2)
                     if distance != 0:
                         self.dash_direction = (dx / distance, dy / distance)
                         self.is_dashing = True
                         self.dash_timer = self.dash_duration
                         self.dash_count -= 1
-                        print("대쉬: 방향", self.dash_direction)
+
                 elif event.button == pico2d.SDL_BUTTON_LEFT:
                     print("공격")
-            elif event.type == pico2d.SDL_KEYUP:
+            if event.type == pico2d.SDL_KEYUP:
                 if event.key == pico2d.SDLK_a:
                     self.left_pressed = False
                 elif event.key == pico2d.SDLK_d:
@@ -116,13 +127,11 @@ class Player:
         # 수평 이동
         if not self.is_dashing:
             if self.left_pressed and not self.right_pressed:
-                self.direction = -1
                 self.state = 'run' if self.y == self.ground_y else 'jump'
-                self.x += self.direction * self.speed * dt
+                self.x -=  self.speed * dt
             elif self.right_pressed and not self.left_pressed:
-                self.direction = 1
                 self.state = 'run' if self.y == self.ground_y else 'jump'
-                self.x += self.direction * self.speed * dt
+                self.x +=  self.speed * dt
             else:
                 self.state = 'idle' if self.y == self.ground_y else 'jump'
 
