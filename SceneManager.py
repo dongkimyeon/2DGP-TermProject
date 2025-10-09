@@ -5,8 +5,7 @@ screen_height = 720
 
 scenes = {}
 active_scene = None
-mfont = pico2d.load_font('resources/font/alagard.ttf', 50)
-
+mfont = None
 def CreateScene(name, scene_class):
     print(f"[SceneManager] CreateScene: {name} 인스턴스 생성")
     scenes[name] = scene_class()
@@ -40,14 +39,8 @@ def update():
 
 
 def render():
-    global mfont
     if active_scene:
-
         pico2d.clear_canvas()
-
         active_scene.render()
-
-        mfont.draw(50, 50, 'APPLE', (255, 0, 0))
-
         pico2d.update_canvas()
 

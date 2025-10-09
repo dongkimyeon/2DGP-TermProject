@@ -4,6 +4,7 @@ import pico2d
 import SceneManager
 import math
 from Player_Katana import Katana
+from Player_Katana_Effect import KatanaEffect
 
 
 class Player:
@@ -33,8 +34,8 @@ class Player:
         self.jump_count = 2
         self.width = 50
         self.height = 50
-
         self.weapon = Katana(self)
+        self.katana_effect = KatanaEffect(self)
 
     def get_bb(self):
         half_width = self.width // 2
@@ -119,9 +120,9 @@ class Player:
                         self.is_dashing = True
                         self.dash_timer = self.dash_duration
                         self.dash_count -= 1
-
                 elif event.button == pico2d.SDL_BUTTON_LEFT:
                     print("공격")
+                    self.katana_effect.start()
             if event.type == pico2d.SDL_KEYUP:
                 if event.key == pico2d.SDLK_a:
                     self.left_pressed = False
@@ -155,6 +156,8 @@ class Player:
 
         if self.weapon:
             self.weapon.update()
+        if self.katana_effect:
+            self.katana_effect.update()
 
 
 
@@ -175,6 +178,10 @@ class Player:
 
         if self.weapon:
             self.weapon.render()
+        if self.katana_effect:
+            self.katana_effect.render()
+
+
 
 
 

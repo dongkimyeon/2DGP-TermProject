@@ -19,8 +19,15 @@ class Katana:
         # 각도는 Player에서 직접 갱신됨
 
     def render(self):
-
-        image, temp, width, height = ImageManager.get_image(f"katana")
+        ImageType = None
+        if self.player.direction == 1:
+            ImageType = "katana_right"
+        else:
+            ImageType = "katana_left"
+        image, temp, width, height = ImageManager.get_image(f"{ImageType}")
         scale = 2.0
-        # 마우스 방향으로 회전
-        image.rotate_draw(self.angle, self.x, self.y, width * scale, height * scale)
+        if self.player.direction == 1:
+            image.rotate_draw(self.angle, self.x, self.y, width * scale, height * scale)
+        else:
+            image.rotate_draw(self.angle, self.x, self.y, width * scale, height * scale)
+
