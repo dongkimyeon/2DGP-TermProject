@@ -5,29 +5,33 @@ screen_height = 720
 
 scenes = {}
 active_scene = None
+mfont = pico2d.load_font('resources/font/alagard.ttf', 50)
 
 def CreateScene(name, scene_class):
-    print(f"[SceneManager] CreateScene: {name} 인스턴스 생성 및 등록")
+    print(f"[SceneManager] CreateScene: {name} 인스턴스 생성")
     scenes[name] = scene_class()
 
 def load_scene(name):
     global active_scene
 
     if active_scene and hasattr(active_scene, 'exit'):
-        print(f"[SceneManager] 이전 씬 exit: {type(active_scene).__name__}")
+        print(f"[SceneManager] exit: {type(active_scene).__name__}")
         active_scene.exit()
     active_scene = scenes[name]
     if active_scene and hasattr(active_scene, 'enter'):
-        print(f"[SceneManager] 새 씬 enter: {type(active_scene).__name__}")
+        print(f"[SceneManager] enter: {type(active_scene).__name__}")
         active_scene.enter()
 
 def run():
-    print("[SceneManager] run() 시작")
+    print("[SceneManager] run")
+    global mfont
+    mfont = pico2d.load_font('resources/font/alagard.ttf', 50)
+
     while active_scene:
         Time.update()
         update()
         render()
-    print("[SceneManager] run() 종료")
+
 
 def update():
     if active_scene:
@@ -36,7 +40,14 @@ def update():
 
 
 def render():
+    global mfont
     if active_scene:
+
         pico2d.clear_canvas()
+
         active_scene.render()
+
+        mfont.draw(50, 50, 'APPLE', (255, 0, 0))
+
         pico2d.update_canvas()
+

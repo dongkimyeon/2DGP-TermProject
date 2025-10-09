@@ -98,12 +98,12 @@ class Stage1Scene:
 
     def render(self):
                # 맵 타일 렌더링
-        self.map_manager.render()
+        #self.map_manager.render()
 
         # 게임 오브젝트 렌더링
         for gameobj in self.gameobjs:
             #print("gameobj render")
-            #gameobj.render()
+            gameobj.render()
             pico2d.draw_rectangle(*gameobj.get_bb())
         # 플레이어 렌더링
         player.render()

@@ -26,6 +26,7 @@ class Bat:
         self.detection_radius = 350
         self.attack_cooldown = 0.0  # 쿨타임 1초
         self.direction = 1
+        self.font = pico2d.load_font('resources/font/alagard.ttf', 16)
 
     def attack(self):
         return self.attack_power
@@ -100,5 +101,6 @@ class Bat:
             else:
                 image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h',
                                           int(self.x), int(self.y) + height // 2, self.width, self.height)
+        self.font.draw(self.x - 20, self.y + 40, f'HP: {self.health}', (255, 0, 0))
     def is_dead(self):
         return self.health <= 0

@@ -3,6 +3,8 @@ from ImageManager import ImageManager
 import pico2d
 import SceneManager
 import math
+from Player_Katana import Katana
+
 
 class Player:
     def __init__(self):
@@ -31,10 +33,8 @@ class Player:
         self.jump_count = 2
         self.width = 50
         self.height = 50
-        from Player_Katana import Katana
+
         self.weapon = Katana(self)
-
-
 
     def get_bb(self):
         half_width = self.width // 2
@@ -91,6 +91,9 @@ class Player:
                 dy = mouse_y - self.y
                 distance = math.sqrt(dx ** 2 + dy ** 2)
                 self.direction = -1 if dx < 0 else 1 if dx > 0 else self.direction
+                # 각도 계산 및 Katana에 전달
+                angle = math.atan2(dy, dx)
+                self.weapon.angle = angle
             if event.type == pico2d.SDL_KEYDOWN:
                 if event.key == pico2d.SDLK_a:
                     self.left_pressed = True
@@ -168,6 +171,7 @@ class Player:
                 image.composite_draw(0, 'h', int(self.x), int(self.y) + height // 2, self.width, self.height)
             else:
                 image.draw(int(self.x), int(self.y) + height // 2, self.width, self.height)
+
 
         if self.weapon:
             self.weapon.render()

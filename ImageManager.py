@@ -74,6 +74,7 @@ class ImageManager:
 
 
 
+
     @staticmethod
     def load_image(name, path, frame_count=1):
         inst = ImageManager.instance()
