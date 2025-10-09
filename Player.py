@@ -17,7 +17,6 @@ class Player:
         self.frame_timer = 0.0
         self.jump_velocity = 0
         self.gravity = -2000  # 중력 값 약간 완화 (-2200 -> -2000)
-        self.weapon = None
         self.left_pressed = False
         self.right_pressed = False
         self.is_dashing = False
@@ -32,6 +31,8 @@ class Player:
         self.jump_count = 2
         self.width = 50
         self.height = 50
+        from Player_Katana import Katana
+        self.weapon = Katana(self)
 
 
 
@@ -149,10 +150,12 @@ class Player:
                 self.dash_timer = 0.0
                 print("대쉬 충전: 현재 대쉬 수", self.dash_count)
 
+        if self.weapon:
+            self.weapon.update()
+
 
 
     def render(self):
-        # 체력 텍스트 렌더링 (좌측 상단)
         image, frame_count, width, height = ImageManager.get_image(f"player_{self.state}")
         if frame_count > 1:
             frame = self.frame_count % frame_count
@@ -165,6 +168,9 @@ class Player:
                 image.composite_draw(0, 'h', int(self.x), int(self.y) + height // 2, self.width, self.height)
             else:
                 image.draw(int(self.x), int(self.y) + height // 2, self.width, self.height)
+
+        if self.weapon:
+            self.weapon.render()
 
 
 

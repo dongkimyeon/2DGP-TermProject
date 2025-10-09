@@ -64,6 +64,11 @@ class ImageManager:
         self.load_image("skel_attack", "resources/images/Enemy/Skel/Big_Normal/attack.png",12)
         self.load_image("skel_attack_shot", "resources/images/Enemy/Skel/Big_Normal/attack_shot.png",12)
 
+        # Katana 관련 이미지 로드
+        self.load_image("katana", 'resources/images/SwordWeapon/Katana.png')
+        self.load_image("katana_effect", 'resources/images/SwordWeapon/Katana_Effect.png', 9)
+        self.load_image("katana_effect_ex", 'resources/images/SwordWeapon/Kanata_Effect_Ex.png', 10)
+
 
 
 
