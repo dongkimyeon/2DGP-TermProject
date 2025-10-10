@@ -69,6 +69,9 @@ class ImageManager:
         self.load_image("katana_left", 'resources/images/SwordWeapon/KatanaLeft.png')
         self.load_image("katana_effect", 'resources/images/SwordWeapon/Katana_Effect.png', 9)
         self.load_image("katana_effect_ex", 'resources/images/SwordWeapon/Kanata_Effect_Ex.png', 10)
+        self.load_image("charging_gage_bar", 'resources/images/SwordWeapon/ChargingGage.png')
+        self.load_image("charging_gage_frame", 'resources/images/SwordWeapon/ChargingGageBar.png')
+
 
 
 

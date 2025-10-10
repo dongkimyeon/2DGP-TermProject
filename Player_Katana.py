@@ -9,14 +9,13 @@ class Katana:
         self.player = player
         self.x = player.x
         self.y = player.y
-        self.attack_cooldown = 0.5
         self.image = None
         self.angle = 0.0
 
     def update(self):
         self.x = self.player.x
         self.y = self.player.y
-        # 각도는 Player에서 직접 갱신됨
+
 
     def render(self):
         ImageType = None

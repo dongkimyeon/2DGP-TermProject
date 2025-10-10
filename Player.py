@@ -1,3 +1,5 @@
+from pico2d import draw_rectangle
+
 from Time import Time
 from ImageManager import ImageManager
 import pico2d
@@ -37,6 +39,8 @@ class Player:
         self.weapon = Katana(self)
         self.katana_effect = KatanaEffect(self)
         self.chargingGage = 0.0
+        self.is_charging = False
+        self.max_chargingGage = 0.75
 
     def get_bb(self):
         half_width = self.width // 2
@@ -122,15 +126,23 @@ class Player:
                         self.dash_timer = self.dash_duration
                         self.dash_count -= 1
                 elif event.button == pico2d.SDL_BUTTON_LEFT:
-                    print("공격")
-                    self.chargingGage += 0.1
+                    self.is_charging = True
+            if event.type == pico2d.SDL_MOUSEBUTTONUP:
+                if event.button == pico2d.SDL_BUTTON_LEFT and self.is_charging:
+                    print("공격 실행")
                     self.katana_effect.start()
+                    self.is_charging = False
+                    self.chargingGage = 0.0
             if event.type == pico2d.SDL_KEYUP:
                 if event.key == pico2d.SDLK_a:
                     self.left_pressed = False
                 elif event.key == pico2d.SDLK_d:
                     self.right_pressed = False
-
+        if self.is_charging:
+            self.chargingGage += dt
+            if self.chargingGage > self.max_chargingGage:
+                self.chargingGage = self.max_chargingGage
+            print(f"차징 중: {self.chargingGage:.2f} / {self.max_chargingGage}")
         # 수평 이동
         if not self.is_dashing:
             if self.left_pressed and not self.right_pressed:
@@ -177,11 +189,19 @@ class Player:
             else:
                 image.draw(int(self.x), int(self.y) + height // 2, self.width, self.height)
 
+        charging_gage_image, _, gage_width, gage_height = ImageManager.get_image("charging_gage_bar")
+        charging_gage_frame_image, _, frame_width, frame_height = ImageManager.get_image("charging_gage_frame")
+        charging_gage_offset_y = 40
+        if self.is_charging:
+            gage_scale = self.chargingGage / self.max_chargingGage
+            charging_gage_image.draw(self.x, self.y + charging_gage_offset_y, gage_width * gage_scale * 2, gage_height)
+            charging_gage_frame_image.draw(self.x, self.y + charging_gage_offset_y, frame_width * 2, frame_height)
 
         if self.weapon:
             self.weapon.render()
         if self.katana_effect:
             self.katana_effect.render()
+            draw_rectangle(*self.katana_effect.get_bb())
 
 
 

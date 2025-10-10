@@ -1,3 +1,5 @@
+from pico2d import draw_rectangle
+
 from Player_Katana import Katana
 from ImageManager import ImageManager
 import pico2d
@@ -14,11 +16,41 @@ class KatanaEffect:
         self.frame_duration = 0.05  # 프레임 전환 시간
         self.active = False
         self.angle = 0.0
+        self.width = 62
+        self.height = 81
+        self.special_attack = False
+        self.special_attack_damage = 30
+        self.default_damage = 10
+        self.image = None
+
 
     def start(self):
         self.active = True
+        if self.player.chargingGage >= self.player.max_chargingGage:
+            self.special_attack = True
+            self.player.chargingGage = 0.0
+        else:
+            self.special_attack = False
+
         self.frame_count = 0
         self.frame_timer = 0.0
+
+    def get_bb(self):
+        if  not self.active:
+            return (0, 0, 0, 0)
+
+        half_width = (self.width // 9) // 2
+        half_height = self.height // 2
+        if self.special_attack:
+            return self.x - half_width*2, self.y - half_height *2, self.x + half_width*2, self.y + half_height*2
+        else:
+            return self.x - half_width, self.y - half_height, self.x + half_width, self.y + half_height
+
+    def get_damage(self):
+        if self.special_attack:
+            return self.special_attack_damage
+        else:
+            return self.default_damage
 
     def update(self):
         if not self.active:
@@ -40,14 +72,22 @@ class KatanaEffect:
         self.y = self.player.y + offset_radius * math.sin(angle)
         self.angle = angle
 
+
+
     def render(self):
         if not self.active:
             return
-        image, frame_count, width, height = ImageManager.get_image("katana_effect")
-        if self.player.direction == 1:
-            image.clip_composite_draw(self.frame_count * (width // frame_count), 0, width // frame_count, height,
-                                      self.angle, 'none', self.x, self.y, width // frame_count, height)
+        scale = 1.0
+        if self.special_attack:
+            self.image, frame_count, self.width, self.height = ImageManager.get_image("katana_effect_ex")
+            scale = 2.0
         else:
-            image.clip_composite_draw(self.frame_count * (width // frame_count), 0, width // frame_count, height,
-                                      self.angle, 'v', self.x, self.y, width // frame_count, height)
+            self.image, frame_count, self.width, self.height = ImageManager.get_image("katana_effect")
+            scale = 1.0
 
+        if self.player.direction == 1:
+            self.image.clip_composite_draw(self.frame_count * (self.width // frame_count), 0, self.width // frame_count, self.height,
+                                      self.angle, 'none', self.x, self.y, self.width // frame_count * scale, self.height * scale)
+        else:
+            self.image.clip_composite_draw(self.frame_count * (self.width // frame_count), 0, self.width // frame_count, self.height,
+                                      self.angle, 'v', self.x, self.y, self.width // frame_count * scale, self.height * scale)
