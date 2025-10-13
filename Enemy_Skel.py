@@ -102,23 +102,25 @@ class Skel:
                 else:
                     self.state = 'idle'
 
-    def render(self):
+    def render(self, camera_x=0, camera_y=0, zoom=1.0):
         image, frame_count, width, height = ResourceManager.get_image(f"skel_{self.state}")
         frame = self.frame_count % frame_count
+        draw_x = int((self.x - camera_x) * zoom)
+        draw_y = int((self.y - camera_y) * zoom) + int(height // 2 * zoom)
         if image:
             if self.direction == 1:
                 if(self.state == 'attack'):
-                    image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x + 22 * 1.5),
-                                    int(self.y + 15) + height // 2, (self.width * 2.0) * 1.5, (self.height * 1.6) * 1.5)
+                    image.clip_draw(frame * width // frame_count, 0, width // frame_count, height,
+                                    int(draw_x + 22 * 1.5 * zoom), int(draw_y + 15 * zoom), int((self.width * 2.0) * 1.5 * zoom), int((self.height * 1.6) * 1.5 * zoom))
                 else:
-                    image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x),
-                                    int(self.y) + height // 2 , self.width * 1.5, self.height * 1.5)
+                    image.clip_draw(frame * width // frame_count, 0, width // frame_count, height,
+                                    draw_x, draw_y, int(self.width * 1.5 * zoom), int(self.height * 1.5 * zoom))
             else:
                 if (self.state == 'attack'):
                     image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h',
-                                              int(self.x - 22 * 1.5), int(self.y + 15) + height // 2, (self.width * 2.0) * 1.5, (self.height * 1.6) * 1.5)
+                                              int(draw_x - 22 * 1.5 * zoom), int(draw_y + 15 * zoom), int((self.width * 2.0) * 1.5 * zoom), int((self.height * 1.6) * 1.5 * zoom))
                 else:
                     image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h',
-                                          int(self.x ), int(self.y) + height // 2, self.width * 1.5, self.height * 1.5)
+                                          draw_x, draw_y, int(self.width * 1.5 * zoom), int(self.height * 1.5 * zoom))
     def is_dead(self):
         return self.health <= 0

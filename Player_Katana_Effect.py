@@ -74,20 +74,24 @@ class KatanaEffect:
 
 
 
-    def render(self):
+    def render(self, camera_x=0, camera_y=0, zoom=1.0):
         if not self.active:
             return
-        scale = 1.0
+        scale = 1.0 * zoom
         if self.special_attack:
             self.image, frame_count, self.width, self.height = ResourceManager.get_image("katana_effect_ex")
-            scale = 2.0
+            scale = 2.0 * zoom
         else:
             self.image, frame_count, self.width, self.height = ResourceManager.get_image("katana_effect")
-            scale = 1.0
+            scale = 1.0 * zoom
 
+        draw_x = (self.x - camera_x) * zoom
+        draw_y = (self.y - camera_y) * zoom
+        draw_w = int(self.width // frame_count * scale)
+        draw_h = int(self.height * scale)
         if self.player.direction == 1:
             self.image.clip_composite_draw(self.frame_count * (self.width // frame_count), 0, self.width // frame_count, self.height,
-                                      self.angle, 'none', self.x, self.y, self.width // frame_count * scale, self.height * scale)
+                                      self.angle, 'none', draw_x, draw_y, draw_w, draw_h)
         else:
             self.image.clip_composite_draw(self.frame_count * (self.width // frame_count), 0, self.width // frame_count, self.height,
-                                      self.angle, 'v', self.x, self.y, self.width // frame_count * scale, self.height * scale)
+                                      self.angle, 'v', draw_x, draw_y, draw_w, draw_h)

@@ -46,7 +46,7 @@ class Player:
         half_width = self.width // 2
         half_height = self.height // 2
         return (self.x - half_width, self.y - half_height + 5, self.x + half_width, self.y + half_height + 5)
-    def update(self):
+    def update(self, camera_x, camera_y, zoom):
         dt = Time.DeltaTime()
 
         # 중력 적용 (대쉬 중에는 중력 무시)
@@ -87,14 +87,14 @@ class Player:
         # 입력 처리
         events = pico2d.get_events()
         for event in events:
-
-
-
             if event.type == pico2d.SDL_MOUSEMOTION:
                 mouse_x = event.x
                 mouse_y = SceneManager.screen_height - event.y
-                dx = mouse_x - self.x
-                dy = mouse_y - self.y
+                # 화면 좌표 → 월드 좌표 변환
+                world_x = mouse_x / zoom + camera_x
+                world_y = mouse_y / zoom + camera_y
+                dx = world_x - self.x
+                dy = world_y - self.y
                 distance = math.sqrt(dx ** 2 + dy ** 2)
                 self.direction = -1 if dx < 0 else 1 if dx > 0 else self.direction
                 # 각도 계산 및 Katana에 전달
@@ -116,8 +116,10 @@ class Player:
             if event.type == pico2d.SDL_MOUSEBUTTONDOWN:
                 mouse_x = event.x
                 mouse_y = SceneManager.screen_height - event.y
-                dx = mouse_x - self.x
-                dy = mouse_y - self.y
+                world_x = mouse_x / zoom + camera_x
+                world_y = mouse_y / zoom + camera_y
+                dx = world_x - self.x
+                dy = world_y - self.y
                 distance = math.sqrt(dx ** 2 + dy ** 2)
                 if event.button == pico2d.SDL_BUTTON_RIGHT and self.dash_count > 0:
                     if distance != 0:
@@ -173,39 +175,48 @@ class Player:
         if self.katana_effect:
             self.katana_effect.update()
 
-
-
-    def render(self):
+    def render(self, camera_x=0, camera_y=0, zoom=1.0):
         image, frame_count, width, height = ResourceManager.get_image(f"player_{self.state}")
+        draw_x = int((self.x - camera_x) * zoom)
+        draw_y = int((self.y - camera_y) * zoom) + int(height // 2 * zoom)
+        draw_w = int(self.width * zoom)
+        draw_h = int(self.height * zoom)
         if frame_count > 1:
             frame = self.frame_count % frame_count
             if self.direction == -1:
-                image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h', int(self.x), int(self.y) + height // 2, self.width, self.height)
+                image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h', draw_x,
+                                          draw_y, draw_w, draw_h)
             else:
-                image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x), int(self.y) + height // 2, self.width, self.height)
+                image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, draw_x, draw_y, draw_w,
+                                draw_h)
         else:
             if self.direction == -1:
-                image.composite_draw(0, 'h', int(self.x), int(self.y) + height // 2, self.width, self.height)
+                image.composite_draw(0, 'h', draw_x, draw_y, draw_w, draw_h)
             else:
-                image.draw(int(self.x), int(self.y) + height // 2, self.width, self.height)
+                image.draw(draw_x, draw_y, draw_w, draw_h)
 
         charging_gage_image, _, gage_width, gage_height = ResourceManager.get_image("charging_gage_bar")
         charging_gage_frame_image, _, frame_width, frame_height = ResourceManager.get_image("charging_gage_frame")
-        charging_gage_offset_y = 40
+        charging_gage_offset_y = int(40 * zoom)
         if self.is_charging:
             gage_scale = self.chargingGage / self.max_chargingGage
-            charging_gage_image.draw(self.x, self.y + charging_gage_offset_y, gage_width * gage_scale * 2, gage_height)
-            charging_gage_frame_image.draw(self.x, self.y + charging_gage_offset_y, frame_width * 2, frame_height)
+            charging_gage_image.draw(draw_x, draw_y + charging_gage_offset_y, int(gage_width * gage_scale * 2 * zoom),
+                                     int(gage_height * zoom))
+            charging_gage_frame_image.draw(draw_x, draw_y + charging_gage_offset_y, int(frame_width * 2 * zoom),
+                                           int(frame_height * zoom))
 
         if self.weapon:
-            self.weapon.render()
+            self.weapon.render(camera_x, camera_y, zoom)
         if self.katana_effect:
-            self.katana_effect.render()
-            draw_rectangle(*self.katana_effect.get_bb())
+            self.katana_effect.render(camera_x, camera_y, zoom)
+            left, bottom, right, top = self.katana_effect.get_bb()
+            pico2d.draw_rectangle(
+                (left - camera_x) * zoom, (bottom - camera_y) * zoom,
+                (right - camera_x) * zoom, (top - camera_y) * zoom
+            )
 
         font = ResourceManager.get_font("default")
         font.draw(10, SceneManager.screen_height - 30, f'HP: {self.hp}', (255, 0, 0))
-
 
 
 

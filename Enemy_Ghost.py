@@ -70,15 +70,19 @@ class Ghost:
             self.frame_count += 1
             self.frame_timer = 0.0
 
-    def render(self):
+    def render(self, camera_x=0, camera_y=0, zoom=1.0):
         image, frame_count, width, height = ResourceManager.get_image(f"ghost_{self.state}")
         frame = self.frame_count % frame_count
+        draw_x = int((self.x - camera_x) * zoom)
+        draw_y = int((self.y - camera_y) * zoom) + int(height // 2 * zoom)
+        draw_w = int(self.width * zoom)
+        draw_h = int(self.height * zoom)
         if image:
             if self.direction == 1:
-                image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, int(self.x),
-                                int(self.y) + height // 2, self.width, self.height)
+                image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, draw_x,
+                                draw_y, draw_w, draw_h)
             else:
                 image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h',
-                                          int(self.x), int(self.y) + height // 2, self.width, self.height)
+                                          draw_x, draw_y, draw_w, draw_h)
     def is_dead(self):
         return self.health <= 0

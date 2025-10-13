@@ -9,6 +9,7 @@ from Enemy_Bat import Bat
 from Bat_Attack_bullet import Bullet
 from Enemy_Ghost import Ghost
 from Enemy_Skel import Skel
+from Camera import Camera
 import random
 
 
@@ -47,6 +48,10 @@ class Stage1Scene:
             newwSkel.set_position(rand_x, rand_y)
             self.gameobjs.append(newwSkel)
 
+        # 카메라 초기화 및 플레이어 설정
+        self.camera = Camera()
+        self.camera.set_target(player)
+
 
     def enter(self):
         print("[Stage1Scene] enter()")
@@ -59,9 +64,10 @@ class Stage1Scene:
     def update(self):
         for obj in self.gameobjs:
             #print("obj update")
-            obj.update()
 
-        player.update()
+            obj.update()
+        self.camera.update()
+        player.update(self.camera.mX, self.camera.mY, self.camera.zoom)
 
         self.handle_collisions()
 
@@ -96,14 +102,21 @@ class Stage1Scene:
                 player.hp -= obj.get_damage()
 
     def render(self):
-               # 맵 타일 렌더링
-        #self.map_manager.render()
+        # 맵 타일 렌더링
+        self.map_manager.render(self.camera.mX, self.camera.mY, self.camera.zoom)
 
         # 게임 오브젝트 렌더링
         for gameobj in self.gameobjs:
-            #print("gameobj render")
-            gameobj.render()
-            pico2d.draw_rectangle(*gameobj.get_bb())
+            gameobj.render(self.camera.mX, self.camera.mY, self.camera.zoom)
+            left, bottom, right, top = gameobj.get_bb()
+            pico2d.draw_rectangle(
+                (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
+                (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
+            )
         # 플레이어 렌더링
-        player.render()
-        pico2d.draw_rectangle(*player.get_bb())
+        player.render(self.camera.mX, self.camera.mY, self.camera.zoom)
+        left, bottom, right, top = player.get_bb()
+        pico2d.draw_rectangle(
+            (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
+            (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
+        )

@@ -62,16 +62,18 @@ class MapManager:
         except Exception as e:
             print(f"맵 로드 실패: {e}")
 
-    def render(self):
+    def render(self, camera_x=0, camera_y=0, zoom=1.0):
         """맵 타일을 화면에 렌더링"""
         for y in range(self.GRID_HEIGHT):
             for x in range(self.GRID_WIDTH):
                 idx = self.map_data[y][x]
                 if idx >= 0 and idx < len(self.tile_images):
+                    screen_x = (x * self.TILE_SIZE - camera_x) * zoom + int(self.TILE_SIZE // 2 * zoom)
+                    screen_y = (y * self.TILE_SIZE - camera_y) * zoom + int(self.TILE_SIZE // 2 * zoom)
                     self.tile_images[idx].draw(
-                        x * self.TILE_SIZE + self.TILE_SIZE // 2,
-                        y * self.TILE_SIZE + self.TILE_SIZE // 2,
-                        self.TILE_SIZE, self.TILE_SIZE
+                        screen_x,
+                        screen_y,
+                        int(self.TILE_SIZE * zoom), int(self.TILE_SIZE * zoom)
                     )
 
     def set_tile(self, x, y, tile_idx):

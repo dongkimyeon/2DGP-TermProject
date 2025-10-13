@@ -17,15 +17,14 @@ class Katana:
         self.y = self.player.y
 
 
-    def render(self):
+    def render(self, camera_x=0, camera_y=0, zoom=1.0):
         ImageType = None
         if self.player.direction == 1:
             ImageType = "katana_right"
         else:
             ImageType = "katana_left"
         image, temp, width, height = ResourceManager.get_image(f"{ImageType}")
-        scale = 2.0
-        if self.player.direction == 1:
-            image.rotate_draw(self.angle, self.x, self.y, width * scale, height * scale)
-        else:
-            image.rotate_draw(self.angle, self.x, self.y, width * scale, height * scale)
+        scale = 2.0 * zoom
+        draw_x = (self.x - camera_x) * zoom
+        draw_y = (self.y - camera_y) * zoom
+        image.rotate_draw(self.angle, draw_x, draw_y, int(width * scale), int(height * scale))
