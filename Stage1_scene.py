@@ -106,17 +106,17 @@ class Stage1Scene:
         self.map_manager.render(self.camera.mX, self.camera.mY, self.camera.zoom)
 
         # 게임 오브젝트 렌더링
-        for gameobj in self.gameobjs:
-            gameobj.render(self.camera.mX, self.camera.mY, self.camera.zoom)
-            left, bottom, right, top = gameobj.get_bb()
-            pico2d.draw_rectangle(
-                (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
-                (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
-            )
+        # for gameobj in self.gameobjs:
+        #     #gameobj.render(self.camera.mX, self.camera.mY, self.camera.zoom)
+        #     left, bottom, right, top = gameobj.get_bb()
+        #     pico2d.draw_rectangle(
+        #         (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
+        #         (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
+        #     )
         # 플레이어 렌더링
         player.render(self.camera.mX, self.camera.mY, self.camera.zoom)
         left, bottom, right, top = player.get_bb()
-        pico2d.draw_rectangle(
-            (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
-            (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
-        )
+        # pico2d.draw_rectangle(
+        #     (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
+        #     (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
+        # )
