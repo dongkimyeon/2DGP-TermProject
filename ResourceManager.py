@@ -6,6 +6,7 @@ class ResourceManager:
 
     def __init__(self):
         self.images = {}
+        self.fonts = {}
 
     @staticmethod
     def instance():
@@ -66,6 +67,22 @@ class ResourceManager:
         self.load_image("katana_effect_ex", 'resources/images/SwordWeapon/Kanata_Effect_Ex.png', 10)
         self.load_image("charging_gage_bar", 'resources/images/SwordWeapon/ChargingGage.png')
         self.load_image("charging_gage_frame", 'resources/images/SwordWeapon/ChargingGageBar.png')
+
+        # Font 로드
+        self.load_font("default", 'resources/font/alagard.ttf', 16)
+
+    @staticmethod
+    def load_font(name, path, size):
+        inst = ResourceManager.instance()
+        if name not in inst.fonts:
+            font = pico2d.load_font(path, size)
+            print(f"[ResourceManager] Load Font: {name}, size={size}")
+            inst.fonts[name] = font
+        return inst.fonts[name]
+    @staticmethod
+    def get_font(name):
+        inst = ResourceManager.instance()
+        return inst.fonts.get(name, None)
 
     @staticmethod
     def load_image(name, path, frame_count=1):

@@ -203,6 +203,8 @@ class Player:
             self.katana_effect.render()
             draw_rectangle(*self.katana_effect.get_bb())
 
+        font = ResourceManager.get_font("default")
+        font.draw(10, SceneManager.screen_height - 30, f'HP: {self.hp}', (255, 0, 0))
 
 
 
