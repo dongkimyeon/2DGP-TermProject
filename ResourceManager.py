@@ -1,6 +1,6 @@
 import pico2d
 
-class ImageManager:
+class ResourceManager:
     _instance = None
     _initialized = False
 
@@ -9,12 +9,12 @@ class ImageManager:
 
     @staticmethod
     def instance():
-        if ImageManager._instance is None:
-            ImageManager._instance = ImageManager()
-            if not ImageManager._initialized:
-                ImageManager._instance._init_images()
-                ImageManager._initialized = True
-        return ImageManager._instance
+        if ResourceManager._instance is None:
+            ResourceManager._instance = ResourceManager()
+            if not ResourceManager._initialized:
+                ResourceManager._instance._init_images()
+                ResourceManager._initialized = True
+        return ResourceManager._instance
 
     def _init_images(self):
         # Player 이미지 로드
@@ -35,7 +35,6 @@ class ImageManager:
         self.load_image("forest_back_Layer_0", 'resources/images/Map/ForestBackLayer0.png')
         self.load_image("forest_back_Layer_1", 'resources/images/Map/ForestBackLayer1.png')
         self.load_image("forest_back_Layer_2", 'resources/images/Map/ForestBackLayer2.png')
-
         # Banshee 이미지 로드
         self.load_image("banshee_idle", 'resources/images/Enemy/Banshee/idle.png', 6)
         self.load_image("banshee_idle_shot", 'resources/images/Enemy/Banshee/idle_shot.png', 6)
@@ -43,19 +42,16 @@ class ImageManager:
         self.load_image("banshee_attack_shot", 'resources/images/Enemy/Banshee/attack_shot.png', 6)
         self.load_image("note", "resources/images/Enemy/Bullet/note.png",4)
         self.load_image("note_hit", "resources/images/Enemy/Bullet/note_FX.png",6)
-
         # Bat 이미지 로드
         self.load_image("bat_move", "resources/images/Enemy/Bat/Normal/move.png" ,6)
         self.load_image("bat_move_shot", "resources/images/Enemy/Bat/Normal/move_shot.png",6)
         self.load_image("bat_bullet", "resources/images/Enemy/Bullet/smallBullet.png",5)
         self.load_image("bat_bullet_hit", "resources/images/Enemy/Bullet/smallBullet_FX.png",7)
-
         # Ghost 이미지 로드
         self.load_image("ghost_move", "resources/images/Enemy/Ghost/move.png",6)
         self.load_image("ghost_attack", "resources/images/Enemy/Ghost/attack.png",3)
         self.load_image("ghost_move_shot", "resources/images/Enemy/Ghost/move_shot.png",6)
         self.load_image("ghost_attack_shot", "resources/images/Enemy/Ghost/attack_shot.png",3)
-
         # Skel 이미지 로드
         self.load_image("skel_idle", "resources/images/Enemy/Skel/Big_Normal/idle.png",5)
         self.load_image("skel_idle_shot", "resources/images/Enemy/Skel/Big_Normal/idle_shot.png",5)
@@ -63,7 +59,6 @@ class ImageManager:
         self.load_image("skel_move_shot", "resources/images/Enemy/Skel/Big_Normal/move_shot.png",6)
         self.load_image("skel_attack", "resources/images/Enemy/Skel/Big_Normal/attack.png",12)
         self.load_image("skel_attack_shot", "resources/images/Enemy/Skel/Big_Normal/attack_shot.png",12)
-
         # Katana 관련 이미지 로드
         self.load_image("katana_right", 'resources/images/SwordWeapon/KatanaRight.png')
         self.load_image("katana_left", 'resources/images/SwordWeapon/KatanaLeft.png')
@@ -72,32 +67,23 @@ class ImageManager:
         self.load_image("charging_gage_bar", 'resources/images/SwordWeapon/ChargingGage.png')
         self.load_image("charging_gage_frame", 'resources/images/SwordWeapon/ChargingGageBar.png')
 
-
-
-
-
-
-
-
     @staticmethod
     def load_image(name, path, frame_count=1):
-        inst = ImageManager.instance()
+        inst = ResourceManager.instance()
         if name not in inst.images:
             img = pico2d.load_image(path)
             width = img.w if hasattr(img, 'w') else 0
             height = img.h if hasattr(img, 'h') else 0
-            print(f"[ImageManager] Load: {name}, w={width}, h={height}")
+            print(f"[ResourceManager] Load: {name}, w={width}, h={height}")
             inst.images[name] = (img, frame_count, width, height)
         return inst.images[name]
 
     @staticmethod
     def get_image(name):
-        inst = ImageManager.instance()
+        inst = ResourceManager.instance()
         return inst.images.get(name, (None, 0, 0, 0))
 
     @staticmethod
     def unload_all():
-        inst = ImageManager.instance()
+        inst = ResourceManager.instance()
         inst.images.clear()
-
-

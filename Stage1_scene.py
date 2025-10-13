@@ -1,7 +1,6 @@
 import SceneManager
 import pico2d
 from Time import Time
-from ImageManager import ImageManager
 from Player import player
 from MapManager import MapManager
 from Enemy_Banshee import Banshee
@@ -108,4 +107,3 @@ class Stage1Scene:
         # 플레이어 렌더링
         player.render()
         pico2d.draw_rectangle(*player.get_bb())
-

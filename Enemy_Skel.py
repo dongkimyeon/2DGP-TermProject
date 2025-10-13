@@ -1,5 +1,5 @@
 from Time import Time
-from ImageManager import ImageManager
+from ResourceManager import ResourceManager
 import pico2d
 import SceneManager
 import math
@@ -47,7 +47,7 @@ class Skel:
             self.state = 'attack'
             self.is_attacking = True
             # 공격 애니메이션 프레임 수 저장
-            _, frame_count, _, _ = ImageManager.get_image(f"skel_attack")
+            _, frame_count, _, _ = ResourceManager.get_image(f"skel_attack")
             self.attack_frame_max = frame_count
             self.frame_count = 0
 
@@ -103,7 +103,7 @@ class Skel:
                     self.state = 'idle'
 
     def render(self):
-        image, frame_count, width, height = ImageManager.get_image(f"skel_{self.state}")
+        image, frame_count, width, height = ResourceManager.get_image(f"skel_{self.state}")
         frame = self.frame_count % frame_count
         if image:
             if self.direction == 1:

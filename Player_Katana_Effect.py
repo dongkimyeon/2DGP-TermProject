@@ -1,7 +1,7 @@
 from pico2d import draw_rectangle
 
 from Player_Katana import Katana
-from ImageManager import ImageManager
+from ResourceManager import ResourceManager
 import pico2d
 from Time import Time
 import math
@@ -79,10 +79,10 @@ class KatanaEffect:
             return
         scale = 1.0
         if self.special_attack:
-            self.image, frame_count, self.width, self.height = ImageManager.get_image("katana_effect_ex")
+            self.image, frame_count, self.width, self.height = ResourceManager.get_image("katana_effect_ex")
             scale = 2.0
         else:
-            self.image, frame_count, self.width, self.height = ImageManager.get_image("katana_effect")
+            self.image, frame_count, self.width, self.height = ResourceManager.get_image("katana_effect")
             scale = 1.0
 
         if self.player.direction == 1:

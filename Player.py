@@ -1,7 +1,7 @@
 from pico2d import draw_rectangle
 
 from Time import Time
-from ImageManager import ImageManager
+from ResourceManager import ResourceManager
 import pico2d
 import SceneManager
 import math
@@ -176,7 +176,7 @@ class Player:
 
 
     def render(self):
-        image, frame_count, width, height = ImageManager.get_image(f"player_{self.state}")
+        image, frame_count, width, height = ResourceManager.get_image(f"player_{self.state}")
         if frame_count > 1:
             frame = self.frame_count % frame_count
             if self.direction == -1:
@@ -189,8 +189,8 @@ class Player:
             else:
                 image.draw(int(self.x), int(self.y) + height // 2, self.width, self.height)
 
-        charging_gage_image, _, gage_width, gage_height = ImageManager.get_image("charging_gage_bar")
-        charging_gage_frame_image, _, frame_width, frame_height = ImageManager.get_image("charging_gage_frame")
+        charging_gage_image, _, gage_width, gage_height = ResourceManager.get_image("charging_gage_bar")
+        charging_gage_frame_image, _, frame_width, frame_height = ResourceManager.get_image("charging_gage_frame")
         charging_gage_offset_y = 40
         if self.is_charging:
             gage_scale = self.chargingGage / self.max_chargingGage

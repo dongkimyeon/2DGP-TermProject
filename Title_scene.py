@@ -3,7 +3,7 @@ from pico2d import clear_canvas, update_canvas, close_canvas
 import SceneManager
 import pico2d
 from Time import Time
-from ImageManager import ImageManager
+from ResourceManager import ResourceManager
 
 
 
@@ -11,16 +11,16 @@ from ImageManager import ImageManager
 class TitleScene:
     def __init__(self):
         print("[TitleScene] __init__()")
-        self.backCloud, _, self.backCloud_width, self.backCloud_height = ImageManager.get_image("backCloud")
-        self.frontCloud, _, self.frontCloud_width, self.frontCloud_height = ImageManager.get_image("frontCloud")
-        self.backGround, _, self.backGround_width, self.backGround_height = ImageManager.get_image("titleBackground")
-        self.mainLogo, _, self.mainLogo_width, self.mainLogo_height = ImageManager.get_image("mainlogo")
+        self.backCloud, _, self.backCloud_width, self.backCloud_height = ResourceManager.get_image("backCloud")
+        self.frontCloud, _, self.frontCloud_width, self.frontCloud_height = ResourceManager.get_image("frontCloud")
+        self.backGround, _, self.backGround_width, self.backGround_height = ResourceManager.get_image("titleBackground")
+        self.mainLogo, _, self.mainLogo_width, self.mainLogo_height = ResourceManager.get_image("mainlogo")
 
         #버튼
-        self.play_On, _, self.play_On_width, self.play_On_height = ImageManager.get_image("play_on")
-        self.play_Off, _, self.play_Off_width, self.play_Off_height = ImageManager.get_image("play_off")
-        self.exit_On, _, self.exit_On_width, self.exit_On_height = ImageManager.get_image("exit_on")
-        self.exit_Off, _, self.exit_Off_width, self.exit_Off_height = ImageManager.get_image("exit_off")
+        self.play_On, _, self.play_On_width, self.play_On_height = ResourceManager.get_image("play_on")
+        self.play_Off, _, self.play_Off_width, self.play_Off_height = ResourceManager.get_image("play_off")
+        self.exit_On, _, self.exit_On_width, self.exit_On_height = ResourceManager.get_image("exit_on")
+        self.exit_Off, _, self.exit_Off_width, self.exit_Off_height = ResourceManager.get_image("exit_off")
 
         self.screen_width = SceneManager.screen_width
         self.screen_height = SceneManager.screen_height

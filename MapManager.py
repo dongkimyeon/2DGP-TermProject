@@ -1,6 +1,6 @@
 import os
 from pico2d import *
-from ImageManager import ImageManager
+from ResourceManager import ResourceManager
 
 
 class MapManager:
@@ -34,13 +34,13 @@ class MapManager:
         self.load_map()
 
     def load_tiles(self):
-        """ImageManager를 통해 타일 이미지를 로드"""
+        """ResourceManager를 통해 타일 이미지를 로드"""
         for file in self.TILE_FILES:
             try:
                 # 타일 이미지 경로를 resources/images/Map/StageMapTile에 맞게 설정
                 path = os.path.join('resources', 'images', 'Map', 'StageMapTile', file)
-                ImageManager.load_image(file, path, 1)  # 프레임 수는 1로 고정
-                img, _, _, _ = ImageManager.get_image(file)
+                ResourceManager.load_image(file, path, 1)  # 프레임 수는 1로 고정
+                img, _, _, _ = ResourceManager.get_image(file)
                 if img:
                     self.tile_images.append(img)
                 else:
@@ -81,4 +81,3 @@ class MapManager:
             print(f"타일 {self.TILE_FILES[tile_idx]}을 ({x}, {y})에 배치했습니다")
         else:
             print(f"잘못된 좌표: ({x}, {y})")
-

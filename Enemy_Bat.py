@@ -1,5 +1,5 @@
 from Time import Time
-from ImageManager import ImageManager
+from ResourceManager import ResourceManager
 import pico2d
 import SceneManager
 import math
@@ -91,7 +91,7 @@ class Bat:
             self.frame_timer = 0.0
 
     def render(self):
-        image, frame_count, width, height = ImageManager.get_image(f"bat_move")
+        image, frame_count, width, height = ResourceManager.get_image(f"bat_move")
         frame = self.frame_count % frame_count
         if image:
             if self.direction == 1:

@@ -1,5 +1,5 @@
 from Time import Time
-from ImageManager import ImageManager
+from ResourceManager import ResourceManager
 import pico2d
 import SceneManager
 import math
@@ -73,7 +73,7 @@ class Banshee:
 
 
     def render(self):
-        image, frame_count, width, height = ImageManager.get_image(f"banshee_{self.state}")
+        image, frame_count, width, height = ResourceManager.get_image(f"banshee_{self.state}")
         frame = self.frame_count % frame_count
         if image:
             if self.direction == 1:
