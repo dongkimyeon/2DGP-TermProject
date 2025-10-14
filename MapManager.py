@@ -1,6 +1,7 @@
 import os
 from pico2d import *
 from ResourceManager import ResourceManager
+import MapEditor
 
 
 class MapManager:
@@ -13,7 +14,7 @@ class MapManager:
         'wallTile5.png', 'wallTile6.png', 'wallTile7.png', 'wallTile8.png', 'backGroundTile.png'
     ]
 
-    def __init__(self, grid_width=20, grid_height=15, tile_size=32, filename='map.txt'):
+    def __init__(self, grid_width=100, grid_height=50, tile_size=16, filename='map.txt'):
         """
         초기화: 맵 크기, 타일 크기, 맵 파일 경로 설정
         :param grid_width: 맵의 가로 타일 수

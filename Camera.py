@@ -14,8 +14,8 @@ class Camera:
             self.mX = self.mTarget.x - 640.0  # 1280 / 2
             self.mY = self.mTarget.y - 360.0  # 720 / 2
             # Clamp to map bounds (2000x2000)
-            self.mX = max(0.0, min(self.mX, 2000.0 - 1280.0))
-            self.mY = max(0.0, min(self.mY, 2000.0 - 720.0))
+            self.mX = max(0.0, min(self.mX, 3200.0 - 1280.0))
+            self.mY = max(0.0, min(self.mY, 1600.0 - 720.0))
 
     def set_target(self, target):
         self.mTarget = target

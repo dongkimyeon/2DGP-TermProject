@@ -2,10 +2,10 @@ import os
 from pico2d import *
 
 # 설정
-TILE_SIZE = 32
-GRID_WIDTH = 20
-GRID_HEIGHT = 15
-WINDOW_WIDTH = TILE_SIZE * GRID_WIDTH + 200  # 오른쪽에 미리보기 패널을 위한 여유 공간
+TILE_SIZE = 16
+GRID_WIDTH = 100
+GRID_HEIGHT = 50
+WINDOW_WIDTH = TILE_SIZE * GRID_WIDTH + 100  # 오른쪽에 미리보기 패널을 위한 여유 공간
 WINDOW_HEIGHT = TILE_SIZE * GRID_HEIGHT
 TILE_FOLDER = os.path.join('resources', 'images', 'Map', 'StageMapTile')
 

@@ -19,7 +19,7 @@ class Stage1Scene:
 
         self.gameobjs = []
         # MapManager 초기화
-        self.map_manager = MapManager(grid_width=20, grid_height=15, tile_size=32, filename='map.txt')
+        self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16*1.5, filename='map.txt')
 
         for _ in range(2):
             newBanshee = Banshee()
@@ -106,17 +106,17 @@ class Stage1Scene:
         self.map_manager.render(self.camera.mX, self.camera.mY, self.camera.zoom)
 
         # 게임 오브젝트 렌더링
-        # for gameobj in self.gameobjs:
-        #     #gameobj.render(self.camera.mX, self.camera.mY, self.camera.zoom)
-        #     left, bottom, right, top = gameobj.get_bb()
-        #     pico2d.draw_rectangle(
-        #         (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
-        #         (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
-        #     )
+        for gameobj in self.gameobjs:
+            gameobj.render(self.camera.mX, self.camera.mY, self.camera.zoom)
+            left, bottom, right, top = gameobj.get_bb()
+            pico2d.draw_rectangle(
+                (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
+                (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
+            )
         # 플레이어 렌더링
         player.render(self.camera.mX, self.camera.mY, self.camera.zoom)
         left, bottom, right, top = player.get_bb()
-        # pico2d.draw_rectangle(
-        #     (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
-        #     (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
-        # )
+        pico2d.draw_rectangle(
+            (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
+            (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
+        )
