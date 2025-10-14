@@ -5,8 +5,6 @@ class Camera:
         self.mTarget = None
         self.zoom = 1.5  # 확대/축소 비율
 
-    def __del__(self):
-        pass
 
     def update(self):
         if self.mTarget:
@@ -22,6 +20,7 @@ class Camera:
 
     def set_zoom(self, zoom):
         self.zoom = max(0.5, min(zoom, 3.0))  # 0.5~3.0배 제한
-
+    def get_position(self):
+        return self.mX, self.mY
     def get_zoom(self):
         return self.zoom

@@ -2,7 +2,7 @@ import pico2d
 from Time import Time
 screen_width = 1280
 screen_height = 720
-
+from Player import player
 scenes = {}
 active_scene = None
 mfont = None
@@ -29,14 +29,14 @@ def run():
     while active_scene:
         Time.update()
         update()
+        events = pico2d.get_events()
+        player.handel_event(events)
         render()
 
 
 def update():
     if active_scene:
         active_scene.update()
-
-
 
 def render():
     if active_scene:

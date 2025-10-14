@@ -7,6 +7,7 @@ import SceneManager
 import math
 from Player_Katana import Katana
 from Player_Katana_Effect import KatanaEffect
+import Camera
 
 
 class Player:
@@ -48,7 +49,8 @@ class Player:
         return (self.x - half_width, self.y - half_height + 5, self.x + half_width, self.y + half_height + 5)
     def update(self, camera_x, camera_y, zoom):
         dt = Time.DeltaTime()
-
+        #stateprint
+        print("Player State:", self.state)
         # 중력 적용 (대쉬 중에는 중력 무시)
         if not self.is_dashing:
             self.jump_velocity += self.gravity * dt
@@ -83,10 +85,46 @@ class Player:
                     self.state = 'jump'
                 else:
                     self.state = 'idle'
+        # 차징 처리
+        if self.is_charging:
+            self.chargingGage += dt
+            if self.chargingGage > self.max_chargingGage:
+                self.chargingGage = self.max_chargingGage
+            print(f"차징 중: {self.chargingGage:.2f} / {self.max_chargingGage}")
+        # 수평 이동
+        if not self.is_dashing:
+            if self.left_pressed and not self.right_pressed:
+                self.state = 'run' if self.y == self.ground_y else 'jump'
+                self.x -=  self.speed * dt
+            elif self.right_pressed and not self.left_pressed:
+                self.state = 'run' if self.y == self.ground_y else 'jump'
+                self.x +=  self.speed * dt
+            else:
+                self.state = 'idle' if self.y == self.ground_y else 'jump'
 
-        # 입력 처리
-        events = pico2d.get_events()
+        # 프레임 애니메이션
+        self.frame_timer += dt
+        if self.frame_timer > 0.1:
+            self.frame_count += 1
+            self.frame_timer = 0.0
+
+        # 대쉬 쿨타임
+        if not self.is_dashing and self.dash_count < 3:
+            self.dash_timer += dt
+            if self.dash_timer >= self.dash_recharge_time:
+                self.dash_count += 1
+                self.dash_timer = 0.0
+                print("대쉬 충전: 현재 대쉬 수", self.dash_count)
+
+        if self.weapon:
+            self.weapon.update()
+        if self.katana_effect:
+            self.katana_effect.update()
+    def handel_event(self, events):
         for event in events:
+            camera = Camera.Camera()
+            camera_x, camera_y = camera.get_position()
+            zoom = camera.get_zoom()
             if event.type == pico2d.SDL_MOUSEMOTION:
                 mouse_x = event.x
                 mouse_y = SceneManager.screen_height - event.y
@@ -140,41 +178,6 @@ class Player:
                     self.left_pressed = False
                 elif event.key == pico2d.SDLK_d:
                     self.right_pressed = False
-        if self.is_charging:
-            self.chargingGage += dt
-            if self.chargingGage > self.max_chargingGage:
-                self.chargingGage = self.max_chargingGage
-            print(f"차징 중: {self.chargingGage:.2f} / {self.max_chargingGage}")
-        # 수평 이동
-        if not self.is_dashing:
-            if self.left_pressed and not self.right_pressed:
-                self.state = 'run' if self.y == self.ground_y else 'jump'
-                self.x -=  self.speed * dt
-            elif self.right_pressed and not self.left_pressed:
-                self.state = 'run' if self.y == self.ground_y else 'jump'
-                self.x +=  self.speed * dt
-            else:
-                self.state = 'idle' if self.y == self.ground_y else 'jump'
-
-        # 프레임 애니메이션
-        self.frame_timer += dt
-        if self.frame_timer > 0.1:
-            self.frame_count += 1
-            self.frame_timer = 0.0
-
-        # 대쉬 쿨타임
-        if not self.is_dashing and self.dash_count < 3:
-            self.dash_timer += dt
-            if self.dash_timer >= self.dash_recharge_time:
-                self.dash_count += 1
-                self.dash_timer = 0.0
-                print("대쉬 충전: 현재 대쉬 수", self.dash_count)
-
-        if self.weapon:
-            self.weapon.update()
-        if self.katana_effect:
-            self.katana_effect.update()
-
     def render(self, camera_x=0, camera_y=0, zoom=1.0):
         image, frame_count, width, height = ResourceManager.get_image(f"player_{self.state}")
         draw_x = int((self.x - camera_x) * zoom)

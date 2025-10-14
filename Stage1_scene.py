@@ -64,7 +64,6 @@ class Stage1Scene:
     def update(self):
         for obj in self.gameobjs:
             #print("obj update")
-
             obj.update()
         self.camera.update()
         player.update(self.camera.mX, self.camera.mY, self.camera.zoom)
