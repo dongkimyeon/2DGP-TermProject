@@ -1,7 +1,6 @@
 import os
 from pico2d import *
 from ResourceManager import ResourceManager
-import MapEditor
 
 
 class MapManager:

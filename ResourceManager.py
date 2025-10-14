@@ -68,6 +68,18 @@ class ResourceManager:
         self.load_image("charging_gage_bar", 'resources/images/SwordWeapon/ChargingGage.png')
         self.load_image("charging_gage_frame", 'resources/images/SwordWeapon/ChargingGageBar.png')
 
+        # Boss 관련 이미지 로드
+        # Niflheim
+        self.load_image("niflheim_idle", "resources/images/boss/Niflheim/idle.png", 8)
+        self.load_image("niflheim_attack", "resources/images/boss/Niflheim/attack.png", 12)
+        self.load_image("niflheim_attack_1", "resources/images/boss/Niflheim/attack_1.png", 12)
+        self.load_image("niflheim_die", "resources/images/boss/Niflheim/die.png", 12)
+        self.load_image("niflheim_enter", "resources/images/boss/Niflheim/enter.png", 12)
+        self.load_image("niflheim_ice_bullet", "resources/images/boss/Niflheim/IceBullet.png", 4)
+        self.load_image("niflheim_icicle", "resources/images/boss/Niflheim/icicle.png", 1)
+        self.load_image("niflheim_pillar", "resources/images/boss/Niflheim/pillar.png", 1)
+        self.load_image("niflheim_spear", "resources/images/boss/Niflheim/spear.png", 1)
+
         # Font 로드
         self.load_font("default", 'resources/font/alagard.ttf', 16)
 
