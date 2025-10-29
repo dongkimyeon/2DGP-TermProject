@@ -1,3 +1,5 @@
+#카메라 수정
+
 class Camera:
     def __init__(self):
         self.mX = 0.0
