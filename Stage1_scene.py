@@ -52,10 +52,10 @@ class Stage1Scene:
             newSkel.set_map_manager(self.map_manager)  # 맵 매니저 설정
             self.gameobjs.append(newSkel)
 
-        # 카메라 초기화 및 플레이어 설정
-        boss = Boss(700, 300)
-        boss.set_map_manager(self.map_manager)  # 맵 매니저 설정
-        self.gameobjs.append(boss)
+        # # 카메라 초기화 및 플레이어 설정
+        # boss = Boss(700, 300)
+        # boss.set_map_manager(self.map_manager)  # 맵 매니저 설정
+        # self.gameobjs.append(boss)
 
         self.camera = Camera()
         self.camera.set_target(player)
