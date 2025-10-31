@@ -31,8 +31,8 @@ class Boss:
         self.is_moving = False
         self.move_target_x = self.x
         self.move_target_y = self.y
-        self.move_speed = 400.0  # 이동 속도 (픽셀/s)
-        self.move_distance = 200.0  # 이동할 거리 (픽셀)
+        self.move_speed = 300.0  # 이동 속도 (픽셀/s)
+        self.move_distance = 400.0  # 이동할 거리 (픽셀)
         # 플레이어와의 최대 허용 거리(이동 후 이 거리보다 멀어지면 그 쪽으로 이동하지 않고 최대 거리로 제한)
         self.max_distance_from_player = 500.0
         self.has_moved = False
@@ -51,14 +51,12 @@ class Boss:
     def take_damage(self, damage):
         self.health -= damage
     def start_idle_movement(self, player_x, player_y):
-        # 범위(move_distance) 내에서 랜덤한 좌표를 목표로 설정
-        # 랜덤 반경과 각도를 선택
+
         rand_r = random.uniform(0, self.move_distance)
         rand_theta = random.uniform(0, math.tau)
         target_x = self.x + math.cos(rand_theta) * rand_r
         target_y = self.y + math.sin(rand_theta) * rand_r
 
-        # 맵 경계 처리: SceneManager.active_scene.map_manager 사용
         try:
             mm = SceneManager.active_scene.map_manager
             min_x = mm.TILE_SIZE / 2.0
@@ -66,7 +64,7 @@ class Boss:
             max_x = mm.GRID_WIDTH * mm.TILE_SIZE - mm.TILE_SIZE / 2.0
             max_y = mm.GRID_HEIGHT * mm.TILE_SIZE - mm.TILE_SIZE / 2.0
         except Exception:
-            # 안전망: 화면 크기 기반 제한
+
             min_x = 0
             min_y = 0
             max_x = SceneManager.screen_width
