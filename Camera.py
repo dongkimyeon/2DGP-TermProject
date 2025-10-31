@@ -5,7 +5,7 @@ class Camera:
         self.mX = 0.0
         self.mY = 0.0
         self.mTarget = None
-        self.zoom = 2.0  # 확대/축소 비율
+        self.zoom = 1.5  # 확대/축소 비율
 
 
     def update(self):
