@@ -6,7 +6,6 @@ import math
 from Player import player
 from Banshee_Attack_note import Note
 
-
 class Banshee:
     def __init__(self):
         self.health = 50

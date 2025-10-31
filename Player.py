@@ -50,7 +50,7 @@ class Player:
     def update(self, camera_x, camera_y, zoom):
         dt = Time.DeltaTime()
         #stateprint
-        print("Player State:", self.state)
+        #print("Player State:", self.state)
         # 중력 적용 (대쉬 중에는 중력 무시)
         if not self.is_dashing:
             self.jump_velocity += self.gravity * dt

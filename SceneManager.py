@@ -1,7 +1,7 @@
 import pico2d
 from Time import Time
-screen_width = 1280
-screen_height = 720
+screen_width = 1920
+screen_height = 1080
 from Player import player
 scenes = {}
 active_scene = None

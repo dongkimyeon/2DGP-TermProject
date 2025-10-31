@@ -70,15 +70,15 @@ class ResourceManager:
 
         # Boss 관련 이미지 로드
         # Niflheim
-        self.load_image("niflheim_idle", "resources/images/boss/Niflheim/idle.png", 8)
-        self.load_image("niflheim_attack", "resources/images/boss/Niflheim/attack.png", 12)
-        self.load_image("niflheim_attack_1", "resources/images/boss/Niflheim/attack_1.png", 12)
-        self.load_image("niflheim_die", "resources/images/boss/Niflheim/die.png", 12)
-        self.load_image("niflheim_enter", "resources/images/boss/Niflheim/enter.png", 12)
-        self.load_image("niflheim_ice_bullet", "resources/images/boss/Niflheim/IceBullet.png", 4)
-        self.load_image("niflheim_icicle", "resources/images/boss/Niflheim/icicle.png", 1)
-        self.load_image("niflheim_pillar", "resources/images/boss/Niflheim/pillar.png", 1)
-        self.load_image("niflheim_spear", "resources/images/boss/Niflheim/spear.png", 1)
+        self.load_image("niflheim_idle", "resources/images/boss/Niflheim/idle.png", 6)
+        self.load_image("niflheim_attack", "resources/images/boss/Niflheim/attack.png", 11)
+        self.load_image("niflheim_die", "resources/images/boss/Niflheim/die.png", 30)
+        self.load_image("niflheim_enter", "resources/images/boss/Niflheim/enter.png", 16)
+        # 투사체
+        self.load_image("niflheim_ice_bullet", "resources/images/boss/Niflheim/IceBullet.png")
+        self.load_image("niflheim_icicle", "resources/images/boss/Niflheim/icicle.png", 10)
+        self.load_image("niflheim_pillar", "resources/images/boss/Niflheim/pillar.png", 20)
+        self.load_image("niflheim_spear", "resources/images/boss/Niflheim/spear.png", 13)
 
         # Font 로드
         self.load_font("default", 'resources/font/alagard.ttf', 16)

@@ -11,6 +11,7 @@ from Enemy_Ghost import Ghost
 from Enemy_Skel import Skel
 from Camera import Camera
 import random
+from Boss_nifleheim import Boss
 
 
 class Stage1Scene:
@@ -21,34 +22,36 @@ class Stage1Scene:
         # MapManager 초기화
         self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16*1.5, filename='map.txt')
 
-        for _ in range(2):
-            newBanshee = Banshee()
-            rand_x = random.randint(100, 600)
-            rand_y = random.randint(100, 400)
-            newBanshee.set_position(rand_x, rand_y)
-            self.gameobjs.append(newBanshee)
-        for _ in range(2):
-            newBat = Bat()
-            rand_x = random.randint(100, 600)
-            rand_y = random.randint(100, 400)
-            newBat.set_position(rand_x, rand_y)
-            self.gameobjs.append(newBat)
-
-        for _ in range(2):
-            newGhost = Ghost()
-            rand_x = random.randint(100, 600)
-            rand_y = random.randint(100, 400)
-            newGhost.set_position(rand_x, rand_y)
-            self.gameobjs.append(newGhost)
-
-        for _ in range(2):
-            newwSkel = Skel()
-            rand_x = random.randint(100, 600)
-            rand_y = random.randint(100, 400)
-            newwSkel.set_position(rand_x, rand_y)
-            self.gameobjs.append(newwSkel)
+        # for _ in range(2):
+        #     newBanshee = Banshee()
+        #     rand_x = random.randint(100, 600)
+        #     rand_y = random.randint(100, 400)
+        #     newBanshee.set_position(rand_x, rand_y)
+        #     self.gameobjs.append(newBanshee)
+        # for _ in range(2):
+        #     newBat = Bat()
+        #     rand_x = random.randint(100, 600)
+        #     rand_y = random.randint(100, 400)
+        #     newBat.set_position(rand_x, rand_y)
+        #     self.gameobjs.append(newBat)
+        # for _ in range(2):
+        #     newGhost = Ghost()
+        #     rand_x = random.randint(100, 600)
+        #     rand_y = random.randint(100, 400)
+        #     newGhost.set_position(rand_x, rand_y)
+        #     self.gameobjs.append(newGhost)
+        # for _ in range(2):
+        #     newwSkel = Skel()
+        #     rand_x = random.randint(100, 600)
+        #     rand_y = random.randint(100, 400)
+        #     newwSkel.set_position(rand_x, rand_y)
+        #     self.gameobjs.append(newwSkel)
 
         # 카메라 초기화 및 플레이어 설정
+
+        boss = Boss(400, 300)
+        self.gameobjs.append(boss)
+
         self.camera = Camera()
         self.camera.set_target(player)
 
