@@ -2,7 +2,9 @@ from ResourceManager import ResourceManager
 from Time import Time
 from Player import player
 from IceBullet import IceBullet
+import SceneManager
 import math
+import random
 
 
 
@@ -22,14 +24,59 @@ class Boss:
         self.height = 60
 
         self.attack_timer = 0.0
+        # 같은 공격 동안 여러 발사 방지를 위한 플래그
+        self.has_shot = False
+
+        # idle 시 한 번 이동 관련 변수
+        self.is_moving = False
+        self.move_target_x = self.x
+        self.move_target_y = self.y
+        self.move_speed = 400.0  # 이동 속도 (픽셀/s)
+        self.move_distance = 200.0  # 이동할 거리 (픽셀)
+        # 플레이어와의 최대 허용 거리(이동 후 이 거리보다 멀어지면 그 쪽으로 이동하지 않고 최대 거리로 제한)
+        self.max_distance_from_player = 500.0
+        self.has_moved = False
 
         self.font = ResourceManager.get_font("default")
+
     def get_bb(self):
         half_width = self.width // 2
         half_height = self.height // 2
         return self.x - half_width, self.y - half_height + 7, self.x + half_width, self.y + half_height + 5
     def take_damage(self, damage):
         self.health -= damage
+    def start_idle_movement(self, player_x, player_y):
+        # 범위(move_distance) 내에서 랜덤한 좌표를 목표로 설정
+        # 랜덤 반경과 각도를 선택
+        rand_r = random.uniform(0, self.move_distance)
+        rand_theta = random.uniform(0, math.tau)
+        target_x = self.x + math.cos(rand_theta) * rand_r
+        target_y = self.y + math.sin(rand_theta) * rand_r
+
+        # 맵 경계 처리: SceneManager.active_scene.map_manager 사용
+        try:
+            mm = SceneManager.active_scene.map_manager
+            min_x = mm.TILE_SIZE / 2.0
+            min_y = mm.TILE_SIZE / 2.0
+            max_x = mm.GRID_WIDTH * mm.TILE_SIZE - mm.TILE_SIZE / 2.0
+            max_y = mm.GRID_HEIGHT * mm.TILE_SIZE - mm.TILE_SIZE / 2.0
+        except Exception:
+            # 안전망: 화면 크기 기반 제한
+            min_x = 0
+            min_y = 0
+            max_x = SceneManager.screen_width
+            max_y = SceneManager.screen_height
+
+        # 클램핑
+        target_x = max(min_x, min(max_x, target_x))
+        target_y = max(min_y, min(max_y, target_y))
+
+        # 목표 설정 및 상태 초기화
+        self.move_target_x = target_x
+        self.move_target_y = target_y
+        self.is_moving = True
+        self.has_moved = False
+
     def update(self):
         dt = Time.DeltaTime()
 
@@ -40,6 +87,8 @@ class Boss:
             self.dir = -1
         else:
             self.dir = 1
+
+        prev_state = self.state
 
         #enter -> idle
         if self.state == 'enter':
@@ -52,13 +101,16 @@ class Boss:
                 self.state = 'attack'
                 self.frame_count = 0
                 self.attack_timer = 0.0
+                # 공격 시작 시 발사 플래그 리셋
+                self.has_shot = False
+                # 이동 동작이 있으면 중단
+                self.is_moving = False
+                self.has_moved = False
 
         #attack -> idle
         elif self.state == 'attack':
-            # 프레임 타이밍에 맞춰 아이스불렛 발사
-            if self.frame_count == 6:
             # 프레임 타이밍에 맞춰 아이스불렛 발사 (부채꼴 5발, 한 번만)
-                self.state = 'idle'
+            if self.frame_count == 6 and not self.has_shot:
                 # 총알 개수와 스프레드 각도(라디안)
                 count = 5
                 step_deg = 10  # 각 탄 사이의 간격(도)
@@ -69,10 +121,58 @@ class Boss:
                     offset_rad = math.radians(offset_deg)
                     bullet_angle = angle + offset_rad
                     IceBullet().shot(self.x, self.y, bullet_angle, speed=350)
+                self.has_shot = True
+
+            if self.frame_count >= 11:
+                self.state = 'idle'
+                # 랜덤 패턴 선택
+                import random
+                self.pattern = random.choice(['ice_bullet', 'ice_spear', 'icicle_fall'])
+                if self.pattern == 'ice_bullet':
+                    # 추가적인 패턴 동작이 필요하면 여기에 구현
+                    pass
+                if self.pattern == 'ice_spear':
+                    # 맵의 양끝에서 창이 좌우로 날아오는 패턴
+                    pass
+                if self.pattern == 'icicle_fall':
+                    # 맵의 상단에서 아래로 얼음 조각이 떨어지는 패턴
+                    pass
 
                 self.frame_count = 0
                 self.attack_timer = 0.0
+                # 공격 종료 시 플래그 리셋
+                self.has_shot = False
 
+        # 상태 변경 감지
+        if prev_state != 'idle' and self.state == 'idle':
+            self.start_idle_movement(player.x, player.y)
+
+
+        # 이동 처리
+        if self.is_moving:
+            tx = self.move_target_x - self.x
+            ty = self.move_target_y - self.y
+            dist = math.hypot(tx, ty)
+            if dist < 1.0:
+                # 도착
+                self.x = self.move_target_x
+                self.y = self.move_target_y
+                self.is_moving = False
+                self.has_moved = True
+            else:
+                # 이동 방향 단위 벡터
+                nx = tx / dist
+                ny = ty / dist
+                move_step = self.move_speed * dt
+
+                if move_step >= dist:
+                    self.x = self.move_target_x
+                    self.y = self.move_target_y
+                    self.is_moving = False
+                    self.has_moved = True
+                else:
+                    self.x += nx * move_step
+                    self.y += ny * move_step
 
         self.frame_timer += dt
         self.attack_timer += dt
@@ -100,3 +200,6 @@ class Boss:
             else:
                 image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h',
                                           draw_x, draw_y, draw_w, draw_h)
+
+    def shot_ice_bullet(self):
+        pass
