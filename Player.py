@@ -218,8 +218,8 @@ class Player:
                 (right - camera_x) * zoom, (top - camera_y) * zoom
             )
 
-        font = ResourceManager.get_font("default")
-        font.draw(10, SceneManager.screen_height - 30, f'HP: {self.hp}', (255, 0, 0))
+        # font = ResourceManager.get_font("default")
+        # font.draw(10, SceneManager.screen_height - 30, f'HP: {self.hp}', (255, 0, 0))
 
 
 

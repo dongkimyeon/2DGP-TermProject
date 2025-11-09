@@ -3,6 +3,7 @@ from Time import Time
 screen_width = 1920
 screen_height = 1080
 from Player import player
+from ResourceManager import ResourceManager
 scenes = {}
 active_scene = None
 mfont = None

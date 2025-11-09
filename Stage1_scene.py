@@ -12,6 +12,7 @@ from Enemy_Skel import Skel
 from Camera import Camera
 import random
 from Boss_nifleheim import Boss
+from ResourceManager import ResourceManager
 
 
 class Stage1Scene:
@@ -54,7 +55,6 @@ class Stage1Scene:
 
         self.camera = Camera()
         self.camera.set_target(player)
-
 
     def enter(self):
         print("[Stage1Scene] enter()")

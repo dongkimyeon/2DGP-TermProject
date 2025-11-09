@@ -92,6 +92,7 @@ class ResourceManager:
             inst.fonts[name] = font
         return inst.fonts[name]
 
+    @staticmethod
     def get_font(name):
         inst = ResourceManager.instance()
         return inst.fonts.get(name, None)
