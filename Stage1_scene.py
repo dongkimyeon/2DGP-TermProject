@@ -122,3 +122,36 @@ class Stage1Scene:
             (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
             (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
         )
+
+    def update_mouse_from_events(self, events):
+        """이벤트에서 마우스 좌표를 읽어 월드 좌표로 변환"""
+        for event in events:
+            if event.type in [pico2d.SDL_MOUSEMOTION, pico2d.SDL_MOUSEBUTTONDOWN, pico2d.SDL_MOUSEBUTTONUP]:
+                mx = event.x
+                # pico2d 이벤트 y는 위쪽이 0이므로 아래쪽 원점으로 변환
+                my = SceneManager.screen_height - event.y
+
+                # 화면 좌표를 월드 좌표로 변환
+                wx = self.camera.mX + mx / self.camera.zoom
+                wy = self.camera.mY + my / self.camera.zoom
+
+                # 맵 경계 클램프
+                try:
+                    mm = self.map_manager
+                    min_x = mm.TILE_SIZE / 2.0
+                    min_y = mm.TILE_SIZE / 2.0
+                    max_x = mm.GRID_WIDTH * mm.TILE_SIZE - mm.TILE_SIZE / 2.0
+                    max_y = mm.GRID_HEIGHT * mm.TILE_SIZE - mm.TILE_SIZE / 2.0
+                except Exception:
+                    min_x = 0
+                    min_y = 0
+                    max_x = SceneManager.screen_width
+                    max_y = SceneManager.screen_height
+
+                wx = max(min_x, min(max_x, wx))
+                wy = max(min_y, min(max_y, wy))
+
+                # 전역으로 저장
+                SceneManager.mouse_world = (wx, wy)
+                self.mouse_world = (wx, wy)
+                break

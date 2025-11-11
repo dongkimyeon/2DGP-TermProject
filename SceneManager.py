@@ -29,8 +29,11 @@ def run():
 
     while active_scene:
         Time.update()
-        update()
         events = pico2d.get_events()
+        # 이벤트 처리 전에 마우스 월드 좌표 업데이트
+        if active_scene and hasattr(active_scene, 'update_mouse_from_events'):
+            active_scene.update_mouse_from_events(events)
+        update()
         player.handel_event(events)
         render()
 
@@ -44,4 +47,3 @@ def render():
         pico2d.clear_canvas()
         active_scene.render()
         pico2d.update_canvas()
-

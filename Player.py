@@ -121,21 +121,25 @@ class Player:
         if self.katana_effect:
             self.katana_effect.update()
     def handel_event(self, events):
+        # 카메라와 SceneManager.mouse_world를 한 번만 읽음
+        camera = Camera.Camera()
+        camera_x, camera_y = camera.get_position()
+        zoom = camera.get_zoom()
+        mouse_world = getattr(SceneManager, 'mouse_world', None)
+
         for event in events:
-            camera = Camera.Camera()
-            camera_x, camera_y = camera.get_position()
-            zoom = camera.get_zoom()
             if event.type == pico2d.SDL_MOUSEMOTION:
-                mouse_x = event.x
-                mouse_y = SceneManager.screen_height - event.y
-                # 화면 좌표 → 월드 좌표 변환
-                world_x = mouse_x / zoom + camera_x
-                world_y = mouse_y / zoom + camera_y
+                if mouse_world:
+                    world_x, world_y = mouse_world
+                else:
+                    mouse_x = event.x
+                    mouse_y = SceneManager.screen_height - event.y
+                    world_x = mouse_x / zoom + camera_x
+                    world_y = mouse_y / zoom + camera_y
                 dx = world_x - self.x
                 dy = world_y - self.y
-                distance = math.sqrt(dx ** 2 + dy ** 2)
+                distance = math.hypot(dx, dy)
                 self.direction = -1 if dx < 0 else 1 if dx > 0 else self.direction
-                # 각도 계산 및 Katana에 전달
                 angle = math.atan2(dy, dx)
                 self.weapon.angle = angle
             if event.type == pico2d.SDL_KEYDOWN:
@@ -152,13 +156,16 @@ class Player:
                     self.hp -= 10
                     print("플레이어 체력:", self.hp)
             if event.type == pico2d.SDL_MOUSEBUTTONDOWN:
-                mouse_x = event.x
-                mouse_y = SceneManager.screen_height - event.y
-                world_x = mouse_x / zoom + camera_x
-                world_y = mouse_y / zoom + camera_y
+                if mouse_world:
+                    world_x, world_y = mouse_world
+                else:
+                    mouse_x = event.x
+                    mouse_y = SceneManager.screen_height - event.y
+                    world_x = mouse_x / zoom + camera_x
+                    world_y = mouse_y / zoom + camera_y
                 dx = world_x - self.x
                 dy = world_y - self.y
-                distance = math.sqrt(dx ** 2 + dy ** 2)
+                distance = math.hypot(dx, dy)
                 if event.button == pico2d.SDL_BUTTON_RIGHT and self.dash_count > 0:
                     if distance != 0:
                         self.dash_direction = (dx / distance, dy / distance)
