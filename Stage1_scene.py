@@ -23,34 +23,34 @@ class Stage1Scene:
         # MapManager 초기화
         self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16*1.5, filename='map.txt')
 
-        # for _ in range(2):
-        #     newBanshee = Banshee()
-        #     rand_x = random.randint(100, 600)
-        #     rand_y = random.randint(100, 400)
-        #     newBanshee.set_position(rand_x, rand_y)
-        #     self.gameobjs.append(newBanshee)
-        # for _ in range(2):
-        #     newBat = Bat()
-        #     rand_x = random.randint(100, 600)
-        #     rand_y = random.randint(100, 400)
-        #     newBat.set_position(rand_x, rand_y)
-        #     self.gameobjs.append(newBat)
-        # for _ in range(2):
-        #     newGhost = Ghost()
-        #     rand_x = random.randint(100, 600)
-        #     rand_y = random.randint(100, 400)
-        #     newGhost.set_position(rand_x, rand_y)
-        #     self.gameobjs.append(newGhost)
-        # for _ in range(2):
-        #     newwSkel = Skel()
-        #     rand_x = random.randint(100, 600)
-        #     rand_y = random.randint(100, 400)
-        #     newwSkel.set_position(rand_x, rand_y)
-        #     self.gameobjs.append(newwSkel)
+        for _ in range(1):
+            newBanshee = Banshee()
+            rand_x = 400
+            rand_y = random.randint(100, 400)
+            newBanshee.set_position(rand_x, rand_y)
+            self.gameobjs.append(newBanshee)
+        for _ in range(1):
+            newBat = Bat()
+            rand_x = 300
+            rand_y = random.randint(100, 400)
+            newBat.set_position(rand_x, rand_y)
+            self.gameobjs.append(newBat)
+        for _ in range(1):
+            newGhost = Ghost()
+            rand_x = 200
+            rand_y = random.randint(100, 400)
+            newGhost.set_position(rand_x, rand_y)
+            self.gameobjs.append(newGhost)
+        for _ in range(1):
+            newSkel = Skel()
+            rand_x = 100
+            rand_y = random.randint(100, 400)
+            newSkel.set_position(rand_x, rand_y)
+            self.gameobjs.append(newSkel)
 
         # 카메라 초기화 및 플레이어 설정
 
-        boss = Boss(400, 300)
+        boss = Boss(700, 300)
         self.gameobjs.append(boss)
 
         self.camera = Camera()
