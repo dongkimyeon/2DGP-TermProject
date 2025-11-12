@@ -210,5 +210,5 @@ class Boss:
         pass
 
     def handle_collision(self, group, other):
-        """충돌 처리"""
+        #충돌처리를 위한 함수 아직 미구현
         pass
