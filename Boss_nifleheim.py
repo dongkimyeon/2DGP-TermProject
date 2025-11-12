@@ -31,8 +31,8 @@ class Boss:
         self.is_moving = False
         self.move_target_x = self.x
         self.move_target_y = self.y
-        self.move_speed = 300.0  # 이동 속도 (픽셀/s)
-        self.move_distance = 400.0  # 이동할 거리 (픽셀)
+        self.move_speed = 400.0  # 이동 속도 (픽셀/s)
+        self.move_distance = 200.0  # 이동할 거리 (픽셀)
         # 플레이어와의 최대 허용 거리(이동 후 이 거리보다 멀어지면 그 쪽으로 이동하지 않고 최대 거리로 제한)
         self.max_distance_from_player = 500.0
         self.has_moved = False
@@ -51,12 +51,14 @@ class Boss:
     def take_damage(self, damage):
         self.health -= damage
     def start_idle_movement(self, player_x, player_y):
-
+        # 범위(move_distance) 내에서 랜덤한 좌표를 목표로 설정
+        # 랜덤 반경과 각도를 선택
         rand_r = random.uniform(0, self.move_distance)
         rand_theta = random.uniform(0, math.tau)
         target_x = self.x + math.cos(rand_theta) * rand_r
         target_y = self.y + math.sin(rand_theta) * rand_r
 
+        # 맵 경계 처리: SceneManager.active_scene.map_manager 사용
         try:
             mm = SceneManager.active_scene.map_manager
             min_x = mm.TILE_SIZE / 2.0
@@ -64,7 +66,7 @@ class Boss:
             max_x = mm.GRID_WIDTH * mm.TILE_SIZE - mm.TILE_SIZE / 2.0
             max_y = mm.GRID_HEIGHT * mm.TILE_SIZE - mm.TILE_SIZE / 2.0
         except Exception:
-
+            # 안전망: 화면 크기 기반 제한
             min_x = 0
             min_y = 0
             max_x = SceneManager.screen_width
@@ -114,7 +116,17 @@ class Boss:
         elif self.state == 'attack':
             # 프레임 타이밍에 맞춰 아이스불렛 발사 (부채꼴 5발, 한 번만)
             if self.frame_count == 6 and not self.has_shot:
-
+                # 총알 개수와 스프레드 각도(라디안)
+                count = 5
+                step_deg = 10  # 각 탄 사이의 간격(도)
+                half_span = (step_deg * (count - 1)) / 2.0
+                # 생성
+                for i in range(count):
+                    offset_deg = -half_span + i * step_deg
+                    offset_rad = math.radians(offset_deg)
+                    bullet_angle = angle + offset_rad
+                    IceBullet().shot(self.x, self.y, bullet_angle, speed=350)
+                self.has_shot = True
 
             if self.frame_count >= 11:
                 self.state = 'idle'
@@ -122,17 +134,8 @@ class Boss:
                 import random
                 self.pattern = random.choice(['ice_bullet', 'ice_spear', 'icicle_fall'])
                 if self.pattern == 'ice_bullet':
-                    # 총알 개수와 스프레드 각도(라디안)
-                    count = 5
-                    step_deg = 10  # 각 탄 사이의 간격(도)
-                    half_span = (step_deg * (count - 1)) / 2.0
-                    # 생성
-                    for i in range(count):
-                        offset_deg = -half_span + i * step_deg
-                        offset_rad = math.radians(offset_deg)
-                        bullet_angle = angle + offset_rad
-                        IceBullet().shot(self.x, self.y, bullet_angle, speed=350)
-                    self.has_shot = True
+                    # 추가적인 패턴 동작이 필요하면 여기에 구현
+                    pass
                 if self.pattern == 'ice_spear':
                     # 맵의 양끝에서 창이 좌우로 날아오는 패턴
                     pass
