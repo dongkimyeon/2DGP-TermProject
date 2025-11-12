@@ -59,7 +59,7 @@ class IceBullet:
             self.frame_timer = 0.0
 
     def handle_collision(self, group, other):
-        """충돌 처리"""
+        #맵 or 플레이와 충돌시 사라짐
         pass
 
     def render(self, camera_x=0, camera_y=0, zoom=1.0):
