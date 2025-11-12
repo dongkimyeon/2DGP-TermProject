@@ -67,6 +67,12 @@ class Player:
         half_width = self.width // 2
         half_height = self.height // 2
 
+        # 현재 위치의 충돌 박스
+        old_left = self.x - half_width
+        old_right = self.x + half_width
+        old_bottom = self.y - half_height + 5
+        old_top = self.y + half_height + 5
+
         # 새 위치에서의 충돌 박스
         left = new_x - half_width
         bottom = new_y - half_height + 5
@@ -78,23 +84,17 @@ class Player:
 
         grounded = False
 
-        if colliding_tiles:
-            # X축 충돌 체크
-            old_left = self.x - half_width
-            old_right = self.x + half_width
+        # Y축 충돌 처리 먼저 (수직 방향에서만 충돌 체크)
+        for tile in colliding_tiles:
+            # 수직 충돌인지 먼저 확인 (X축 중심이 타일과 겹치는지)
+            tile_center_x = (tile['left'] + tile['right']) / 2
+            player_center_x = (old_left + old_right) / 2
 
-            # Y축 충돌 체크
-            old_bottom = self.y - half_height + 5
-            old_top = self.y + half_height + 5
+            # X축 오버랩 체크 - 플레이어 중심이 타일 영역에 있는지
+            x_overlap = (old_left < tile['right'] and old_right > tile['left'])
 
-            for tile in colliding_tiles:
-                # 수평 충돌 처리
-                if old_right <= tile['left'] and right > tile['left']:
-                    new_x = tile['left'] - half_width
-                elif old_left >= tile['right'] and left < tile['right']:
-                    new_x = tile['right'] + half_width
-
-                # 수직 충돌 처리
+            if x_overlap:
+                # 수직 충돌 처리 (Y축)
                 if old_top <= tile['bottom'] and top > tile['bottom']:
                     # 위에서 타일에 부딪힘 (천장)
                     new_y = tile['bottom'] - half_height - 5
@@ -105,34 +105,62 @@ class Player:
                     self.jump_velocity = 0
                     grounded = True
 
+        # Y축 처리 후 업데이트된 위치로 X축 충돌 체크
+        left = new_x - half_width
+        bottom = new_y - half_height + 5
+        right = new_x + half_width
+        top = new_y + half_height + 5
+
+        colliding_tiles_x = self.map_manager.check_collision(left, bottom, right, top)
+
+        for tile in colliding_tiles_x:
+            # Y축 오버랩 체크 - 수평 충돌인지 확인
+            y_overlap = (bottom < tile['top'] and top > tile['bottom'])
+
+            if y_overlap:
+                # 수평 충돌 처리
+                if old_right <= tile['left'] and right > tile['left']:
+                    new_x = tile['left'] - half_width - 0.1
+                elif old_left >= tile['right'] and left < tile['right']:
+                    new_x = tile['right'] + half_width + 0.1
+
+        # 착지 여부 추가 체크: 발 아래에 타일이 있는지 확인
+        if not grounded:
+            # 발 바로 아래를 체크
+            foot_left = new_x - half_width + 2
+            foot_right = new_x + half_width - 2
+            foot_bottom = new_y - half_height + 4
+            foot_top = new_y - half_height + 6
+
+            foot_tiles = self.map_manager.check_collision(foot_left, foot_bottom, foot_right, foot_top)
+            if foot_tiles:
+                grounded = True
+
         return new_x, new_y, grounded
 
     def update(self, camera_x, camera_y, zoom):
         dt = Time.DeltaTime()
 
-        # 중력 적용 (대쉬 중에는 중력 무시)
-        if not self.is_dashing:
-            self.jump_velocity += self.gravity * dt
-            new_y = self.y + self.jump_velocity * dt
-            new_x = self.x
-        else:
-            # 대쉬 중에는 중력 영향을 받지 않고 방향대로만 이동
-            new_x = self.x + self.dash_direction[0] * self.dash_speed * dt
-            new_y = self.y + self.dash_direction[1] * self.dash_speed * dt
-
-        # 수평 이동 처리
+        # 수평 이동 계산
+        new_x = self.x
         if not self.is_dashing:
             if self.left_pressed and not self.right_pressed:
                 new_x = self.x - self.speed * dt
             elif self.right_pressed and not self.left_pressed:
                 new_x = self.x + self.speed * dt
 
-        # X축 충돌 체크 먼저
-        temp_x, temp_y, _ = self.check_tile_collision(new_x, self.y)
-        self.x = temp_x
+        # 중력 적용
+        new_y = self.y
+        if not self.is_dashing:
+            self.jump_velocity += self.gravity * dt
+            new_y = self.y + self.jump_velocity * dt
+        else:
+            # 대쉬 중
+            new_x = self.x + self.dash_direction[0] * self.dash_speed * dt
+            new_y = self.y + self.dash_direction[1] * self.dash_speed * dt
 
-        # Y축 충돌 체크 (중력 적용된 새로운 Y 위치)
-        final_x, final_y, grounded = self.check_tile_collision(self.x, new_y)
+        # 충돌 체크 (X, Y 동시에)
+        final_x, final_y, grounded = self.check_tile_collision(new_x, new_y)
         self.x = final_x
         self.y = final_y
         self.is_grounded = grounded
