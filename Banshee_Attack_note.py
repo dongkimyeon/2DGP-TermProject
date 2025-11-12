@@ -16,10 +16,15 @@ class Note:
         self.attack_power = 12
         self.frame_count = 0
         self.frame_timer = 0.0
+        self.map_manager = None  # 맵 매니저 참조
 
     def set_position(self, x, y):
         self.x = x
         self.y = y
+
+    def set_map_manager(self, map_manager):
+        """맵 매니저 설정"""
+        self.map_manager = map_manager
 
     def get_bb(self):
         half_width = self.width // 2
@@ -58,3 +63,7 @@ class Note:
         if image:
             image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, draw_x,
                             draw_y, draw_w, draw_h)
+
+    def handle_collision(self, group, other):
+        """충돌 처리"""
+        pass

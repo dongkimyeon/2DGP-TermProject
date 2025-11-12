@@ -16,13 +16,13 @@ class Player:
         self.dash_count = 3
         self.state = 'idle'
         self.x = SceneManager.screen_width // 2
-        self.y = SceneManager.screen_height // 2
+        self.y = 120
         self.speed = 200
         self.direction = 0
         self.frame_count = 0
         self.frame_timer = 0.0
         self.jump_velocity = 0
-        self.gravity = -2000  # 중력 값 약간 완화 (-2200 -> -2000)
+        self.gravity = -2000
         self.left_pressed = False
         self.right_pressed = False
         self.is_dashing = False
@@ -33,7 +33,6 @@ class Player:
         self.dash_recharge_time = 1.0
         self.is_jumping = False
         self.jump_power = 800
-        self.ground_y = 40
         self.jump_count = 2
         self.width = 50
         self.height = 50
@@ -42,37 +41,116 @@ class Player:
         self.chargingGage = 0.0
         self.is_charging = False
         self.max_chargingGage = 0.75
+        self.map_manager = None  # 맵 매니저 참조
+        self.is_grounded = False  # 땅에 닿아있는지 여부
+
+    def set_map_manager(self, map_manager):
+        """맵 매니저 설정"""
+        self.map_manager = map_manager
 
     def get_bb(self):
         half_width = self.width // 2
         half_height = self.height // 2
         return (self.x - half_width, self.y - half_height + 5, self.x + half_width, self.y + half_height + 5)
+
+    def handle_collision(self, group, other):
+        """충돌 처리"""
+        if group == 'player:tile':
+            # 타일과의 충돌 처리
+            pass
+
+    def check_tile_collision(self, new_x, new_y):
+        """타일 충돌 체크 및 위치 보정"""
+        if not self.map_manager:
+            return new_x, new_y, False
+
+        half_width = self.width // 2
+        half_height = self.height // 2
+
+        # 새 위치에서의 충돌 박스
+        left = new_x - half_width
+        bottom = new_y - half_height + 5
+        right = new_x + half_width
+        top = new_y + half_height + 5
+
+        # 충돌하는 타일들 가져오기
+        colliding_tiles = self.map_manager.check_collision(left, bottom, right, top)
+
+        grounded = False
+
+        if colliding_tiles:
+            # X축 충돌 체크
+            old_left = self.x - half_width
+            old_right = self.x + half_width
+
+            # Y축 충돌 체크
+            old_bottom = self.y - half_height + 5
+            old_top = self.y + half_height + 5
+
+            for tile in colliding_tiles:
+                # 수평 충돌 처리
+                if old_right <= tile['left'] and right > tile['left']:
+                    new_x = tile['left'] - half_width
+                elif old_left >= tile['right'] and left < tile['right']:
+                    new_x = tile['right'] + half_width
+
+                # 수직 충돌 처리
+                if old_top <= tile['bottom'] and top > tile['bottom']:
+                    # 위에서 타일에 부딪힘 (천장)
+                    new_y = tile['bottom'] - half_height - 5
+                    self.jump_velocity = 0
+                elif old_bottom >= tile['top'] and bottom < tile['top']:
+                    # 아래에서 타일에 착지
+                    new_y = tile['top'] + half_height - 5
+                    self.jump_velocity = 0
+                    grounded = True
+
+        return new_x, new_y, grounded
+
     def update(self, camera_x, camera_y, zoom):
         dt = Time.DeltaTime()
-        #stateprint
-        #print("Player State:", self.state)
+
         # 중력 적용 (대쉬 중에는 중력 무시)
         if not self.is_dashing:
             self.jump_velocity += self.gravity * dt
-            self.y += self.jump_velocity * dt
+            new_y = self.y + self.jump_velocity * dt
+            new_x = self.x
         else:
             # 대쉬 중에는 중력 영향을 받지 않고 방향대로만 이동
-            self.x += self.dash_direction[0] * self.dash_speed * dt
-            self.y += self.dash_direction[1] * self.dash_speed * dt
+            new_x = self.x + self.dash_direction[0] * self.dash_speed * dt
+            new_y = self.y + self.dash_direction[1] * self.dash_speed * dt
+
+        # 수평 이동 처리
+        if not self.is_dashing:
+            if self.left_pressed and not self.right_pressed:
+                new_x = self.x - self.speed * dt
+            elif self.right_pressed and not self.left_pressed:
+                new_x = self.x + self.speed * dt
+
+        # X축 충돌 체크 먼저
+        temp_x, temp_y, _ = self.check_tile_collision(new_x, self.y)
+        self.x = temp_x
+
+        # Y축 충돌 체크 (중력 적용된 새로운 Y 위치)
+        final_x, final_y, grounded = self.check_tile_collision(self.x, new_y)
+        self.x = final_x
+        self.y = final_y
+        self.is_grounded = grounded
 
         # 착지 확인
-        if self.y <= self.ground_y:
-            self.y = self.ground_y
-            self.jump_velocity = 0
+        if self.is_grounded:
             self.is_jumping = False
             self.jump_count = 2  # 착지 시 점프 횟수 초기화
-            if self.direction == 0 and not self.is_dashing:
-                self.state = 'idle'
-            elif self.direction != 0 and not self.is_dashing:
-                self.state = 'run'
+            if not self.is_dashing:
+                if self.left_pressed or self.right_pressed:
+                    self.state = 'run'
+                else:
+                    self.state = 'idle'
         else:
-            self.is_jumping = True
-            self.state = 'jump'
+            # 공중에 있음
+            if not self.is_dashing:
+                self.is_jumping = True
+                self.state = 'jump'
 
         # 대쉬 처리
         if self.is_dashing:
@@ -80,27 +158,17 @@ class Player:
             if self.dash_timer <= 0:
                 self.is_dashing = False
                 # 대쉬 종료 후 공중이면 점프 속도 유지
-                if self.y > self.ground_y:
-                    self.jump_velocity = max(self.jump_velocity, -400)  # 더 부드러운 하강을 위해 -500 -> -400
+                if not self.is_grounded:
+                    self.jump_velocity = max(self.jump_velocity, -400)
                     self.state = 'jump'
                 else:
                     self.state = 'idle'
+
         # 차징 처리
         if self.is_charging:
             self.chargingGage += dt
             if self.chargingGage > self.max_chargingGage:
                 self.chargingGage = self.max_chargingGage
-            print(f"차징 중: {self.chargingGage:.2f} / {self.max_chargingGage}")
-        # 수평 이동
-        if not self.is_dashing:
-            if self.left_pressed and not self.right_pressed:
-                self.state = 'run' if self.y == self.ground_y else 'jump'
-                self.x -=  self.speed * dt
-            elif self.right_pressed and not self.left_pressed:
-                self.state = 'run' if self.y == self.ground_y else 'jump'
-                self.x +=  self.speed * dt
-            else:
-                self.state = 'idle' if self.y == self.ground_y else 'jump'
 
         # 프레임 애니메이션
         self.frame_timer += dt
@@ -114,12 +182,12 @@ class Player:
             if self.dash_timer >= self.dash_recharge_time:
                 self.dash_count += 1
                 self.dash_timer = 0.0
-                print("대쉬 충전: 현재 대쉬 수", self.dash_count)
 
         if self.weapon:
             self.weapon.update()
         if self.katana_effect:
             self.katana_effect.update()
+
     def handel_event(self, events):
         # 카메라와 SceneManager.mouse_world를 한 번만 읽음
         camera = Camera.Camera()
@@ -185,6 +253,7 @@ class Player:
                     self.left_pressed = False
                 elif event.key == pico2d.SDLK_d:
                     self.right_pressed = False
+
     def render(self, camera_x=0, camera_y=0, zoom=1.0):
         image, frame_count, width, height = ResourceManager.get_image(f"player_{self.state}")
         draw_x = int((self.x - camera_x) * zoom)

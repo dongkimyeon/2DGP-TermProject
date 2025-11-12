@@ -28,6 +28,11 @@ class Skel:
         self.attack_cooldown = 0.0  # 쿨타임 1초
         self.is_attacking = False  # 공격 애니메이션 진행 중 여부
         self.attack_frame_max = 0  # 공격 애니메이션 프레임 수
+        self.map_manager = None  # 맵 매니저 참조
+
+    def set_map_manager(self, map_manager):
+        """맵 매니저 설정"""
+        self.map_manager = map_manager
 
     def attack(self):
         return self.attack_power
@@ -124,3 +129,7 @@ class Skel:
                                           draw_x, draw_y, int(self.width * 1.5 * zoom), int(self.height * 1.5 * zoom))
     def is_dead(self):
         return self.health <= 0
+
+    def handle_collision(self, group, other):
+        """충돌 처리"""
+        pass

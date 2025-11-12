@@ -28,33 +28,40 @@ class Stage1Scene:
             rand_x = 400
             rand_y = random.randint(100, 400)
             newBanshee.set_position(rand_x, rand_y)
+            newBanshee.set_map_manager(self.map_manager)  # 맵 매니저 설정
             self.gameobjs.append(newBanshee)
         for _ in range(1):
             newBat = Bat()
             rand_x = 300
             rand_y = random.randint(100, 400)
             newBat.set_position(rand_x, rand_y)
+            newBat.set_map_manager(self.map_manager)  # 맵 매니저 설정
             self.gameobjs.append(newBat)
         for _ in range(1):
             newGhost = Ghost()
             rand_x = 200
             rand_y = random.randint(100, 400)
             newGhost.set_position(rand_x, rand_y)
+            newGhost.set_map_manager(self.map_manager)  # 맵 매니저 설정
             self.gameobjs.append(newGhost)
         for _ in range(1):
             newSkel = Skel()
             rand_x = 100
             rand_y = random.randint(100, 400)
             newSkel.set_position(rand_x, rand_y)
+            newSkel.set_map_manager(self.map_manager)  # 맵 매니저 설정
             self.gameobjs.append(newSkel)
 
         # 카메라 초기화 및 플레이어 설정
-
         boss = Boss(700, 300)
+        boss.set_map_manager(self.map_manager)  # 맵 매니저 설정
         self.gameobjs.append(boss)
 
         self.camera = Camera()
         self.camera.set_target(player)
+
+        # 플레이어에게 맵 매니저 설정
+        player.set_map_manager(self.map_manager)
 
     def enter(self):
         print("[Stage1Scene] enter()")
@@ -72,6 +79,11 @@ class Stage1Scene:
         player.update(self.camera.mX, self.camera.mY, self.camera.zoom)
 
         self.handle_collisions()
+
+        # 새로 생성된 발사체들에도 맵 매니저 설정
+        for obj in self.gameobjs:
+            if hasattr(obj, 'set_map_manager') and obj.map_manager is None:
+                obj.set_map_manager(self.map_manager)
 
     def handle_collisions(self):
         left_a, bottom_a, right_a, top_a = player.get_bb()
@@ -104,8 +116,8 @@ class Stage1Scene:
                 player.hp -= obj.get_damage()
 
     def render(self):
-        # 맵 타일 렌더링
-        self.map_manager.render(self.camera.mX, self.camera.mY, self.camera.zoom)
+        # 맵 타일 렌더링 (충돌 박스 표시 활성화)
+        self.map_manager.render(self.camera.mX, self.camera.mY, self.camera.zoom, draw_collision_box=True)
 
         # 게임 오브젝트 렌더링
         for gameobj in self.gameobjs:

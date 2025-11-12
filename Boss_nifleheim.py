@@ -38,6 +38,11 @@ class Boss:
         self.has_moved = False
 
         self.font = ResourceManager.get_font("default")
+        self.map_manager = None  # 맵 매니저 참조
+
+    def set_map_manager(self, map_manager):
+        """맵 매니저 설정"""
+        self.map_manager = map_manager
 
     def get_bb(self):
         half_width = self.width // 2
@@ -202,4 +207,8 @@ class Boss:
                                           draw_x, draw_y, draw_w, draw_h)
 
     def shot_ice_bullet(self):
+        pass
+
+    def handle_collision(self, group, other):
+        """충돌 처리"""
         pass

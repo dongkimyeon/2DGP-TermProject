@@ -17,10 +17,15 @@ class IceBullet:
 
         self.frame_count = 0
         self.frame_timer = 0.0
+        self.map_manager = None  # 맵 매니저 참조
 
     def set_position(self, x, y):
         self.x = x
         self.y = y
+
+    def set_map_manager(self, map_manager):
+        """맵 매니저 설정"""
+        self.map_manager = map_manager
 
     def get_bb(self):
         half_width = 18 // 2
@@ -52,6 +57,10 @@ class IceBullet:
         if self.frame_timer > 0.1:
             self.frame_count += 1
             self.frame_timer = 0.0
+
+    def handle_collision(self, group, other):
+        """충돌 처리"""
+        pass
 
     def render(self, camera_x=0, camera_y=0, zoom=1.0):
         image, frame_count, width, height = ResourceManager.get_image(f"niflheim_ice_bullet")

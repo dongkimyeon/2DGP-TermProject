@@ -79,7 +79,8 @@ class ResourceManager:
         self.load_image("niflheim_icicle", "resources/images/boss/Niflheim/icicle.png", 10)
         self.load_image("niflheim_pillar", "resources/images/boss/Niflheim/pillar.png", 20)
         self.load_image("niflheim_spear", "resources/images/boss/Niflheim/spear.png", 13)
-
+        # gate
+        self.load_image("gate", "resources/images/map/gate.png", 0)
         # Font 로드
         self.load_font("default", 'resources/font/alagard.ttf', 16)
 

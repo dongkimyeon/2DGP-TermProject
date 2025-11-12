@@ -26,6 +26,11 @@ class Ghost:
         self.height = 50
         self.detection_radius = 350
         self.attack_cooldown = 0.0  # 쿨타임 1초
+        self.map_manager = None  # 맵 매니저 참조
+
+    def set_map_manager(self, map_manager):
+        """맵 매니저 설정"""
+        self.map_manager = map_manager
 
     def attack(self):
         return self.attack_power
@@ -86,3 +91,7 @@ class Ghost:
                                           draw_x, draw_y, draw_w, draw_h)
     def is_dead(self):
         return self.health <= 0
+
+    def handle_collision(self, group, other):
+        """충돌 처리"""
+        pass

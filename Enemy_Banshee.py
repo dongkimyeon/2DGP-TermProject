@@ -24,6 +24,11 @@ class Banshee:
         self.attack_cooldown = 0.0
         self.note_fired = False
         self.direction = 1  # 1: 오른쪽, -1: 왼쪽
+        self.map_manager = None  # 맵 매니저 참조
+
+    def set_map_manager(self, map_manager):
+        """맵 매니저 설정"""
+        self.map_manager = map_manager
 
     def attack(self):
         return self.attack_power
@@ -99,3 +104,7 @@ class Banshee:
 
     def is_dead(self):
         return self.health <= 0
+
+    def handle_collision(self, group, other):
+        """충돌 처리"""
+        pass
