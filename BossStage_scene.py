@@ -2,56 +2,29 @@ import SceneManager
 import pico2d
 from Player import player
 from MapManager import MapManager
-from Enemy_Banshee import Banshee
-from Banshee_Attack_note import Note
-from Enemy_Bat import Bat
-from Bat_Attack_bullet import Bullet
-from Enemy_Ghost import Ghost
-from Enemy_Skel import Skel
+from Boss_nifleheim import Boss
+from IceBullet import IceBullet
 from Camera import Camera
 from Portal import Portal
 import random
 from ResourceManager import ResourceManager
 
 
-class Stage2Scene:
+class BossStageScene:
     def __init__(self):
-        print("[Stage2Scene] __init__()")
+        print("[BossStageScene] __init__()")
 
         self.gameobjs = []
-        # MapManager 초기화
-        self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16*1.5, filename='map1.txt')
+        # MapManager 초기화 - 보스 스테이지용 맵 사용
+        self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16*1.5, filename='map2.txt')
 
-        for _ in range(1):
-            newBanshee = Banshee()
-            rand_x = 400
-            rand_y = random.randint(100, 400)
-            newBanshee.set_position(rand_x, rand_y)
-            newBanshee.set_map_manager(self.map_manager)  # 맵 매니저 설정
-            self.gameobjs.append(newBanshee)
-        for _ in range(1):
-            newBat = Bat()
-            rand_x = 300
-            rand_y = random.randint(100, 400)
-            newBat.set_position(rand_x, rand_y)
-            newBat.set_map_manager(self.map_manager)  # 맵 매니저 설정
-            self.gameobjs.append(newBat)
-        for _ in range(1):
-            newGhost = Ghost()
-            rand_x = 200
-            rand_y = random.randint(100, 400)
-            newGhost.set_position(rand_x, rand_y)
-            newGhost.set_map_manager(self.map_manager)  # 맵 매니저 설정
-            self.gameobjs.append(newGhost)
-        for _ in range(1):
-            newSkel = Skel()
-            rand_x = 100
-            rand_y = random.randint(100, 400)
-            newSkel.set_position(rand_x, rand_y)
-            newSkel.set_map_manager(self.map_manager)  # 맵 매니저 설정
-            self.gameobjs.append(newSkel)
+        # 보스 생성
+        boss = Boss(1200, 400)
+        boss.set_map_manager(self.map_manager)
+        self.gameobjs.append(boss)
 
-        self.portal = Portal(2483,1172)
+        # 포탈 생성 (보스를 처치하면 활성화될 포탈)
+        self.portal = Portal(2483, 1172)
         self.gameobjs.append(self.portal)
 
         self.camera = Camera()
@@ -61,15 +34,14 @@ class Stage2Scene:
         player.set_map_manager(self.map_manager)
 
     def enter(self):
-        print("[Stage2Scene] enter()")
+        print("[BossStageScene] enter()")
         pass
 
     def exit(self):
-        print("[Stage2Scene] exit()")
+        print("[BossStageScene] exit()")
 
     def update(self):
         for obj in self.gameobjs:
-            #print("obj update")
             obj.update()
         self.camera.update()
         player.update(self.camera.mX, self.camera.mY, self.camera.zoom)
@@ -93,47 +65,29 @@ class Stage2Scene:
             if top_a < bottom_b: continue
             if bottom_a > top_b: continue
 
-            #각 객체마다 충돌처리 코드 추가
+            # 각 객체마다 충돌처리 코드 추가
             if isinstance(obj, Portal):
                 # 포탈과 충돌 중
                 player.near_portal = obj
                 print("Player near Portal!")
 
-            elif isinstance(obj, Banshee):
-                print("Player collided with Banshee!")
-                player.hp -= obj.get_damage()
+            elif isinstance(obj, Boss):
+                print("Player collided with Boss!")
+                player.hp -= 5
 
-            elif isinstance(obj, Bat):
-                print("Player collided with Bat!")
-                player.hp -= obj.get_damage()
-
-            elif isinstance(obj, Ghost):
-                print("Player collided with Ghost!")
-                player.hp -= obj.get_damage()
-
-            elif isinstance(obj, Note):
-                print("Player collided with Note!")
-                player.hp -= obj.get_damage()
-
-            elif isinstance(obj, Bullet):
-                print("Player collided with Bullet!")
-                player.hp -= obj.get_damage()
+            elif isinstance(obj, IceBullet):
+                print("Player collided with IceBullet!")
+                player.hp -= 10
 
     def handle_events(self, events):
-        """이벤트 처리 및 씬 전환 감지"""
+        """이벤트 처리"""
         self.update_mouse_from_events(events)
 
         # 플레이어 이벤트 처리
         result = player.handel_event(events)
 
-        # 포탈 진입 신호 확인 - 보스 스테이지로 전환
-        if result == 'enter_portal':
-            print("Entering Boss Stage...")
-            import BossStage_scene
-            SceneManager.change_scene(BossStage_scene.BossStageScene())
-            return True
-
         return False
+
     def render(self):
         # 맵 타일 렌더링 (충돌 박스 표시 활성화)
         self.map_manager.render(self.camera.mX, self.camera.mY, self.camera.zoom, draw_collision_box=True)
@@ -192,3 +146,4 @@ class Stage2Scene:
                 SceneManager.mouse_world = (wx, wy)
                 self.mouse_world = (wx, wy)
                 break
+
