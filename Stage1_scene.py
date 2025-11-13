@@ -10,6 +10,7 @@ from Bat_Attack_bullet import Bullet
 from Enemy_Ghost import Ghost
 from Enemy_Skel import Skel
 from Camera import Camera
+from Portal import Portal
 import random
 from Boss_nifleheim import Boss
 from ResourceManager import ResourceManager
@@ -52,10 +53,9 @@ class Stage1Scene:
             newSkel.set_map_manager(self.map_manager)  # 맵 매니저 설정
             self.gameobjs.append(newSkel)
 
-        # # 카메라 초기화 및 플레이어 설정
-        # boss = Boss(700, 300)
-        # boss.set_map_manager(self.map_manager)  # 맵 매니저 설정
-        # self.gameobjs.append(boss)
+        newPortal = Portal(2483,1172)
+        self.gameobjs.append(newPortal)
+
 
         self.camera = Camera()
         self.camera.set_target(player)

@@ -44,7 +44,7 @@ area_end = None    # (gx, gy)
 eraser_mode = False
 
 # 맵 저장 함수
-def save_map(filename='map2.txt'):
+def save_map(filename='map.txt'):
     try:
         with open(filename, 'w') as f:
             for row in map_data:
@@ -54,7 +54,7 @@ def save_map(filename='map2.txt'):
         print(f"맵 저장 실패: {e}")
 
 # 맵 로드 함수
-def load_map(filename='map2.txt'):
+def load_map(filename='map.txt'):
     global map_data
     try:
         with open(filename, 'r') as f:
