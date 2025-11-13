@@ -7,6 +7,7 @@ class Portal:
         self.width = 27
         self.height = 31
         self.scale = 2.0
+        self.is_player_nearby = False  # 플레이어가 근처에 있는지 여부
 
 
     def get_bb(self):
@@ -17,6 +18,10 @@ class Portal:
     def update(self):
         pass
 
+    def handle_collision(self, group, other):
+        """충돌 처리"""
+        if group == 'player:portal':
+            self.is_player_nearby = True
 
     def render(self, camera_x=0, camera_y=0, zoom=1.0):
         image, frame_count, width, height = ResourceManager.get_image(f"gate")
@@ -24,6 +29,3 @@ class Portal:
         draw_y = int((self.y - camera_y) * zoom) + int(height // 2 * zoom)
 
         image.draw(draw_x, draw_y, self.width * self.scale * zoom, self.height * self.scale * zoom)
-
-
-

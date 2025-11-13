@@ -43,6 +43,7 @@ class Player:
         self.max_chargingGage = 0.75
         self.map_manager = None  # 맵 매니저 참조
         self.is_grounded = False  # 땅에 닿아있는지 여부
+        self.near_portal = None  # 근처에 있는 포탈 참조
 
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
@@ -251,6 +252,9 @@ class Player:
                 elif event.key == pico2d.SDLK_p:
                     self.hp -= 10
                     print("플레이어 체력:", self.hp)
+                elif event.key == pico2d.SDLK_f:
+                    if self.near_portal:
+                        return 'enter_portal'  # 포탈 진입 신호 반환
             if event.type == pico2d.SDL_MOUSEBUTTONDOWN:
                 if mouse_world:
                     world_x, world_y = mouse_world

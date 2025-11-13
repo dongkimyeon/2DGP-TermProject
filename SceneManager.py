@@ -30,13 +30,30 @@ def run():
     while active_scene:
         Time.update()
         events = pico2d.get_events()
-        # 이벤트 처리 전에 마우스 월드 좌표 업데이트
-        if active_scene and hasattr(active_scene, 'update_mouse_from_events'):
-            active_scene.update_mouse_from_events(events)
+
+        # 씬의 handle_events 메서드 호출 (씬 전환 처리 포함)
+        if active_scene and hasattr(active_scene, 'handle_events'):
+            scene_changed = active_scene.handle_events(events)
+            if scene_changed:
+                continue  # 씬이 변경되면 다음 루프로
+
         update()
-        player.handel_event(events)
         render()
 
+
+def change_scene(new_scene):
+    """씬을 변경하는 함수"""
+    global active_scene
+
+    if active_scene and hasattr(active_scene, 'exit'):
+        print(f"[SceneManager] exit: {type(active_scene).__name__}")
+        active_scene.exit()
+
+    active_scene = new_scene
+
+    if active_scene and hasattr(active_scene, 'enter'):
+        print(f"[SceneManager] enter: {type(active_scene).__name__}")
+        active_scene.enter()
 
 def update():
     if active_scene:

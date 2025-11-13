@@ -1,6 +1,5 @@
 import SceneManager
 import pico2d
-from Time import Time
 from Player import player
 from MapManager import MapManager
 from Enemy_Banshee import Banshee
@@ -12,8 +11,8 @@ from Enemy_Skel import Skel
 from Camera import Camera
 from Portal import Portal
 import random
-from Boss_nifleheim import Boss
 from ResourceManager import ResourceManager
+import Stage2_scene
 
 
 class Stage1Scene:
@@ -53,9 +52,8 @@ class Stage1Scene:
             newSkel.set_map_manager(self.map_manager)  # 맵 매니저 설정
             self.gameobjs.append(newSkel)
 
-        newPortal = Portal(2483,1172)
-        self.gameobjs.append(newPortal)
-
+        self.portal = Portal(2483,1172)
+        self.gameobjs.append(self.portal)
 
         self.camera = Camera()
         self.camera.set_target(player)
@@ -65,7 +63,6 @@ class Stage1Scene:
 
     def enter(self):
         print("[Stage1Scene] enter()")
-        # 맵 로드는 MapManager의 __init__에서 이미 처리됨
         pass
 
     def exit(self):
@@ -86,6 +83,9 @@ class Stage1Scene:
                 obj.set_map_manager(self.map_manager)
 
     def handle_collisions(self):
+        # 먼저 플레이어의 포탈 근처 상태 초기화
+        player.near_portal = None
+
         left_a, bottom_a, right_a, top_a = player.get_bb()
         for obj in self.gameobjs:
             left_b, bottom_b, right_b, top_b = obj.get_bb()
@@ -95,7 +95,12 @@ class Stage1Scene:
             if bottom_a > top_b: continue
 
             #각 객체마다 충돌처리 코드 추가
-            if isinstance(obj, Banshee):
+            if isinstance(obj, Portal):
+                # 포탈과 충돌 중
+                player.near_portal = obj
+                print("Player near Portal! Press F to enter Stage 2")
+
+            elif isinstance(obj, Banshee):
                 print("Player collided with Banshee!")
                 player.hp -= obj.get_damage()
 
@@ -114,6 +119,21 @@ class Stage1Scene:
             elif isinstance(obj, Bullet):
                 print("Player collided with Bullet!")
                 player.hp -= obj.get_damage()
+
+    def handle_events(self, events):
+        """이벤트 처리 및 씬 전환 감지"""
+        self.update_mouse_from_events(events)
+
+        # 플레이어 이벤트 처리
+        result = player.handel_event(events)
+
+        # 포탈 진입 신호 확인
+        if result == 'enter_portal':
+            print("Entering Stage 2...")
+            SceneManager.change_scene(Stage2_scene.Stage2Scene())
+            return True
+
+        return False
 
     def render(self):
         # 맵 타일 렌더링 (충돌 박스 표시 활성화)
@@ -134,6 +154,12 @@ class Stage1Scene:
             (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
             (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
         )
+
+        # 포탈 근처에 있을 때 UI 표시
+        if player.near_portal:
+            font = ResourceManager.get_font("default")
+            font.draw(SceneManager.screen_width // 2 - 100, SceneManager.screen_height - 50,
+                     "Press F to Enter", (255, 255, 255))
 
     def update_mouse_from_events(self, events):
         """이벤트에서 마우스 좌표를 읽어 월드 좌표로 변환"""
