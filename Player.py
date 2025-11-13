@@ -16,7 +16,7 @@ class Player:
         self.dash_count = 3
         self.state = 'idle'
         self.x = SceneManager.screen_width // 2
-        self.y = 120
+        self.y = 128
         self.speed = 200
         self.direction = 0
         self.frame_count = 0
@@ -322,8 +322,8 @@ class Player:
                 (right - camera_x) * zoom, (top - camera_y) * zoom
             )
 
-        # font = ResourceManager.get_font("default")
-        # font.draw(10, SceneManager.screen_height - 30, f'HP: {self.hp}', (255, 0, 0))
+        font = ResourceManager.get_font("default")
+        font.draw(10, SceneManager.screen_height - 30, f'{self.x, self.y}', (255, 0, 0))
 
 
 

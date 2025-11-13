@@ -47,16 +47,85 @@ class Bat:
             self.direction = -1
         else:
             self.direction = 1
+
+        # 이동할 위치 계산
+        new_x = self.x
+        new_y = self.y
+
         if dist2 < min_dist2:
             # 너무 가까우면 멀어짐
-            self.x -= math.cos(angle) * self.moveSpeed * dt
-            self.y -= math.sin(angle) * self.moveSpeed * dt
+            new_x = self.x - math.cos(angle) * self.moveSpeed * dt
+            new_y = self.y - math.sin(angle) * self.moveSpeed * dt
         elif dist2 > max_dist2:
-            self.x += math.cos(angle) * self.moveSpeed * dt
-            self.y += math.sin(angle) * self.moveSpeed * dt
+            new_x = self.x + math.cos(angle) * self.moveSpeed * dt
+            new_y = self.y + math.sin(angle) * self.moveSpeed * dt
         else:
-            self.x += math.cos(angle) * 50 * dt
-            self.y += math.sin(angle) * 50 * dt
+            new_x = self.x + math.cos(angle) * 50 * dt
+            new_y = self.y + math.sin(angle) * 50 * dt
+
+        # 벽 충돌 체크 후 위치 업데이트
+        final_x, final_y = self.check_wall_collision(new_x, new_y)
+        self.x = final_x
+        self.y = final_y
+
+    def check_wall_collision(self, new_x, new_y):
+        """벽 충돌 체크 및 위치 보정"""
+        if not self.map_manager:
+            return new_x, new_y
+
+        half_width = self.width // 2
+        half_height = self.height // 2
+
+        # 현재 위치의 충돌 박스
+        old_left = self.x - half_width
+        old_right = self.x + half_width
+        old_bottom = self.y - half_height + 7
+        old_top = self.y + half_height + 5
+
+        # 새 위치에서의 충돌 박스
+        left = new_x - half_width
+        bottom = new_y - half_height + 7
+        right = new_x + half_width
+        top = new_y + half_height + 5
+
+        # 충돌하는 타일들 가져오기
+        colliding_tiles = self.map_manager.check_collision(left, bottom, right, top)
+
+        # Y축 충돌 처리 먼저
+        for tile in colliding_tiles:
+            x_overlap = (old_left < tile['right'] and old_right > tile['left'])
+
+            if x_overlap:
+                # 수직 충돌 처리 (Y축)
+                if old_top <= tile['bottom'] and top > tile['bottom']:
+                    # 위에서 타일에 부딪힘 (천장)
+                    new_y = tile['bottom'] - half_height - 5
+                elif old_bottom >= tile['top'] and bottom < tile['top']:
+                    # 아래에서 타일에 부딪힘 (바닥)
+                    new_y = tile['top'] + half_height - 7
+
+        # Y축 처리 후 업데이트된 위치로 X축 충돌 체크
+        left = new_x - half_width
+        bottom = new_y - half_height + 7
+        right = new_x + half_width
+        top = new_y + half_height + 5
+
+        colliding_tiles_x = self.map_manager.check_collision(left, bottom, right, top)
+
+        for tile in colliding_tiles_x:
+            # Y축 오버랩 체크
+            y_overlap = (bottom < tile['top'] and top > tile['bottom'])
+
+            if y_overlap:
+                # 수평 충돌 처리
+                if old_right <= tile['left'] and right > tile['left']:
+                    # 왼쪽 벽에 부딪힘
+                    new_x = tile['left'] - half_width - 0.1
+                elif old_left >= tile['right'] and left < tile['right']:
+                    # 오른쪽 벽에 부딪힘
+                    new_x = tile['right'] + half_width + 0.1
+
+        return new_x, new_y
 
     def get_damage(self):
         return self.attack_power
