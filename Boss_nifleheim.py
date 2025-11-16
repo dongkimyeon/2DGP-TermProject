@@ -186,7 +186,7 @@ class Boss:
             self.frame_timer = 0.0
 
 
-        print(self.frame_count)
+
 
 
     def render(self, camera_x=0, camera_y=0, zoom=1.0):

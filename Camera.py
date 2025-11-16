@@ -13,14 +13,19 @@ class Camera:
             # Center camera on player
             self.mX = self.mTarget.x - (SceneManager.screen_width/2)  # 1280 / 2
             self.mY = self.mTarget.y - (SceneManager.screen_height/2)  # 720 / 2
-            # Clamp to map bounds (2000x2000)
-            if SceneManager.active_scene == 'BossStageScene':
-                self.mX = max(0.0, min(self.mX, 0))
-                self.mY = max(0.0, min(self.mY, 1600.0 - 720.0))
+            # 보스 스테이지 판별
+            active = SceneManager.active_scene
+            is_boss = False
+            try:
+                is_boss = (hasattr(active, '__class__') and
+                           active.__class__.__name__ == 'BossStageScene')
+            except Exception:
+                is_boss = False
+            if is_boss:
+                self.mX = max(0.0, min(self.mX, 16))
             else:
                 self.mX = max(0.0, min(self.mX, 3200.0 - 1280.0))
-                self.mY = max(0.0, min(self.mY, 1600.0 - 720.0))
-
+            self.mY = max(0.0, min(self.mY, 100))
 
     def set_target(self, target):
         self.mTarget = target
