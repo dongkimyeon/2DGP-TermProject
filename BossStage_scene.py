@@ -1,3 +1,5 @@
+from pico2d import load_image
+
 import SceneManager
 import pico2d
 from Player import player
@@ -13,7 +15,7 @@ from ResourceManager import ResourceManager
 class BossStageScene:
     def __init__(self):
         print("[BossStageScene] __init__()")
-
+        self.background = load_image('resources/images/Map/StageMapTile/IceBackGround.png')
         self.gameobjs = []
         # MapManager 초기화 - 보스 스테이지용 맵 사용
         self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16*1.5, filename='map2.txt')
@@ -90,6 +92,9 @@ class BossStageScene:
 
     def render(self):
         # 맵 타일 렌더링 (충돌 박스 표시 활성화)
+        self.background.draw(SceneManager.screen_width // 2, SceneManager.screen_height // 2, SceneManager.screen_width,
+                             SceneManager.screen_height)
+
         self.map_manager.render(self.camera.mX, self.camera.mY, self.camera.zoom, draw_collision_box=True)
 
         # 게임 오브젝트 렌더링
