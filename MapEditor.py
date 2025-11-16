@@ -1,5 +1,6 @@
 import os
 from pico2d import *
+import math
 
 # 설정
 TILE_SIZE = 16
@@ -15,7 +16,9 @@ TILE_FILES = [
     'iceBottomTile0.png', 'iceBottomTile1.png', 'iceBottomTile2.png', 'iceFloorTile.png',
     'mapDecoObj0.png', 'mapDecoObj1.png', 'mapDecoObj2.png',
     'wallTile0.png', 'wallTile1.png', 'wallTile2.png', 'wallTile3.png', 'wallTile4.png',
-    'wallTile5.png', 'wallTile6.png', 'wallTile7.png', 'wallTile8.png', 'backGroundTile.png'
+    'wallTile5.png', 'wallTile6.png', 'wallTile7.png', 'wallTile8.png', 'backGroundTile.png',
+    'IceWallTile0.png', 'IceWallTile1.png', 'IceWallTile2.png', 'IceWallTile3.png', 'IceWallTile4.png',
+    'IceWallTile5.png', 'IceWallTile6.png', 'IceWallTile7.png'
 ]
 
 # 초기화
@@ -132,19 +135,20 @@ def handle_events():
                     print(f"({gx}, {gy})의 타일을 제거했습니다")
             # 미리보기 타일 클릭 처리
             elif e.button == SDL_BUTTON_LEFT and mx >= GRID_WIDTH * TILE_SIZE:
-                for col in range(3):
-                    preview_x = GRID_WIDTH * TILE_SIZE + 20 + col * (TILE_SIZE + 10)
-                    num_tiles = 7 if col < 2 else 6
-                    start_idx = 7 if col == 1 else 14 if col == 2 else 0
-                    for i in range(num_tiles):
-                        tile_idx = start_idx + i
-                        if tile_idx >= len(tile_images):
-                            break
-                        tile_y = WINDOW_HEIGHT - (i + 1) * (TILE_SIZE + 10) + TILE_SIZE // 2
-                        if preview_x <= mx < preview_x + TILE_SIZE and tile_y - TILE_SIZE // 2 <= my < tile_y + TILE_SIZE // 2:
-                            selected_tile = tile_idx
-                            eraser_mode = False  # 타일 선택 시 지우개 모드 자동 해제
-                            print(f"선택된 타일: {TILE_FILES[selected_tile]}")
+                total = len(tile_images)
+                if total > 0:
+                    per_col = math.ceil(total / 3)
+                    for col in range(3):
+                        preview_x = GRID_WIDTH * TILE_SIZE + 20 + col * (TILE_SIZE + 10)
+                        start_idx = col * per_col
+                        end_idx = min(total, (col + 1) * per_col)
+                        for idx in range(start_idx, end_idx):
+                            i = idx - start_idx
+                            tile_center_y = WINDOW_HEIGHT - (i + 1) * (TILE_SIZE + 10) + TILE_SIZE // 2
+                            if preview_x <= mx < preview_x + TILE_SIZE and tile_center_y - TILE_SIZE // 2 <= my < tile_center_y + TILE_SIZE // 2:
+                                selected_tile = idx
+                                eraser_mode = False  # 타일 선택 시 지우개 모드 자동 해제
+                                print(f"선택된 타일: {TILE_FILES[selected_tile]}")
         elif e.type == SDL_MOUSEBUTTONUP:
             if e.button == SDL_BUTTON_LEFT:
                 # 영역 선택 종료 - 영역 채우기
@@ -213,21 +217,24 @@ while running:
         draw_rectangle(min_x, min_y, max_x, max_y)
 
     # 미리보기 타일 그리기 (3열로 배치)
-    for col in range(3):
-        preview_x = GRID_WIDTH * TILE_SIZE + 20 + col * (TILE_SIZE + 10)
-        num_tiles = 7 if col < 2 else 6
-        start_idx = 7 if col == 1 else 14 if col == 2 else 0
-        for i in range(num_tiles):
-            tile_idx = start_idx + i
-            if tile_idx >= len(tile_images):
-                break
-            tile_y = WINDOW_HEIGHT - (i + 1) * (TILE_SIZE + 10)
-            tile_images[tile_idx].draw(preview_x + TILE_SIZE // 2, tile_y + TILE_SIZE // 2, TILE_SIZE, TILE_SIZE)
+    total = len(tile_images)
+    if total > 0:
+        per_col = math.ceil(total / 3)
+        for col in range(3):
+            preview_x = GRID_WIDTH * TILE_SIZE + 20 + col * (TILE_SIZE + 10)
+            start_idx = col * per_col
+            end_idx = min(total, (col + 1) * per_col)
+            for idx in range(start_idx, end_idx):
+                i = idx - start_idx
+                tile_center_y = WINDOW_HEIGHT - (i + 1) * (TILE_SIZE + 10) + TILE_SIZE // 2
+                tile_images[idx].draw(preview_x + TILE_SIZE // 2, tile_center_y, TILE_SIZE, TILE_SIZE)
 
     # 선택된 타일 주변에 테두리 그리기 (지우개 모드가 아닐 때만)
     if not eraser_mode and selected_tile < len(tile_images):
-        col_idx = 0 if selected_tile < 7 else 1 if selected_tile < 14 else 2
-        row_idx = selected_tile if selected_tile < 7 else selected_tile - 7 if selected_tile < 14 else selected_tile - 14
+        total = len(tile_images)
+        per_col = math.ceil(total / 3) if total > 0 else 1
+        col_idx = selected_tile // per_col
+        row_idx = selected_tile % per_col
         preview_x = GRID_WIDTH * TILE_SIZE + 20 + col_idx * (TILE_SIZE + 10)
         tile_y = WINDOW_HEIGHT - (row_idx + 1) * (TILE_SIZE + 10)
         draw_rectangle(preview_x, tile_y, preview_x + TILE_SIZE, tile_y + TILE_SIZE)
@@ -236,4 +243,3 @@ while running:
     handle_events()
 
 close_canvas()
-

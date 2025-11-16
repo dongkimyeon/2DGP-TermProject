@@ -10,7 +10,9 @@ class MapManager:
         'iceBottomTile0.png', 'iceBottomTile1.png', 'iceBottomTile2.png', 'iceFloorTile.png',
         'mapDecoObj0.png', 'mapDecoObj1.png', 'mapDecoObj2.png',
         'wallTile0.png', 'wallTile1.png', 'wallTile2.png', 'wallTile3.png', 'wallTile4.png',
-        'wallTile5.png', 'wallTile6.png', 'wallTile7.png', 'wallTile8.png', 'backGroundTile.png'
+        'wallTile5.png', 'wallTile6.png', 'wallTile7.png', 'wallTile8.png', 'backGroundTile.png',
+        'IceWallTile0.png', 'IceWallTile1.png', 'IceWallTile2.png', 'IceWallTile3.png', 'IceWallTile4.png',
+        'IceWallTile5.png', 'IceWallTile6.png', 'IceWallTile7.png'
     ]
 
     def __init__(self, grid_width=100, grid_height=50, tile_size=16, filename='map.txt'):
@@ -66,13 +68,18 @@ class MapManager:
             print(f"맵 로드 실패: {e}")
 
     def is_collision_tile(self, tile_idx):
-        """충돌이 발생하는 타일인지 확인"""
+        """충돌이 발생하는 타일인지 확인
+
+        주의: 여기에서 build_collision_tiles()를 호출하면 build -> is_collision_tile -> build ... 식의
+        무한 재귀가 발생하므로 절대 호출하지 않습니다.
+        """
         if tile_idx < 0 or tile_idx >= len(self.TILE_FILES):
             return False
 
-        tile_name = self.TILE_FILES[tile_idx]
+        tile_name = self.TILE_FILES[tile_idx].lower()
         # wallTile 또는 bottomTile 키워드가 포함된 타일은 충돌 타일
-        return 'wallTile' in tile_name or 'bottomTile' in tile_name
+        # ice 관련 타일도 충돌로 처리
+        return any(k in tile_name for k in ('walltile', 'bottomtile', 'icebottom', 'icefloortile', 'icewalltile'))
 
     def build_collision_tiles(self):
         """맵 데이터에서 충돌 타일 정보 추출"""
