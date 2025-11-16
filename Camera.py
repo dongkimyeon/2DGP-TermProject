@@ -1,5 +1,5 @@
 #카메라 수정
-
+import SceneManager
 class Camera:
     def __init__(self):
         self.mX = 0.0
@@ -10,12 +10,17 @@ class Camera:
 
     def update(self):
         if self.mTarget:
-            # Center camera on player (viewport 1280x720)
-            self.mX = self.mTarget.x - 640.0  # 1280 / 2
-            self.mY = self.mTarget.y - 360.0  # 720 / 2
+            # Center camera on player
+            self.mX = self.mTarget.x - (SceneManager.screen_width/2)  # 1280 / 2
+            self.mY = self.mTarget.y - (SceneManager.screen_height/2)  # 720 / 2
             # Clamp to map bounds (2000x2000)
-            self.mX = max(0.0, min(self.mX, 3200.0 - 1280.0))
-            self.mY = max(0.0, min(self.mY, 1600.0 - 720.0))
+            if SceneManager.active_scene == 'BossStageScene':
+                self.mX = max(0.0, min(self.mX, 0))
+                self.mY = max(0.0, min(self.mY, 1600.0 - 720.0))
+            else:
+                self.mX = max(0.0, min(self.mX, 3200.0 - 1280.0))
+                self.mY = max(0.0, min(self.mY, 1600.0 - 720.0))
+
 
     def set_target(self, target):
         self.mTarget = target

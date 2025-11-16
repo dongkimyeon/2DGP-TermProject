@@ -121,7 +121,7 @@ class MapManager:
                     screen_x = (x * self.TILE_SIZE - camera_x) * zoom + int(self.TILE_SIZE // 2 * zoom)
                     screen_y = (y * self.TILE_SIZE - camera_y) * zoom + int(self.TILE_SIZE // 2 * zoom)
 
-                    
+
                     if idx >= 0 and idx < len(self.TILE_FILES):
                         tile_name = self.TILE_FILES[idx].lower()
                         if 'mapdeco' in tile_name:
