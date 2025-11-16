@@ -120,6 +120,13 @@ class MapManager:
                 if idx >= 0 and idx < len(self.tile_images):
                     screen_x = (x * self.TILE_SIZE - camera_x) * zoom + int(self.TILE_SIZE // 2 * zoom)
                     screen_y = (y * self.TILE_SIZE - camera_y) * zoom + int(self.TILE_SIZE // 2 * zoom)
+
+                    
+                    if idx >= 0 and idx < len(self.TILE_FILES):
+                        tile_name = self.TILE_FILES[idx].lower()
+                        if 'mapdeco' in tile_name:
+                            screen_y -= 5 * zoom
+
                     self.tile_images[idx].draw(
                         screen_x,
                         screen_y,
