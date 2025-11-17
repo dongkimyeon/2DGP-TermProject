@@ -28,6 +28,7 @@ class Skel:
         self.attack_cooldown = 0.0  # 쿨타임 1초
         self.is_attacking = False  # 공격 애니메이션 진행 중 여부
         self.attack_frame_max = 0  # 공격 애니메이션 프레임 수
+        self.attack_direction = 1  # 공격 시작 시 방향 고정용
         self.map_manager = None  # 맵 매니저 참조
 
     def set_map_manager(self, map_manager):
@@ -51,6 +52,8 @@ class Skel:
         if (player.x - self.x) ** 2 + (player.y - self.y) ** 2 < self.attack_radius ** 2 and not self.is_attacking:
             self.state = 'attack'
             self.is_attacking = True
+            # 공격 시작 시 현재 방향을 고정
+            self.attack_direction = self.direction
             # 공격 애니메이션 프레임 수 저장
             _, frame_count, _, _ = ResourceManager.get_image(f"skel_attack")
             self.attack_frame_max = frame_count
@@ -75,14 +78,20 @@ class Skel:
 
     def update(self):
         dt = Time.DeltaTime()
-        dx = player.x - self.x
-        dy = player.y - self.y
 
-        angle = math.atan2(dy, dx)
-        if (angle > math.pi / 2 or angle < -math.pi / 2):
-            self.direction = -1
+        # 공격 중이 아닐 때만 방향 업데이트
+        if not self.is_attacking:
+            dx = player.x - self.x
+            dy = player.y - self.y
+            angle = math.atan2(dy, dx)
+            if (angle > math.pi / 2 or angle < -math.pi / 2):
+                self.direction = -1
+            else:
+                self.direction = 1
         else:
-            self.direction = 1
+            # 공격 중일 때는 공격 시작 시의 방향 유지
+            self.direction = self.attack_direction
+
         # 공격 중이면 애니메이션 끝날 때까지 상태 유지
         if self.is_attacking:
             self.state = 'attack'
