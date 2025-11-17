@@ -63,6 +63,9 @@ class BossStageScene:
         # 먼저 플레이어의 포탈 근처 상태 초기화
         player.near_portal = None
 
+        # 충돌 시 제거할 객체 리스트
+        objects_to_remove = []
+
         left_a, bottom_a, right_a, top_a = player.get_bb()
         for obj in self.gameobjs:
             left_b, bottom_b, right_b, top_b = obj.get_bb()
@@ -84,6 +87,13 @@ class BossStageScene:
             elif isinstance(obj, IceBullet):
                 print("Player collided with IceBullet!")
                 player.hp -= 10
+                # IceBullet을 제거 리스트에 추가
+                objects_to_remove.append(obj)
+
+        # 충돌한 객체들을 gameobjs에서 제거
+        for obj in objects_to_remove:
+            if obj in self.gameobjs:
+                self.gameobjs.remove(obj)
 
     def handle_events(self, events):
         """이벤트 처리"""
