@@ -37,7 +37,11 @@ class BossStageScene:
 
     def enter(self):
         print("[BossStageScene] enter()")
-        pass
+        # 씬 진입 시 플레이어에게 이 씬의 맵 매니저를 다시 설정
+        player.set_map_manager(self.map_manager)
+        # 플레이어 위치 초기화 (필요시)
+        player.x = 100
+        player.y = 200
 
     def exit(self):
         print("[BossStageScene] exit()")
@@ -151,4 +155,3 @@ class BossStageScene:
                 SceneManager.mouse_world = (wx, wy)
                 self.mouse_world = (wx, wy)
                 break
-

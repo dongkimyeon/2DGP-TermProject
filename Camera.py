@@ -11,8 +11,8 @@ class Camera:
     def update(self):
         if self.mTarget:
             # Center camera on player
-            self.mX = self.mTarget.x - (SceneManager.screen_width/2)  # 1280 / 2
-            self.mY = self.mTarget.y - (SceneManager.screen_height/2)  # 720 / 2
+            self.mX = self.mTarget.x - 640.0  # 1280 / 2
+            self.mY = self.mTarget.y - 360.0  # 720 / 2
             # 보스 스테이지 판별
             active = SceneManager.active_scene
             is_boss = False
@@ -23,9 +23,11 @@ class Camera:
                 is_boss = False
             if is_boss:
                 self.mX = max(0.0, min(self.mX, 16))
+                self.mY = max(0.0, min(self.mY, 100))
             else:
                 self.mX = max(0.0, min(self.mX, 3200.0 - 1280.0))
-            self.mY = max(0.0, min(self.mY, 100))
+                self.mY = max(0.0, min(self.mY, 1600-720))
+
 
     def set_target(self, target):
         self.mTarget = target

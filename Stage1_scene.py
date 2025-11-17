@@ -12,7 +12,6 @@ from Camera import Camera
 from Portal import Portal
 import random
 from ResourceManager import ResourceManager
-import Stage2_scene
 
 
 class Stage1Scene:
@@ -63,7 +62,11 @@ class Stage1Scene:
 
     def enter(self):
         print("[Stage1Scene] enter()")
-        pass
+        # 씬 진입 시 플레이어에게 이 씬의 맵 매니저를 다시 설정
+        player.set_map_manager(self.map_manager)
+        # 플레이어 위치 초기화
+        player.x = 100
+        player.y = 200
 
     def exit(self):
         print("[Stage1Scene] exit()")
@@ -130,7 +133,7 @@ class Stage1Scene:
         # 포탈 진입 신호 확인
         if result == 'enter_portal':
             print("Entering Stage 2...")
-            SceneManager.change_scene(Stage2_scene.Stage2Scene())
+            SceneManager.load_scene("Stage2Scene")
             return True
 
         return False
@@ -193,3 +196,4 @@ class Stage1Scene:
                 SceneManager.mouse_world = (wx, wy)
                 self.mouse_world = (wx, wy)
                 break
+

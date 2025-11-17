@@ -62,7 +62,11 @@ class Stage2Scene:
 
     def enter(self):
         print("[Stage2Scene] enter()")
-        pass
+        # 씬 진입 시 플레이어에게 이 씬의 맵 매니저를 다시 설정
+        player.set_map_manager(self.map_manager)
+        # 플레이어 위치 초기화
+        player.x = 100
+        player.y = 200
 
     def exit(self):
         print("[Stage2Scene] exit()")
@@ -97,7 +101,7 @@ class Stage2Scene:
             if isinstance(obj, Portal):
                 # 포탈과 충돌 중
                 player.near_portal = obj
-                print("Player near Portal!")
+                print("Player near Portal! Press F to enter Boss Stage")
 
             elif isinstance(obj, Banshee):
                 print("Player collided with Banshee!")
@@ -129,11 +133,11 @@ class Stage2Scene:
         # 포탈 진입 신호 확인 - 보스 스테이지로 전환
         if result == 'enter_portal':
             print("Entering Boss Stage...")
-            import BossStage_scene
-            SceneManager.change_scene(BossStage_scene.BossStageScene())
+            SceneManager.load_scene("BossStageScene")
             return True
 
         return False
+
     def render(self):
         # 맵 타일 렌더링 (충돌 박스 표시 활성화)
         self.map_manager.render(self.camera.mX, self.camera.mY, self.camera.zoom, draw_collision_box=True)
@@ -192,3 +196,4 @@ class Stage2Scene:
                 SceneManager.mouse_world = (wx, wy)
                 self.mouse_world = (wx, wy)
                 break
+

@@ -83,7 +83,7 @@ class TitleScene:
                 if (self.screen_width // 2 - (self.play_On_width * 10.0) // 2 <= mouse_x <= self.screen_width // 2 + (self.play_On_width * 10.0) // 2 and
                     self.screen_height // 2 - 100 - (self.play_On_height * 10.0) // 2 <= mouse_y <= self.screen_height // 2 - 100 + (self.play_On_height * 10.0) // 2):
                     print("[TitleScene] Play 버튼 클릭, Stage1Scene으로 전환")
-                    SceneManager.load_scene("BossStageScene")
+                    SceneManager.load_scene("Stage1Scene")
 
                 # exit button click check
                 if (self.screen_width // 2 - (self.exit_On_width * 10.0) // 2 <= mouse_x <= self.screen_width // 2 + (self.exit_On_width * 10.0) // 2 and
