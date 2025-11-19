@@ -5,6 +5,7 @@ from ResourceManager import ResourceManager
 import pico2d
 from Time import Time
 import math
+import random
 
 class KatanaEffect:
     def __init__(self, player):
@@ -22,11 +23,13 @@ class KatanaEffect:
         self.special_attack_damage = 25  # 차지 공격 데미지 20 ~ 25
         self.default_damage = 13  # 기본 공격 데미지 10 ~ 13
         self.image = None
+        self.hit_enemies = set()  # 이번 공격에서 이미 맞은 적들을 추적
         #기본 공격 데미지 10 ~ 13
         #차지 공격 데미지 20 ~ 25
 
     def start(self):
         self.active = True
+        self.hit_enemies.clear()  # 새 공격 시작 시 히트 리스트 초기화
         if self.player.chargingGage >= self.player.max_chargingGage:
             self.special_attack = True
             self.player.chargingGage = 0.0
@@ -37,7 +40,7 @@ class KatanaEffect:
         self.frame_timer = 0.0
 
     def get_bb(self):
-        if  not self.active:
+        if not self.active:
             return (0, 0, 0, 0)
 
         half_width = (self.width // 9) // 2
@@ -48,10 +51,19 @@ class KatanaEffect:
             return self.x - half_width, self.y - half_height, self.x + half_width, self.y + half_height
 
     def get_damage(self):
+        # 랜덤 데미지 적용
         if self.special_attack:
-            return self.special_attack_damage
+            return random.randint(20, 25)  # 풀차지: 20~25
         else:
-            return self.default_damage
+            return random.randint(10, 13)  # 기본: 10~13
+
+    def can_hit(self, enemy):
+        """해당 적을 공격할 수 있는지 확인 (이미 맞았으면 False)"""
+        return id(enemy) not in self.hit_enemies
+
+    def mark_hit(self, enemy):
+        """적을 맞은 것으로 표시"""
+        self.hit_enemies.add(id(enemy))
 
     def update(self):
         if not self.active:
@@ -67,6 +79,7 @@ class KatanaEffect:
             self.frame_count += 1
             if self.frame_count >= 9:  # 프레임 수에 맞게 조정
                 self.active = False
+                self.hit_enemies.clear()  # 공격 종료 시 히트 리스트 초기화
 
         # 위치와 각도 갱신
         offset_radius = 40
@@ -74,8 +87,6 @@ class KatanaEffect:
         self.x = self.player.x + offset_radius * math.cos(angle)
         self.y = self.player.y + offset_radius * math.sin(angle)
         self.angle = angle
-
-
 
     def render(self, camera_x=0, camera_y=0, zoom=1.0):
         if not self.active:

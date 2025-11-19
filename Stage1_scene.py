@@ -92,6 +92,7 @@ class Stage1Scene:
         # 충돌 시 제거할 객체 리스트
         objects_to_remove = []
 
+        # 플레이어와 다른 객체들의 충돌 체크
         left_a, bottom_a, right_a, top_a = player.get_bb()
         for obj in self.gameobjs:
             left_b, bottom_b, right_b, top_b = obj.get_bb()
@@ -129,6 +130,24 @@ class Stage1Scene:
                 player.hp -= obj.get_damage()
                 # Bullet도 제거 리스트에 추가
                 objects_to_remove.append(obj)
+
+        # 카타나 이펙트와 적들의 충돌 체크
+        if player.katana_effect.active:
+            katana_left, katana_bottom, katana_right, katana_top = player.katana_effect.get_bb()
+
+            for obj in self.gameobjs:
+                if isinstance(obj, Ghost):
+                    obj_left, obj_bottom, obj_right, obj_top = obj.get_bb()
+
+                    # AABB 충돌 체크
+                    if not (katana_left > obj_right or katana_right < obj_left or
+                            katana_top < obj_bottom or katana_bottom > obj_top):
+                        # 충돌 발생
+                        obj.handle_collision('katana_effect:ghost', player.katana_effect)
+
+                        # 체력이 0 이하면 제거 리스트에 추가
+                        if obj.health <= 0:
+                            objects_to_remove.append(obj)
 
         # 충돌한 객체들을 gameobjs에서 제거
         for obj in objects_to_remove:

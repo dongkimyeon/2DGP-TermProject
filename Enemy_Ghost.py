@@ -94,4 +94,10 @@ class Ghost:
 
     def handle_collision(self, group, other):
         """충돌 처리"""
-        pass
+        if group == 'katana_effect:ghost':
+            # 카타나 이펙트와 충돌
+            if other.can_hit(self):  # 아직 맞지 않았다면
+                damage = other.get_damage()
+                self.take_damage(damage)
+                other.mark_hit(self)  # 맞은 것으로 표시
+                print(f"유령이 {damage} 데미지를 받았습니다! 남은 체력: {self.health}")
