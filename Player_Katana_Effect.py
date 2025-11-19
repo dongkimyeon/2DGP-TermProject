@@ -58,11 +58,9 @@ class KatanaEffect:
             return random.randint(10, 13)  # 기본: 10~13
 
     def can_hit(self, enemy):
-        """해당 적을 공격할 수 있는지 확인 (이미 맞았으면 False)"""
         return id(enemy) not in self.hit_enemies
 
     def mark_hit(self, enemy):
-        """적을 맞은 것으로 표시"""
         self.hit_enemies.add(id(enemy))
 
     def update(self):

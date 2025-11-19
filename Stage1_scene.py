@@ -117,7 +117,6 @@ class Stage1Scene:
         # 카타나 이펙트와 적들의 충돌 체크
         if player.katana_effect.active:
             katana_left, katana_bottom, katana_right, katana_top = player.katana_effect.get_bb()
-
             for obj in self.gameobjs:
                 if isinstance(obj, Ghost):
                     obj_left, obj_bottom, obj_right, obj_top = obj.get_bb()

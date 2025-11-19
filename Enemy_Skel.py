@@ -30,7 +30,7 @@ class Skel:
         self.attack_frame_max = 0  # 공격 애니메이션 프레임 수
         self.attack_direction = 1  # 공격 시작 시 방향 고정용
         self.map_manager = None  # 맵 매니저 참조
-        self.attack_hit_applied = False  # 공격 히트 적용 여부
+        self.attack_hit_applied = False
 
 
     def set_map_manager(self, map_manager):
@@ -64,6 +64,8 @@ class Skel:
 
     def take_damage(self, damage):
         self.health -= damage
+        temp = self.state
+        self.state = temp + '_shot'
 
     def get_damage(self):
         return self.attack_power
@@ -138,14 +140,14 @@ class Skel:
         draw_y = int((self.y - camera_y) * zoom) + int(height // 2 * zoom)
         if image:
             if self.direction == 1:
-                if(self.state == 'attack'):
+                if self.state == 'attack' or self.state == 'attack_shot':
                     image.clip_draw(frame * width // frame_count, 0, width // frame_count, height,
                                     int(draw_x + 22 * 1.5 * zoom), int(draw_y + 15 * zoom), int((self.width * 2.0) * 1.5 * zoom), int((self.height * 1.6) * 1.5 * zoom))
                 else:
                     image.clip_draw(frame * width // frame_count, 0, width // frame_count, height,
                                     draw_x, draw_y, int(self.width * 1.5 * zoom), int(self.height * 1.5 * zoom))
             else:
-                if (self.state == 'attack'):
+                if self.state == 'attack' or self.state == 'attack_shot':
                     image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h',
                                               int(draw_x - 22 * 1.5 * zoom), int(draw_y + 15 * zoom), int((self.width * 2.0) * 1.5 * zoom), int((self.height * 1.6) * 1.5 * zoom))
                 else:
@@ -155,7 +157,6 @@ class Skel:
         return self.health <= 0
 
     def handle_collision(self, group, other):
-        """충돌 처리"""
         if group == 'katana_effect:skel':
             # 카타나 이펙트와 충돌
             if other.can_hit(self):  # 아직 맞지 않았다면
