@@ -32,6 +32,8 @@ class Skel:
         self.map_manager = None  # 맵 매니저 참조
         self.attack_hit_applied = False
 
+        self.shot_timer = 0.0
+        self.shot_duration = 1.0
 
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
@@ -66,7 +68,7 @@ class Skel:
         self.health -= damage
         temp = self.state
         self.state = temp + '_shot'
-
+        self.shot_timer = 0.0
     def get_damage(self):
         return self.attack_power
 
@@ -81,6 +83,14 @@ class Skel:
 
     def update(self):
         dt = Time.DeltaTime()
+
+        # shot 타이머 업데이트 및 상태 해제
+        if '_shot' in self.state:
+            self.shot_timer += dt
+            if self.shot_timer >= self.shot_duration:
+                self.state = self.state.replace('_shot', '')
+                self.shot_timer = 0.0
+
 
         # 공격 중이 아닐 때만 방향 업데이트
         if not self.is_attacking:

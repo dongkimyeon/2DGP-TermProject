@@ -36,13 +36,13 @@ class Stage1Scene:
         #     newBat.set_position(rand_x, rand_y)
         #     newBat.set_map_manager(self.map_manager)
         #     self.gameobjs.append(newBat)
-        # for _ in range(1):
-        #     newGhost = Ghost()
-        #     rand_x = 200
-        #     rand_y = random.randint(100, 400)
-        #     newGhost.set_position(rand_x, rand_y)
-        #     newGhost.set_map_manager(self.map_manager)
-        #     self.gameobjs.append(newGhost)
+        for _ in range(1):
+            newGhost = Ghost()
+            rand_x = 200
+            rand_y = random.randint(100, 400)
+            newGhost.set_position(rand_x, rand_y)
+            newGhost.set_map_manager(self.map_manager)
+            self.gameobjs.append(newGhost)
         for _ in range(1):
             newSkel = Skel()
             rand_x = 100

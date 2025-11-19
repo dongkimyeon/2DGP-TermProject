@@ -28,6 +28,9 @@ class Ghost:
         self.attack_cooldown = 0.0  # 쿨타임 1초
         self.map_manager = None  # 맵 매니저 참조
 
+        self.shot_timer = 0.0
+        self.shot_duration = 1.0
+
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
         self.map_manager = map_manager
@@ -53,6 +56,9 @@ class Ghost:
 
     def take_damage(self, damage):
         self.health -= damage
+        temp = self.state
+        self.state = temp + '_shot'
+        self.shot_timer = 0.0
 
     def get_damage(self):
         return self.attack_power
@@ -68,6 +74,14 @@ class Ghost:
 
     def update(self):
         dt = Time.DeltaTime()
+
+        # shot 타이머 업데이트 및 상태 해제
+        if '_shot' in self.state:
+            self.shot_timer += dt
+            if self.shot_timer >= self.shot_duration:
+                self.state = self.state.replace('_shot', '')
+                self.shot_timer = 0.0
+
         self.move()
         # 프레임 애니메이션
         self.frame_timer += dt
