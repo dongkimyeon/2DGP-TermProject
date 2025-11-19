@@ -33,7 +33,7 @@ class Skel:
         self.attack_hit_applied = False
 
         self.shot_timer = 0.0
-        self.shot_duration = 1.0
+        self.shot_duration = 0.1
 
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
@@ -91,7 +91,6 @@ class Skel:
                 self.state = self.state.replace('_shot', '')
                 self.shot_timer = 0.0
 
-
         # 공격 중이 아닐 때만 방향 업데이트
         if not self.is_attacking:
             dx = player.x - self.x
@@ -107,7 +106,8 @@ class Skel:
 
         # 공격 중이면 애니메이션 끝날 때까지 상태 유지
         if self.is_attacking:
-            self.state = 'attack'
+            if '_shot' not in self.state:
+                self.state = 'attack'
             # 공격 애니메이션 3번째 프레임(인덱스 2)에서 플레이어와 충돌 체크
             current_frame = self.frame_count % self.attack_frame_max if self.attack_frame_max > 0 else 0
             if current_frame == 2 and not self.attack_hit_applied:
@@ -123,10 +123,12 @@ class Skel:
         else:
             # 플레이어 감지
             if (player.x - self.x) ** 2 + (player.y - self.y) ** 2 < self.detection_radius ** 2:
-                self.state = 'move'
+                if '_shot' not in self.state:
+                    self.state = 'move'
                 self.move()
             else:
-                self.state = 'idle'
+                if '_shot' not in self.state:
+                    self.state = 'idle'
 
         # 프레임 애니메이션
         self.frame_timer += dt
@@ -138,13 +140,16 @@ class Skel:
                 self.is_attacking = False
                 self.attack_hit_applied = False  # 히트 플래그 리셋
                 # 공격 후 플레이어 위치에 따라 상태 결정
-                if (player.x - self.x) ** 2 + (player.y - self.y) ** 2 < self.detection_radius ** 2:
-                    self.state = 'move'
-                else:
-                    self.state = 'idle'
+                if '_shot' not in self.state:
+                    if (player.x - self.x) ** 2 + (player.y - self.y) ** 2 < self.detection_radius ** 2:
+                        self.state = 'move'
+                    else:
+                        self.state = 'idle'
 
     def render(self, camera_x=0, camera_y=0, zoom=1.0):
         image, frame_count, width, height = ResourceManager.get_image(f"skel_{self.state}")
+        if frame_count == 0:
+            return
         frame = self.frame_count % frame_count
         draw_x = int((self.x - camera_x) * zoom)
         draw_y = int((self.y - camera_y) * zoom) + int(height // 2 * zoom)

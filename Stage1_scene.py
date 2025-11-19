@@ -29,13 +29,13 @@ class Stage1Scene:
             newBanshee.set_position(rand_x, rand_y)
             newBanshee.set_map_manager(self.map_manager)
             self.gameobjs.append(newBanshee)
-        # for _ in range(1):
-        #     newBat = Bat()
-        #     rand_x = 300
-        #     rand_y = random.randint(100, 400)
-        #     newBat.set_position(rand_x, rand_y)
-        #     newBat.set_map_manager(self.map_manager)
-        #     self.gameobjs.append(newBat)
+        for _ in range(1):
+            newBat = Bat()
+            rand_x = 300
+            rand_y = random.randint(100, 400)
+            newBat.set_position(rand_x, rand_y)
+            newBat.set_map_manager(self.map_manager)
+            self.gameobjs.append(newBat)
         for _ in range(1):
             newGhost = Ghost()
             rand_x = 200

@@ -29,7 +29,7 @@ class Ghost:
         self.map_manager = None  # 맵 매니저 참조
 
         self.shot_timer = 0.0
-        self.shot_duration = 1.0
+        self.shot_duration = 0.1
 
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
@@ -43,7 +43,8 @@ class Ghost:
         dy = player.y - self.y
 
         if (player.x - self.x) ** 2 + (player.y - self.y) ** 2 < self.detection_radius ** 2:
-            self.state = 'attack'
+            if '_shot' not in self.state:
+                self.state = 'attack'
             angle = math.atan2(dy, dx)
             if(angle > math.pi/2 or angle < -math.pi/2):
                 self.direction = -1
@@ -52,7 +53,8 @@ class Ghost:
             self.x += math.cos(angle) * self.moveSpeed * Time.DeltaTime()
             self.y += math.sin(angle) * self.moveSpeed * Time.DeltaTime()
         else:
-            self.state = 'move'
+            if '_shot' not in self.state:
+                self.state = 'move'
 
     def take_damage(self, damage):
         self.health -= damage

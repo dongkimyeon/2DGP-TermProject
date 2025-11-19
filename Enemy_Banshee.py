@@ -27,7 +27,7 @@ class Banshee:
         self.map_manager = None  # 맵 매니저 참조
 
         self.shot_timer = 0.0
-        self.shot_duration = 1.0
+        self.shot_duration = 0.1
 
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
@@ -74,7 +74,7 @@ class Banshee:
 
         #플레이어 감지
         if(player.x - self.x)**2 + (player.y - self.y)**2 < self.detection_radius**2:
-            if self.state != 'attack':
+            if '_shot' not in self.state and self.state != 'attack' and self.state != 'attack_shot':
                 self.state = 'attack'
                 self.frame_count = 0
                 self.note_fired = False
@@ -104,16 +104,18 @@ class Banshee:
             else:
                 image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h',
                                           draw_x, draw_y, draw_w, draw_h)
-            if self.state == 'attack' and self.attack_cooldown <= 0:
-                if frame == frame_count - 1 and not self.note_fired:
-                    # 16방향으로 Note 발사 (한 번만)
-                    for i in range(16):
-                        angle = (2 * math.pi / 16) * i
-                        Note().shot(self.x, self.y, angle, 300)
-                    self.note_fired = True
-                    self.attack_cooldown = 3.0 # 쿨타임 리셋
-                if frame == frame_count - 1:
-                    self.state = 'idle'
+            if self.state == 'attack' or self.state == 'attack_shot':
+                if self.attack_cooldown <= 0:
+                    if frame == frame_count - 1 and not self.note_fired:
+                        # 16방향으로 Note 발사 (한 번만)
+                        for i in range(16):
+                            angle = (2 * math.pi / 16) * i
+                            Note().shot(self.x, self.y, angle, 300)
+                        self.note_fired = True
+                        self.attack_cooldown = 3.0 # 쿨타임 리셋
+                    if frame == frame_count - 1:
+                        if '_shot' not in self.state:
+                            self.state = 'idle'
         pass
 
     def is_dead(self):

@@ -28,6 +28,9 @@ class Bat:
         self.direction = 1
         self.map_manager = None  # 맵 매니저 참조
 
+        self.shot_timer = 0.0
+        self.shot_duration = 0.1
+
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
         self.map_manager = map_manager
@@ -132,6 +135,9 @@ class Bat:
 
     def take_damage(self, damage):
         self.health -= damage
+        temp = self.state
+        self.state = temp + '_shot'
+        self.shot_timer = 0.0
 
     def get_bb(self):
         half_width = self.width // 2
@@ -144,6 +150,13 @@ class Bat:
 
     def update(self):
         dt = Time.DeltaTime()
+
+        # shot 타이머 업데이트 및 상태 해제
+        if '_shot' in self.state:
+            self.shot_timer += dt
+            if self.shot_timer >= self.shot_duration:
+                self.state = self.state.replace('_shot', '')
+                self.shot_timer = 0.0
 
         self.move()
 
@@ -165,7 +178,9 @@ class Bat:
             self.frame_timer = 0.0
 
     def render(self, camera_x=0, camera_y=0, zoom=1.0):
-        image, frame_count, width, height = ResourceManager.get_image(f"bat_move")
+        image, frame_count, width, height = ResourceManager.get_image(f"bat_{self.state}")
+        if frame_count == 0:
+            return
         frame = self.frame_count % frame_count
         draw_x = int((self.x - camera_x) * zoom)
         draw_y = int((self.y - camera_y) * zoom) + int(height // 2 * zoom)
