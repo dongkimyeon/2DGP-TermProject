@@ -30,6 +30,8 @@ class Skel:
         self.attack_frame_max = 0  # 공격 애니메이션 프레임 수
         self.attack_direction = 1  # 공격 시작 시 방향 고정용
         self.map_manager = None  # 맵 매니저 참조
+        self.attack_hit_applied = False  # 공격 히트 적용 여부
+
 
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
@@ -52,7 +54,6 @@ class Skel:
         if (player.x - self.x) ** 2 + (player.y - self.y) ** 2 < self.attack_radius ** 2 and not self.is_attacking:
             self.state = 'attack'
             self.is_attacking = True
-            # 공격 시작 시 현재 방향을 고정
             self.attack_direction = self.direction
             # 공격 애니메이션 프레임 수 저장
             _, frame_count, _, _ = ResourceManager.get_image(f"skel_attack")
@@ -95,6 +96,18 @@ class Skel:
         # 공격 중이면 애니메이션 끝날 때까지 상태 유지
         if self.is_attacking:
             self.state = 'attack'
+            # 공격 애니메이션 3번째 프레임(인덱스 2)에서 플레이어와 충돌 체크
+            current_frame = self.frame_count % self.attack_frame_max if self.attack_frame_max > 0 else 0
+            if current_frame == 2 and not self.attack_hit_applied:
+                # 플레이어와 충돌 체크
+                left_a, bottom_a, right_a, top_a = player.get_bb()
+                left_b, bottom_b, right_b, top_b = self.get_bb()
+
+                # 충돌 확인
+                if not (left_a > right_b or right_a < left_b or top_a < bottom_b or bottom_a > top_b):
+                    print(f"Skel이 플레이어를 공격! 데미지: {self.attack_power}")
+                    player.hp -= self.attack_power
+                    self.attack_hit_applied = True
         else:
             # 플레이어 감지
             if (player.x - self.x) ** 2 + (player.y - self.y) ** 2 < self.detection_radius ** 2:
@@ -102,6 +115,7 @@ class Skel:
                 self.move()
             else:
                 self.state = 'idle'
+
         # 프레임 애니메이션
         self.frame_timer += dt
         if self.frame_timer > 0.1:
@@ -110,6 +124,7 @@ class Skel:
             # 공격 애니메이션이 끝나면 상태 복귀
             if self.is_attacking and self.frame_count >= self.attack_frame_max:
                 self.is_attacking = False
+                self.attack_hit_applied = False  # 히트 플래그 리셋
                 # 공격 후 플레이어 위치에 따라 상태 결정
                 if (player.x - self.x) ** 2 + (player.y - self.y) ** 2 < self.detection_radius ** 2:
                     self.state = 'move'
