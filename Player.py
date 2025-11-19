@@ -44,6 +44,9 @@ class Player:
         self.map_manager = None  # 맵 매니저 참조
         self.is_grounded = False  # 땅에 닿아있는지 여부
         self.near_portal = None  # 근처에 있는 포탈 참조
+        self.attack_cooldown = 0  # 공격 쿨타임 초기화
+        self.base_attack_cooldown = 0.5  # 기본 공격 쿨타임
+        self.attack_speed = 1.0  # 공격 속도 (1.0이 기본 속도)
 
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
@@ -141,6 +144,10 @@ class Player:
 
     def update(self, camera_x, camera_y, zoom):
         dt = Time.DeltaTime()
+
+        # 공격 쿨타임 감소
+        if self.attack_cooldown > 0:
+            self.attack_cooldown -= dt
 
         # 수평 이동 계산
         new_x = self.x
@@ -276,10 +283,18 @@ class Player:
                     self.is_charging = True
             if event.type == pico2d.SDL_MOUSEBUTTONUP:
                 if event.button == pico2d.SDL_BUTTON_LEFT and self.is_charging:
-                    print("공격 실행")
-                    self.katana_effect.start()
-                    self.is_charging = False
-                    self.chargingGage = 0.0
+                    # 공격 쿨타임 체크
+                    if self.attack_cooldown <= 0:
+                        print("공격 실행")
+                        self.katana_effect.start()
+                        self.is_charging = False
+                        self.chargingGage = 0.0
+                        # 공격속도에 따른 쿨타임 설정 (공격속도가 높을수록 쿨타임이 짧아짐)
+                        self.attack_cooldown = self.base_attack_cooldown / self.attack_speed
+                    else:
+                        # 쿨타임 중에는 차징만 취소
+                        self.is_charging = False
+                        self.chargingGage = 0.0
             if event.type == pico2d.SDL_KEYUP:
                 if event.key == pico2d.SDLK_a:
                     self.left_pressed = False

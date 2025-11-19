@@ -19,10 +19,9 @@ class KatanaEffect:
         self.width = 62
         self.height = 81
         self.special_attack = False
-        self.special_attack_damage = 30
-        self.default_damage = 10
+        self.special_attack_damage = 25  # 차지 공격 데미지 20 ~ 25
+        self.default_damage = 13  # 기본 공격 데미지 10 ~ 13
         self.image = None
-        self.damage = 10
         #기본 공격 데미지 10 ~ 13
         #차지 공격 데미지 20 ~ 25
 
@@ -59,10 +58,12 @@ class KatanaEffect:
             return
 
         dt = Time.DeltaTime()
+        # 공격속도에 따라 애니메이션 속도 조절
+        adjusted_frame_duration = self.frame_duration / self.player.attack_speed
         self.frame_timer += dt
 
-        if self.frame_timer >= self.frame_duration:
-            self.frame_timer -= self.frame_duration
+        if self.frame_timer >= adjusted_frame_duration:
+            self.frame_timer -= adjusted_frame_duration
             self.frame_count += 1
             if self.frame_count >= 9:  # 프레임 수에 맞게 조정
                 self.active = False
