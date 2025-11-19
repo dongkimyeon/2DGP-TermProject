@@ -22,7 +22,9 @@ class KatanaEffect:
         self.special_attack_damage = 30
         self.default_damage = 10
         self.image = None
-
+        self.damage = 10
+        #기본 공격 데미지 10 ~ 13
+        #차지 공격 데미지 20 ~ 25
 
     def start(self):
         self.active = True
