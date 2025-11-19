@@ -21,14 +21,14 @@ class Stage1Scene:
         self.gameobjs = []
         # MapManager 초기화
         self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16*1.5, filename='map.txt')
-        #
-        # for _ in range(1):
-        #     newBanshee = Banshee()
-        #     rand_x = 400
-        #     rand_y = 300
-        #     newBanshee.set_position(rand_x, rand_y)
-        #     newBanshee.set_map_manager(self.map_manager)
-        #     self.gameobjs.append(newBanshee)
+
+        for _ in range(1):
+            newBanshee = Banshee()
+            rand_x = 400
+            rand_y = 300
+            newBanshee.set_position(rand_x, rand_y)
+            newBanshee.set_map_manager(self.map_manager)
+            self.gameobjs.append(newBanshee)
         # for _ in range(1):
         #     newBat = Bat()
         #     rand_x = 300
