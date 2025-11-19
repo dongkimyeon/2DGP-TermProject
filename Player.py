@@ -46,7 +46,9 @@ class Player:
         self.near_portal = None  # 근처에 있는 포탈 참조
         self.attack_cooldown = 0  # 공격 쿨타임 초기화
         self.base_attack_cooldown = 0.5  # 기본 공격 쿨타임
-        self.attack_speed = 1.5  # 공격 속도 (1.0이 기본 속도)
+        self.attack_speed = 1.0  # 공격 속도 (1.0이 기본 속도)
+        self.damage_cooldown = 0.0  # 적에게 데미지 받는 쿨타임
+        self.damage_cooldown_time = 0.5  # 데미지 쿨타임 (0.5초)
 
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
@@ -150,6 +152,10 @@ class Player:
             self.attack_cooldown -= dt
 
         # 수평 이동 계산
+
+        # 데미지 쿨타임 감소
+        if self.damage_cooldown > 0:
+            self.damage_cooldown -= dt
         new_x = self.x
         if not self.is_dashing:
             if self.left_pressed and not self.right_pressed:

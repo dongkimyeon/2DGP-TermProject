@@ -106,14 +106,6 @@ class Stage2Scene:
                 player.near_portal = obj
                 print("Player near Portal! Press F to enter Boss Stage")
 
-            elif isinstance(obj, Banshee):
-                print("Player collided with Banshee!")
-                player.hp -= obj.get_damage()
-
-            elif isinstance(obj, Bat):
-                print("Player collided with Bat!")
-                player.hp -= obj.get_damage()
-
             elif isinstance(obj, Ghost):
                 print("Player collided with Ghost!")
                 player.hp -= obj.get_damage()

@@ -25,7 +25,7 @@ class Stage1Scene:
         for _ in range(1):
             newBanshee = Banshee()
             rand_x = 400
-            rand_y = random.randint(100, 400)
+            rand_y = 300
             newBanshee.set_position(rand_x, rand_y)
             newBanshee.set_map_manager(self.map_manager)
             self.gameobjs.append(newBanshee)
@@ -97,17 +97,12 @@ class Stage1Scene:
                 player.near_portal = obj
                 print("Player near Portal! Press F to enter Stage 2")
 
-            elif isinstance(obj, Banshee):
-                print("Player collided with Banshee!")
-                player.hp -= obj.get_damage()
-
-            elif isinstance(obj, Bat):
-                print("Player collided with Bat!")
-                player.hp -= obj.get_damage()
-
             elif isinstance(obj, Ghost):
-                print("Player collided with Ghost!")
-                player.hp -= obj.get_damage()
+                # 데미지 쿨타임 체크
+                if player.damage_cooldown <= 0:
+                    print("Player collided with Ghost!")
+                    player.hp -= obj.get_damage()
+                    player.damage_cooldown = player.damage_cooldown_time
 
             elif isinstance(obj, Note):
                 print("Player collided with Note!")
