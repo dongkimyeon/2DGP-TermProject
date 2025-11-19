@@ -18,15 +18,16 @@ class Bat:
         self.frame = 0
         self.frame_count = 0
         self.frame_timer = 0.0
-        self.state = 'move'  # 항상 move 상태
+        self.state = 'idle'  # 'idle' 또는 'move'
         self.is_hit = False
         self.is_dead = False
         self.width = 50
         self.height = 50
-        self.detection_radius = 350
+        self.detection_radius = 350  # 플레이어 감지 범위
         self.attack_cooldown = 0.0  # 쿨타임 1초
         self.direction = 1
         self.map_manager = None  # 맵 매니저 참조
+        self.player_detected = False  # 플레이어를 감지했는지 여부
 
         self.shot_timer = 0.0
         self.shot_duration = 0.1
@@ -51,25 +52,36 @@ class Bat:
         else:
             self.direction = 1
 
-        # 이동할 위치 계산
-        new_x = self.x
-        new_y = self.y
+        # 플레이어 감지 체크
+        if not self.player_detected and dist2 < max_dist2:
+            self.player_detected = True
+            if '_shot' not in self.state:
+                self.state = 'move'
+            print(f"Bat detected player at distance: {math.sqrt(dist2)}")
 
-        if dist2 < min_dist2:
-            # 너무 가까우면 멀어짐
-            new_x = self.x - math.cos(angle) * self.moveSpeed * dt
-            new_y = self.y - math.sin(angle) * self.moveSpeed * dt
-        elif dist2 > max_dist2:
-            new_x = self.x + math.cos(angle) * self.moveSpeed * dt
-            new_y = self.y + math.sin(angle) * self.moveSpeed * dt
-        else:
-            new_x = self.x + math.cos(angle) * 50 * dt
-            new_y = self.y + math.sin(angle) * 50 * dt
+        # 플레이어를 감지한 경우에만 이동
+        if self.player_detected:
+            # 이동할 위치 계산
+            new_x = self.x
+            new_y = self.y
 
-        # 벽 충돌 체크 후 위치 업데이트
-        final_x, final_y = self.check_wall_collision(new_x, new_y)
-        self.x = final_x
-        self.y = final_y
+            if dist2 < min_dist2:
+                # 너무 가까우면 멀어짐
+                new_x = self.x - math.cos(angle) * self.moveSpeed * dt
+                new_y = self.y - math.sin(angle) * self.moveSpeed * dt
+            elif dist2 > max_dist2:
+                # 너무 멀면 가까이 감
+                new_x = self.x + math.cos(angle) * self.moveSpeed * dt
+                new_y = self.y + math.sin(angle) * self.moveSpeed * dt
+            else:
+                # 적당한 거리에서 천천히 이동
+                new_x = self.x + math.cos(angle) * 50 * dt
+                new_y = self.y + math.sin(angle) * 50 * dt
+
+            # 벽 충돌 체크 후 위치 업데이트
+            final_x, final_y = self.check_wall_collision(new_x, new_y)
+            self.x = final_x
+            self.y = final_y
 
     def check_wall_collision(self, new_x, new_y):
         """벽 충돌 체크 및 위치 보정"""
@@ -160,17 +172,20 @@ class Bat:
 
         self.move()
 
-        # 플레이어 감지 및 발사
-        dx = player.x - self.x
-        dy = player.y - self.y
-        dist2 = dx * dx + dy * dy
-        if dist2 < self.detection_radius ** 2:
-            if self.attack_cooldown <= 0:
-                direction = math.atan2(dy, dx)
-                Bullet().shot(self.x, self.y, direction, 300)
-                self.attack_cooldown = 2.0  # 쿨타임 리셋
+        # 플레이어 감지 및 발사 (감지된 경우에만)
+        if self.player_detected:
+            dx = player.x - self.x
+            dy = player.y - self.y
+            dist2 = dx * dx + dy * dy
+            if dist2 < self.detection_radius ** 2:
+                if self.attack_cooldown <= 0:
+                    direction = math.atan2(dy, dx)
+                    Bullet().shot(self.x, self.y, direction, 300)
+                    self.attack_cooldown = 2.0  # 쿨타임 리셋
+
         if self.attack_cooldown > 0:
             self.attack_cooldown -= dt
+
         # 프레임 애니메이션
         self.frame_timer += dt
         if self.frame_timer > 0.1:
@@ -178,7 +193,7 @@ class Bat:
             self.frame_timer = 0.0
 
     def render(self, camera_x=0, camera_y=0, zoom=1.0):
-        image, frame_count, width, height = ResourceManager.get_image(f"bat_{self.state}")
+        image, frame_count, width, height = ResourceManager.get_image(f"bat_move")
         if frame_count == 0:
             return
         frame = self.frame_count % frame_count
