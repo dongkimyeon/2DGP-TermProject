@@ -74,7 +74,9 @@ class ResourceManager:
         self.load_image("hp_fairy", 'resources/images/hpFairy/midFairy.png', 16)
 
         #Gold 이미지
-        self.load_image("gold", 'resources/images/gold/gold.png', 8)
+        self.load_image("gold", 'resources/images/gold/goldCoin.png', 8)
+
+
         # Boss 관련 이미지 로드
         # Niflheim
         self.load_image("niflheim_idle", "resources/images/boss/Niflheim/idle.png", 6)
