@@ -46,6 +46,8 @@ class ResourceManager:
         # Bat 이미지 로드
         self.load_image("bat_move", "resources/images/Enemy/Bat/Normal/move.png" ,6)
         self.load_image("bat_move_shot", "resources/images/Enemy/Bat/Normal/move_shot.png",6)
+        self.load_image("bat_idle", "resources/images/Enemy/Bat/Normal/move.png", 6)
+        self.load_image("bat_idle_shot", "resources/images/Enemy/Bat/Normal/move_shot.png", 6)
         self.load_image("bat_bullet", "resources/images/Enemy/Bullet/smallBullet.png",5)
         self.load_image("bat_bullet_hit", "resources/images/Enemy/Bullet/smallBullet_FX.png",7)
         # Ghost 이미지 로드

@@ -18,7 +18,7 @@ class Bat:
         self.frame = 0
         self.frame_count = 0
         self.frame_timer = 0.0
-        self.state = 'idle'  # 'idle' 또는 'move'
+        self.state = 'idle'  # 'idle' , 'move', 'shot'
         self.is_hit = False
         self.is_dead = False
         self.width = 50
@@ -193,7 +193,7 @@ class Bat:
             self.frame_timer = 0.0
 
     def render(self, camera_x=0, camera_y=0, zoom=1.0):
-        image, frame_count, width, height = ResourceManager.get_image(f"bat_move")
+        image, frame_count, width, height = ResourceManager.get_image(f"bat_{self.state}")
         if frame_count == 0:
             return
         frame = self.frame_count % frame_count
