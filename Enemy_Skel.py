@@ -23,7 +23,7 @@ class Skel:
         self.is_dead = False
         self.width = 50
         self.height = 50
-        self.detection_radius = 350
+        self.detection_radius = 200
         self.attack_radius = 50
         self.attack_cooldown = 0.0  # 쿨타임 1초
         self.is_attacking = False  # 공격 애니메이션 진행 중 여부
@@ -42,6 +42,23 @@ class Skel:
     def attack(self):
         return self.attack_power
 
+    def check_ground_ahead(self, next_x):
+        """앞쪽에 바닥이 있는지 확인"""
+        if not self.map_manager:
+            return True
+
+        # 스켈의 발 위치 확인
+        half_width = self.width // 2
+        check_x = next_x + (half_width if self.direction == 1 else -half_width)
+        check_y = self.y - self.height // 2 - 5  # 발 아래 조금 더 아래
+
+        # 발 아래에 타일이 있는지 확인
+        tiles = self.map_manager.check_collision(
+            check_x - 2, check_y - 10,
+            check_x + 2, check_y
+        )
+        return len(tiles) > 0
+
     def move(self):
         #플레이어 방향으로 이동
         dx = player.x - self.x
@@ -51,7 +68,15 @@ class Skel:
             self.direction = -1
         else:
             self.direction = 1
-        self.x += math.cos(angle) * self.moveSpeed * Time.DeltaTime()
+
+        # 이동하기 전에 앞에 바닥이 있는지 확인
+        next_x = self.x + math.cos(angle) * self.moveSpeed * Time.DeltaTime()
+        if self.check_ground_ahead(next_x):
+            self.x = next_x
+        else:
+            # 앞에 바닥이 없으면 이동하지 않음 (낭떠러지)
+            pass
+
         # 공격 상태 진입 조건
         if (player.x - self.x) ** 2 + (player.y - self.y) ** 2 < self.attack_radius ** 2 and not self.is_attacking:
             self.state = 'attack'
@@ -84,7 +109,7 @@ class Skel:
     def update(self):
         dt = Time.DeltaTime()
 
-        # shot 타이머 업데이트 및 상태 해제
+        # shot 상태 타이머 업데이트
         if '_shot' in self.state:
             self.shot_timer += dt
             if self.shot_timer >= self.shot_duration:
