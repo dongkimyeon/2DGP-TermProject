@@ -76,9 +76,17 @@ class ResourceManager:
         #Gold 이미지
         self.load_image("gold", 'resources/images/gold/goldCoin.png', 8)
         #UI 이미지 로드
-        self.load_image("PlayerLifeBase", 'resources/images/gameScene/ui/PlayerLifeBase 1.png')
+        self.load_image("PlayerLifeBase", 'resources/images/gameScene/ui/PlayerLifeBase.png')
+        self.load_image("PlayerLifeBaseBack", 'resources/images/gameScene/ui/PlayerLifeBack.png')
         self.load_image("LifeBar", 'resources/images/gameScene/ui/LifeBar.png')
         self.load_image("LifeWave", 'resources/images/gameScene/ui/LifeWave.png')
+        self.load_image("DashCount", 'resources/images/gameScene/ui/DashCount.png')
+        self.load_image("DashCountBase0", 'resources/images/gameScene/ui/DashBase.png')
+        self.load_image("DashCountBase1", 'resources/images/gameScene/ui/DashCountBase_0.png')
+        self.load_image("DashCountBase2", 'resources/images/gameScene/ui/DashCountBase_1.png')
+        self.load_image("BossLifeBase", 'resources/images/gameScene/ui/BossLifeBase.png')
+        self.load_image("BossLifeBaseBack", 'resources/images/gameScene/ui/BossLifeBack.png')
+
         # Boss 관련 이미지 로드
         # Niflheim
         self.load_image("niflheim_idle", "resources/images/boss/Niflheim/idle.png", 6)
