@@ -32,6 +32,9 @@ class Skel:
         self.attack_direction = 1  # 공격 시작 시 방향 고정용
         self.map_manager = None  # 맵 매니저 참조
         self.attack_hit_applied = False
+        self.attack_delay = 0.0  # 공격 딜레이 타이머
+        self.attack_delay_duration = 0.3  # 1~2프레임 사이 딜레이 (0.15초)
+        self.is_in_attack_delay = False  # 딜레이 상태 플래그
 
         self.shot_timer = 0.0
         self.shot_duration = 0.1
@@ -156,15 +159,33 @@ class Skel:
                 if '_shot' not in self.state:
                     self.state = 'idle'
 
+        # 공격 딜레이 처리
+        if self.is_in_attack_delay:
+            self.attack_delay += dt
+            if self.attack_delay >= self.attack_delay_duration:
+                self.is_in_attack_delay = False
+                self.attack_delay = 0.0
+                # 딜레이가 끝나면 프레임 진행
+                self.frame_count += 1
+            return  # 딜레이 중에는 프레임 업데이트 하지 않음
+
         # 프레임 애니메이션
         self.frame_timer += dt
         if self.frame_timer > 0.1:
             self.frame_count += 1
             self.frame_timer = 0.0
+
+            # 1번 프레임(인덱스 1)에서 2번 프레임으로 넘어갈 때 딜레이
+            if self.is_attacking and self.frame_count == 2:
+                self.is_in_attack_delay = True
+                self.frame_count = 1  # 1번 프레임에 머물기
+
             # 공격 애니메이션이 끝나면 상태 복귀
             if self.is_attacking and self.frame_count >= self.attack_frame_max:
                 self.is_attacking = False
                 self.attack_hit_applied = False  # 히트 플래그 리셋
+                self.is_in_attack_delay = False  # 딜레이 플래그 리셋
+                self.attack_delay = 0.0
                 # 공격 후 플레이어 위치에 따라 상태 결정
                 if '_shot' not in self.state:
                     if (player.x - self.x) ** 2 + (player.y - self.y) ** 2 < self.detection_radius ** 2:
