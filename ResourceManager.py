@@ -87,6 +87,9 @@ class ResourceManager:
         self.load_image("BossLifeBase", 'resources/images/gameScene/ui/BossLifeBase.png')
         self.load_image("BossLifeBaseBack", 'resources/images/gameScene/ui/BossLifeBack.png')
 
+        self.load_image("enemy_hp_bar", 'resources/images/gameScene/ui/EnemyHpBar.png')
+        self.load_image("enemy_hp_bar_gage", 'resources/images/gameScene/ui/EnemyHpBarGage.png')
+
         # Boss 관련 이미지 로드
         # Niflheim
         self.load_image("niflheim_idle", "resources/images/boss/Niflheim/idle.png", 6)
