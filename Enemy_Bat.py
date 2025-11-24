@@ -18,7 +18,7 @@ class Bat:
         self.frame = 0
         self.frame_count = 0
         self.frame_timer = 0.0
-        self.state = 'idle'  # 'idle' , 'move', 'shot'
+        self.state = 'move'  # 'move', 'move_shot'
         self.is_hit = False
         self.is_dead = False
         self.width = 50

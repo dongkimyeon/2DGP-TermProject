@@ -13,6 +13,7 @@ import Camera
 class Player:
     def __init__(self):
         self.hp = 80
+        self.max_hp = 80  # 최대 HP 추가
         self.dash_count = 3
         self.state = 'idle'
         self.x = SceneManager.screen_width // 2
@@ -350,6 +351,7 @@ class Player:
         font.draw(10, SceneManager.screen_height - 60, f'HP: {self.hp}', (255, 255, 255))
         font.draw(10, SceneManager.screen_height - 90, f'Dash: {self.dash_count}', (255, 255, 255))
         font.draw(10, SceneManager.screen_height - 120, f'Jump: {self.jump_count}', (255, 255, 255))
+
 
 
 

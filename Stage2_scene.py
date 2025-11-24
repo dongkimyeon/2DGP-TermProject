@@ -10,6 +10,8 @@ from Enemy_Ghost import Ghost
 from Enemy_Skel import Skel
 from Camera import Camera
 from Portal import Portal
+from Gold import Gold
+from HpFairy import HpFairy
 import random
 from ResourceManager import ResourceManager
 
@@ -107,8 +109,11 @@ class Stage2Scene:
                 print("Player near Portal! Press F to enter Boss Stage")
 
             elif isinstance(obj, Ghost):
-                print("Player collided with Ghost!")
-                player.hp -= obj.get_damage()
+                # 데미지 쿨타임 체크
+                if player.damage_cooldown <= 0:
+                    print("Player collided with Ghost!")
+                    player.hp -= obj.get_damage()
+                    player.damage_cooldown = player.damage_cooldown_time
 
             elif isinstance(obj, Note):
                 print("Player collided with Note!")
@@ -122,10 +127,90 @@ class Stage2Scene:
                 # Bullet도 제거 리스트에 추가
                 objects_to_remove.append(obj)
 
+            elif isinstance(obj, Gold):
+                print("Player collected Gold!")
+                # 골드 획득 처리
+                objects_to_remove.append(obj)
+
+            elif isinstance(obj, HpFairy):
+                print("Player collected HP Fairy!")
+                player.hp = min(player.hp + 30, player.max_hp)  # HP 30 회복
+                objects_to_remove.append(obj)
+
+        # 카타나 이펙트와 적들의 충돌 체크
+        if player.katana_effect.active:
+            katana_left, katana_bottom, katana_right, katana_top = player.katana_effect.get_bb()
+            for obj in self.gameobjs:
+                if isinstance(obj, Ghost):
+                    obj_left, obj_bottom, obj_right, obj_top = obj.get_bb()
+
+                    if not (katana_left > obj_right or katana_right < obj_left or
+                            katana_top < obj_bottom or katana_bottom > obj_top):
+                        obj.handle_collision('katana_effect:ghost', player.katana_effect)
+
+                        if obj.health <= 0:
+                            objects_to_remove.append(obj)
+                            # 30% 확률로 HP 페어리, 70% 확률로 골드 드랍
+                            drop_item = self.drop_item(obj.x, obj.y)
+                            if drop_item:
+                                self.gameobjs.append(drop_item)
+
+                elif isinstance(obj, Banshee):
+                    obj_left, obj_bottom, obj_right, obj_top = obj.get_bb()
+
+                    if not (katana_left > obj_right or katana_right < obj_left or
+                            katana_top < obj_bottom or katana_bottom > obj_top):
+                        obj.handle_collision('katana_effect:banshee', player.katana_effect)
+
+                        if obj.health <= 0:
+                            objects_to_remove.append(obj)
+                            # 30% 확률로 HP 페어리, 70% 확률로 골드 드랍
+                            drop_item = self.drop_item(obj.x, obj.y)
+                            if drop_item:
+                                self.gameobjs.append(drop_item)
+
+                elif isinstance(obj, Bat):
+                    obj_left, obj_bottom, obj_right, obj_top = obj.get_bb()
+
+                    if not (katana_left > obj_right or katana_right < obj_left or
+                            katana_top < obj_bottom or katana_bottom > obj_top):
+                        obj.handle_collision('katana_effect:bat', player.katana_effect)
+
+                        if obj.health <= 0:
+                            objects_to_remove.append(obj)
+                            # 30% 확률로 HP 페어리, 70% 확률로 골드 드랍
+                            drop_item = self.drop_item(obj.x, obj.y)
+                            if drop_item:
+                                self.gameobjs.append(drop_item)
+
+                elif isinstance(obj, Skel):
+                    obj_left, obj_bottom, obj_right, obj_top = obj.get_bb()
+
+                    if not (katana_left > obj_right or katana_right < obj_left or
+                            katana_top < obj_bottom or katana_bottom > obj_top):
+                        obj.handle_collision('katana_effect:skel', player.katana_effect)
+
+                        if obj.health <= 0:
+                            objects_to_remove.append(obj)
+                            # 30% 확률로 HP 페어리, 70% 확률로 골드 드랍
+                            drop_item = self.drop_item(obj.x, obj.y)
+                            if drop_item:
+                                self.gameobjs.append(drop_item)
+
         # 충돌한 객체들을 gameobjs에서 제거
         for obj in objects_to_remove:
             if obj in self.gameobjs:
                 self.gameobjs.remove(obj)
+
+    def drop_item(self, x, y):
+        """30% 확률로 HP 페어리, 70% 확률로 골드 드랍"""
+        rand = random.random()
+        if rand < 0.3:  # 30% 확률
+            print(f"HP Fairy dropped at ({x}, {y})")
+            return HpFairy(x, y)
+        else:  # 70% 확률
+            print(f"Gold dropped at ({x}, {y})")
+            return Gold(x, y)
 
     def handle_events(self, events):
         """이벤트 처리 및 씬 전환 감지"""
