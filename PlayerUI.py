@@ -6,8 +6,9 @@ import SceneManager
 class PlayerUI:
     def __init__(self):
         self.player = player
-        # UI 스케일 (전체 UI 크기 조정)
-        self.ui_scale = 3.0
+        # UI 스케일 (각각 분리)
+        self.hp_bar_scale = 2.0
+        self.dash_bar_scale = 3.0
 
         # 좌상단 위치로 조정 (피코투디는 왼쪽 아래가 0,0이므로 화면 높이 기준으로 계산)
         self.hp_bar_x = 100
@@ -53,63 +54,62 @@ class PlayerUI:
             life_back.draw(
                 self.hp_bar_x,
                 self.hp_bar_y,
-                int(back_width * self.ui_scale),
-                int(back_height * self.ui_scale)
+                int(back_width * self.hp_bar_scale),
+                int(back_height * self.hp_bar_scale)
             )
 
-        # 체력 게이지 (LifeBar) - HP 비율에 따라 가로로 늘어남
-        if life_bar and hp_ratio > 0:
-            # LifeBar의 시작 위치 (왼쪽 끝)
-            bar_left_x = self.hp_bar_x - int(bar_width * self.ui_scale // 2)
+        # 체력 게이지
+        if life_bar:
+            # 체력 게이지 길이 계산 (비율에 따라)
+            gauge_width = int(bar_width * hp_ratio)
+            gauge_height = bar_height
 
-            # 체력 비율만큼의 너비 계산
-            actual_bar_width = int(bar_width * hp_ratio)
-            scaled_bar_width = int(actual_bar_width * self.ui_scale)
+            # 클리핑 영역을 이용한 부분 렌더링
+            if gauge_width > 0:
+                # 원본 이미지에서 체력 비율만큼만 잘라서 그리기
+                life_bar.clip_draw(
+                    0, 0,  # 원본 이미지의 시작 위치
+                    gauge_width, gauge_height,  # 잘라낼 크기
+                    self.hp_bar_x - int((bar_width - gauge_width) * self.hp_bar_scale / 2),  # 왼쪽 정렬을 위한 위치 조정
+                    self.hp_bar_y,
+                    int(gauge_width * self.hp_bar_scale),
+                    int(gauge_height * self.hp_bar_scale)
+                )
 
-            # LifeBar를 왼쪽에서 오른쪽으로 늘어나게 렌더링
-            life_bar.clip_draw(
-                0, 0, actual_bar_width, bar_height,
-                bar_left_x + scaled_bar_width // 2,  # 중심점이 이동하도록
-                self.hp_bar_y,
-                scaled_bar_width,
-                int(bar_height * self.ui_scale)
-            )
+                # LifeWave 애니메이션 (체력바의 오른쪽 끝에 붙여서 렌더링)
+                # 체력이 70 이하일 때만 표시
+                if life_wave and frame_count > 0 and hp_ratio > 0 and self.player.hp <= 70:
+                    # 프레임 루프 처리
+                    current_frame = self.wave_frame % frame_count
 
-            # LifeBar의 오른쪽 끝 위치 계산
-            bar_right_x = bar_left_x + scaled_bar_width
-        else:
-            bar_right_x = self.hp_bar_x - int(bar_width * self.ui_scale // 2)
+                    # 체력바의 오른쪽 끝 위치 계산
+                    wave_x = self.hp_bar_x - int((bar_width - gauge_width) * self.hp_bar_scale / 2) + int(gauge_width * self.hp_bar_scale / 2)
 
-        # 체력바 웨이브 효과 (애니메이션) - LifeBar 오른쪽 끝에서 나옴
-        if life_wave and hp_ratio > 0 and frame_count > 0:
-            # 애니메이션 프레임 순환
-            current_frame = self.wave_frame % frame_count
-            frame_width = wave_width // frame_count
-
-            # LifeWave를 LifeBar의 오른쪽 끝에서 렌더링
-            life_wave.clip_draw(
-                current_frame * frame_width, 0, frame_width, wave_height,
-                bar_right_x + int(frame_width * self.ui_scale // 2),  # LifeBar 오른쪽 끝에 붙음
-                self.hp_bar_y,
-                int(frame_width * self.ui_scale),
-                int(wave_height * self.ui_scale)
-            )
-
+                    # 프레임 단위로 잘라서 그리기
+                    frame_width = wave_width // frame_count
+                    life_wave.clip_draw(
+                        current_frame * frame_width, 0,  # 현재 프레임 위치
+                        frame_width, wave_height,  # 한 프레임의 크기
+                        wave_x,
+                        self.hp_bar_y,
+                        int(frame_width * self.hp_bar_scale),
+                        int(wave_height * self.hp_bar_scale)
+                    )
         # 체력바 프레임 (앞쪽)
         if life_base:
             life_base.draw(
                 self.hp_bar_x,
                 self.hp_bar_y,
-                int(base_width * self.ui_scale),
-                int(base_height * self.ui_scale)
+                int(base_width * self.hp_bar_scale),
+                int(base_height * self.hp_bar_scale)
             )
 
         # HP 숫자 표시
         if font:
             hp_text = f"{int(self.player.hp)}/{int(self.player.max_hp)}"
             font.draw(
-                self.hp_bar_x - int(30 * self.ui_scale),
-                self.hp_bar_y - int(5 * self.ui_scale),
+                self.hp_bar_x - int(30 * self.hp_bar_scale),
+                self.hp_bar_y - int(5 * self.hp_bar_scale),
                 hp_text,
                 (255, 255, 255)
             )
@@ -133,8 +133,8 @@ class PlayerUI:
             dash_base0.draw(
                 left_x,
                 self.dash_bar_y,
-                int(base0_width * self.ui_scale),
-                int(base0_height * self.ui_scale)
+                int(base0_width * self.dash_bar_scale),
+                int(base0_height * self.dash_bar_scale)
             )
 
             # 첫 번째 대쉬 아이콘
@@ -142,18 +142,18 @@ class PlayerUI:
                 dash_count_img.draw(
                     left_x,
                     self.dash_bar_y,
-                    int(count_width * self.ui_scale),
-                    int(count_height * self.ui_scale)
+                    int(count_width * self.dash_bar_scale),
+                    int(count_height * self.dash_bar_scale)
                 )
 
         # 중앙 베이스 (base1)
         if dash_base1:
-            center_x = self.dash_bar_x + int(base0_width * self.ui_scale) + base_spacing-3
+            center_x = self.dash_bar_x + int(base0_width * self.dash_bar_scale) + base_spacing-3
             dash_base1.draw(
                 center_x,
                 self.dash_bar_y,
-                int(base1_width * self.ui_scale),
-                int(base1_height * self.ui_scale)
+                int(base1_width * self.dash_bar_scale),
+                int(base1_height * self.dash_bar_scale)
             )
 
             # 두 번째 대쉬 아이콘
@@ -161,18 +161,18 @@ class PlayerUI:
                 dash_count_img.draw(
                     center_x,
                     self.dash_bar_y,
-                    int(count_width * self.ui_scale),
-                    int(count_height * self.ui_scale)
+                    int(count_width * self.dash_bar_scale),
+                    int(count_height * self.dash_bar_scale)
                 )
 
         # 오른쪽 베이스 (base2)
         if dash_base2:
-            right_x = self.dash_bar_x + int((base0_width + base1_width) * self.ui_scale) + base_spacing * 2
+            right_x = self.dash_bar_x + int((base0_width + base1_width) * self.dash_bar_scale) + base_spacing * 2
             dash_base2.draw(
                 right_x,
                 self.dash_bar_y,
-                int(base2_width * self.ui_scale),
-                int(base2_height * self.ui_scale)
+                int(base2_width * self.dash_bar_scale),
+                int(base2_height * self.dash_bar_scale)
             )
 
             # 세 번째 대쉬 아이콘
@@ -180,8 +180,8 @@ class PlayerUI:
                 dash_count_img.draw(
                     right_x,
                     self.dash_bar_y,
-                    int(count_width * self.ui_scale),
-                    int(count_height * self.ui_scale)
+                    int(count_width * self.dash_bar_scale),
+                    int(count_height * self.dash_bar_scale)
                 )
 
         # 대쉬 카운트 숫자 표시
@@ -189,8 +189,8 @@ class PlayerUI:
         if font:
             dash_text = f"Dash: {self.player.dash_count}/3"
             font.draw(
-                self.dash_bar_x + int(5 * self.ui_scale),
-                self.dash_bar_y - int(35 * self.ui_scale),
+                self.dash_bar_x + int(5 * self.dash_bar_scale),
+                self.dash_bar_y - int(35 * self.dash_bar_scale),
                 dash_text,
                 (255, 255, 255)
             )
