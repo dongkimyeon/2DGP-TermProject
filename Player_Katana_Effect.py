@@ -68,12 +68,11 @@ class KatanaEffect:
             return
 
         dt = Time.DeltaTime()
-        # 공격속도에 따라 애니메이션 속도 조절
-        adjusted_frame_duration = self.frame_duration / self.player.attack_speed
+        # 애니메이션 속도는 고정 (공격속도에 영향받지 않음)
         self.frame_timer += dt
 
-        if self.frame_timer >= adjusted_frame_duration:
-            self.frame_timer -= adjusted_frame_duration
+        if self.frame_timer >= self.frame_duration:
+            self.frame_timer -= self.frame_duration
             self.frame_count += 1
             if self.frame_count >= 9:  # 프레임 수에 맞게 조정
                 self.active = False
