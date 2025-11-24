@@ -9,6 +9,7 @@ from Banshee_Attack_note import Note
 class Banshee:
     def __init__(self):
         self.health = 50
+        self.max_health = 50  # 최대 체력 추가
         self.attack_power = 12
         self.x = 0
         self.y = 0
@@ -116,7 +117,40 @@ class Banshee:
                     if frame == frame_count - 1:
                         if '_shot' not in self.state:
                             self.state = 'idle'
-        pass
+
+        # 체력바 렌더링
+        self.render_hp_bar(camera_x, camera_y, zoom)
+
+    def render_hp_bar(self, camera_x=0, camera_y=0, zoom=1.0):
+        """적 체력바 렌더링"""
+        hp_bar_base, _, bar_width, bar_height = ResourceManager.get_image("enemy_hp_bar")
+        hp_bar_gage, _, gage_width, gage_height = ResourceManager.get_image("enemy_hp_bar_gage")
+
+        if not hp_bar_base or not hp_bar_gage:
+            return
+
+        # 체력바 위치
+        bar_offset_y = -(int(self.height * 1.5) // 2 - 10)  # 하단으로 이동
+        draw_x = int((self.x - camera_x) * zoom)
+        draw_y = int((self.y - camera_y) * zoom) + int(bar_offset_y * zoom)
+
+        # 체력 비율 계산
+        hp_ratio = max(0, min(1, self.health / self.max_health))
+
+        # 체력바 크기 증가 (1.5배)
+        bar_scale = 2
+
+        # 체력바 배경 렌더링
+        hp_bar_base.draw(draw_x, draw_y, int(bar_width * zoom * bar_scale), int(bar_height * zoom))
+
+        # 체력 게이지 렌더링 (비율만큼만 그리기)
+        if hp_ratio > 0:
+            # clip_draw로 비율만큼만 렌더링
+            gage_draw_width = int(gage_width * hp_ratio)
+            hp_bar_gage.clip_draw(0, 0, gage_draw_width, gage_height,
+                                  draw_x - int((gage_width - gage_draw_width) / 2 * zoom * bar_scale),
+                                  draw_y,
+                                  int(gage_draw_width * zoom * bar_scale), int(gage_height * zoom))
 
     def is_dead(self):
         return self.health <= 0
