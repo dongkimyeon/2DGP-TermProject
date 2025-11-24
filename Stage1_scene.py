@@ -1,5 +1,3 @@
-import os.path
-
 import SceneManager
 import pico2d
 from Player import player
@@ -14,6 +12,7 @@ from Camera import Camera
 from Portal import Portal
 from Gold import Gold
 from HpFairy import HpFairy
+from PlayerUI import PlayerUI
 import random
 from ResourceManager import ResourceManager
 from ObjectLoader import ObjectLoader
@@ -37,6 +36,9 @@ class Stage1Scene:
         self.camera = Camera()
         self.camera.set_target(player)
 
+        # PlayerUI 초기화
+        self.player_ui = PlayerUI()
+
         player.set_map_manager(self.map_manager)
 
     def enter(self):
@@ -53,6 +55,9 @@ class Stage1Scene:
             obj.update()
         self.camera.update()
         player.update(self.camera.mX, self.camera.mY, self.camera.zoom)
+
+        # PlayerUI 업데이트 (LifeWave 애니메이션용)
+        self.player_ui.update()
 
         self.handle_collisions()
 
@@ -96,12 +101,11 @@ class Stage1Scene:
 
             elif isinstance(obj, Gold):
                 print("Player collected Gold!")
-                # 골드 획득 처리 (필요하면 플레이어에 골드 변수 추가)
                 objects_to_remove.append(obj)
 
             elif isinstance(obj, HpFairy):
                 print("Player collected HP Fairy!")
-                player.hp = min(player.hp + 30, player.max_hp)  # HP 30 회복
+                player.hp = min(player.hp + 30, player.max_hp)
                 objects_to_remove.append(obj)
 
         # 카타나 이펙트와 적들의 충돌 체크
@@ -117,7 +121,6 @@ class Stage1Scene:
 
                         if obj.health <= 0:
                             objects_to_remove.append(obj)
-                            # 30% 확률로 HP 페어리, 70% 확률로 골드 드랍
                             drop_item = self.drop_item(obj.x, obj.y)
                             if drop_item:
                                 self.gameobjs.append(drop_item)
@@ -131,7 +134,6 @@ class Stage1Scene:
 
                         if obj.health <= 0:
                             objects_to_remove.append(obj)
-                            # 30% 확률로 HP 페어리, 70% 확률로 골드 드랍
                             drop_item = self.drop_item(obj.x, obj.y)
                             if drop_item:
                                 self.gameobjs.append(drop_item)
@@ -145,7 +147,6 @@ class Stage1Scene:
 
                         if obj.health <= 0:
                             objects_to_remove.append(obj)
-                            # 30% 확률로 HP 페어리, 70% 확률로 골드 드랍
                             drop_item = self.drop_item(obj.x, obj.y)
                             if drop_item:
                                 self.gameobjs.append(drop_item)
@@ -159,7 +160,6 @@ class Stage1Scene:
 
                         if obj.health <= 0:
                             objects_to_remove.append(obj)
-                            # 30% 확률로 HP 페어리, 70% 확률로 골드 드랍
                             drop_item = self.drop_item(obj.x, obj.y)
                             if drop_item:
                                 self.gameobjs.append(drop_item)
@@ -171,10 +171,10 @@ class Stage1Scene:
     def drop_item(self, x, y):
         """30% 확률로 HP 페어리, 70% 확률로 골드 드랍"""
         rand = random.random()
-        if rand < 0.3:  # 30% 확률
+        if rand < 0.3:
             print(f"HP Fairy dropped at ({x}, {y})")
             return HpFairy(x, y)
-        else:  # 70% 확률
+        else:
             print(f"Gold dropped at ({x}, {y})")
             return Gold(x, y)
 
@@ -207,6 +207,9 @@ class Stage1Scene:
             (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
             (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
         )
+
+        # PlayerUI 렌더링
+        self.player_ui.render()
 
         if player.near_portal:
             font = ResourceManager.get_font("default")

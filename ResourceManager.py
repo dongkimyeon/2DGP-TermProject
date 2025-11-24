@@ -79,7 +79,7 @@ class ResourceManager:
         self.load_image("PlayerLifeBase", 'resources/images/gameScene/ui/PlayerLifeBase.png')
         self.load_image("PlayerLifeBaseBack", 'resources/images/gameScene/ui/PlayerLifeBack.png')
         self.load_image("LifeBar", 'resources/images/gameScene/ui/LifeBar.png')
-        self.load_image("LifeWave", 'resources/images/gameScene/ui/LifeWave.png')
+        self.load_image("LifeWave", 'resources/images/gameScene/ui/LifeWave.png', 7 )
         self.load_image("DashCount", 'resources/images/gameScene/ui/DashCount.png')
         self.load_image("DashCountBase0", 'resources/images/gameScene/ui/DashBase.png')
         self.load_image("DashCountBase1", 'resources/images/gameScene/ui/DashCountBase_0.png')

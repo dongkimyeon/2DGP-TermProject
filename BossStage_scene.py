@@ -8,6 +8,7 @@ from Boss_nifleheim import Boss
 from IceBullet import IceBullet
 from Camera import Camera
 from Portal import Portal
+from PlayerUI import PlayerUI
 import random
 from ResourceManager import ResourceManager
 
@@ -32,6 +33,9 @@ class BossStageScene:
         self.camera = Camera()
         self.camera.set_target(player)
 
+        # PlayerUI 초기화
+        self.player_ui = PlayerUI()
+
         # 플레이어에게 맵 매니저 설정
         player.set_map_manager(self.map_manager)
 
@@ -51,6 +55,9 @@ class BossStageScene:
             obj.update()
         self.camera.update()
         player.update(self.camera.mX, self.camera.mY, self.camera.zoom)
+
+        # PlayerUI 업데이트 (LifeWave 애니메이션용)
+        self.player_ui.update()
 
         self.handle_collisions()
 
@@ -126,6 +133,9 @@ class BossStageScene:
             (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
             (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
         )
+
+        # PlayerUI 렌더링
+        self.player_ui.render()
 
         # 포탈 근처에 있을 때 UI 표시
         if player.near_portal:

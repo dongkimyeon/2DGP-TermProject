@@ -12,6 +12,7 @@ from Camera import Camera
 from Portal import Portal
 from Gold import Gold
 from HpFairy import HpFairy
+from PlayerUI import PlayerUI
 import random
 from ResourceManager import ResourceManager
 
@@ -59,6 +60,9 @@ class Stage2Scene:
         self.camera = Camera()
         self.camera.set_target(player)
 
+        # PlayerUI 초기화
+        self.player_ui = PlayerUI()
+
         # 플레이어에게 맵 매니저 설정
         player.set_map_manager(self.map_manager)
 
@@ -79,6 +83,9 @@ class Stage2Scene:
             obj.update()
         self.camera.update()
         player.update(self.camera.mX, self.camera.mY, self.camera.zoom)
+
+        # PlayerUI 업데이트 (LifeWave 애니메이션용)
+        self.player_ui.update()
 
         self.handle_collisions()
 
@@ -246,6 +253,9 @@ class Stage2Scene:
             (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
             (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
         )
+
+        # PlayerUI 렌더링 (가장 마지막에)
+        self.player_ui.render()
 
         # 포탈 근처에 있을 때 UI 표시
         if player.near_portal:
