@@ -26,14 +26,15 @@ class Skel:
         self.height = 50
         self.detection_radius = 200
         self.attack_radius = 50
-        self.attack_cooldown = 0.0  # 쿨타임 1초
+        self.attack_cooldown = 0.0  # 공격 쿨타임
+        self.attack_cooldown_time = 2.0  # 공격 쿨타임 시간 (2초)
         self.is_attacking = False  # 공격 애니메이션 진행 중 여부
         self.attack_frame_max = 0  # 공격 애니메이션 프레임 수
         self.attack_direction = 1  # 공격 시작 시 방향 고정용
         self.map_manager = None  # 맵 매니저 참조
         self.attack_hit_applied = False
         self.attack_delay = 0.0  # 공격 딜레이 타이머
-        self.attack_delay_duration = 0.3  # 1~2프레임 사이 딜레이 (0.15초)
+        self.attack_delay_duration = 0.3  # 1~2프레임 사이 딜레이 (0.3초)
         self.is_in_attack_delay = False  # 딜레이 상태 플래그
 
         self.shot_timer = 0.0
@@ -81,8 +82,8 @@ class Skel:
             # 앞에 바닥이 없으면 이동하지 않음 (낭떠러지)
             pass
 
-        # 공격 상태 진입 조건
-        if (player.x - self.x) ** 2 + (player.y - self.y) ** 2 < self.attack_radius ** 2 and not self.is_attacking:
+        # 공격 상태 진입 조건 (쿨타임 체크 추가)
+        if (player.x - self.x) ** 2 + (player.y - self.y) ** 2 < self.attack_radius ** 2 and not self.is_attacking and self.attack_cooldown <= 0:
             self.state = 'attack'
             self.is_attacking = True
             self.attack_direction = self.direction
@@ -112,6 +113,10 @@ class Skel:
 
     def update(self):
         dt = Time.DeltaTime()
+
+        # 공격 쿨타임 감소
+        if self.attack_cooldown > 0:
+            self.attack_cooldown -= dt
 
         # shot 상태 타이머 업데이트
         if '_shot' in self.state:
@@ -186,6 +191,7 @@ class Skel:
                 self.attack_hit_applied = False  # 히트 플래그 리셋
                 self.is_in_attack_delay = False  # 딜레이 플래그 리셋
                 self.attack_delay = 0.0
+                self.attack_cooldown = self.attack_cooldown_time  # 공격 쿨타임 시작
                 # 공격 후 플레이어 위치에 따라 상태 결정
                 if '_shot' not in self.state:
                     if (player.x - self.x) ** 2 + (player.y - self.y) ** 2 < self.detection_radius ** 2:
