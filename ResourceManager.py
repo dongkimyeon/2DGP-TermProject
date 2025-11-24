@@ -75,8 +75,10 @@ class ResourceManager:
 
         #Gold 이미지
         self.load_image("gold", 'resources/images/gold/goldCoin.png', 8)
-
-
+        #UI 이미지 로드
+        self.load_image("PlayerLifeBase", 'resources/images/gameScene/ui/PlayerLifeBase 1.png')
+        self.load_image("LifeBar", 'resources/images/gameScene/ui/LifeBar.png')
+        self.load_image("LifeWave", 'resources/images/gameScene/ui/LifeWave.png')
         # Boss 관련 이미지 로드
         # Niflheim
         self.load_image("niflheim_idle", "resources/images/boss/Niflheim/idle.png", 6)
