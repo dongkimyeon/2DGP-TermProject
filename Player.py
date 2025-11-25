@@ -306,6 +306,10 @@ class Player:
 
     def render(self, camera_x=0, camera_y=0, zoom=1.0):
         image, frame_count, width, height = ResourceManager.get_image(f"player_{self.state}")
+        # 이미지 유효성 검사 및 frame_count 안전 처리
+        if not image:
+            return
+        frame_count = max(1, frame_count)
         draw_x = int((self.x - camera_x) * zoom)
         draw_y = int((self.y - camera_y) * zoom) + int(height // 2 * zoom)
         draw_w = int(self.width * zoom)
@@ -347,10 +351,6 @@ class Player:
         font = ResourceManager.get_font("default")
         font.draw(10, SceneManager.screen_height - 30, f'{self.x, self.y}', (255, 0, 0))
 
-        # 플레이어 상태 정보 표시
-        font.draw(10, SceneManager.screen_height - 60, f'HP: {self.hp}', (255, 255, 255))
-        font.draw(10, SceneManager.screen_height - 90, f'Dash: {self.dash_count}', (255, 255, 255))
-        font.draw(10, SceneManager.screen_height - 120, f'Jump: {self.jump_count}', (255, 255, 255))
 
 
 

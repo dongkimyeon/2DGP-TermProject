@@ -12,9 +12,9 @@ class PlayerUI:
 
         # 좌상단 위치로 조정 (피코투디는 왼쪽 아래가 0,0이므로 화면 높이 기준으로 계산)
         self.hp_bar_x = 100
-        self.hp_bar_y = SceneManager.screen_height - 20  # 화면 상단에서 20픽셀 아래
+        self.hp_bar_y = SceneManager.screen_height - 100  # 화면 상단에서 20픽셀 아래
         self.dash_bar_x = 30
-        self.dash_bar_y = SceneManager.screen_height - 70  # HP바 아래 50픽셀
+        self.dash_bar_y = SceneManager.screen_height - 150  # HP바 아래 50픽셀
 
         # LifeWave 애니메이션 프레임
         self.wave_frame = 0

@@ -73,6 +73,10 @@ class Bullet:
 
     def render(self, camera_x=0, camera_y=0, zoom=1.0):
         image, frame_count, width, height = ResourceManager.get_image(f"bat_bullet")
+        if not image:
+            return
+        # frame_count가 0인 경우 안전 처리
+        frame_count = max(1, frame_count)
         frame = self.frame_count % frame_count
         draw_x = int((self.x - camera_x) * zoom)
         draw_y = int((self.y - camera_y) * zoom) + int(height // 2 * zoom)

@@ -30,6 +30,11 @@ class Banshee:
         self.shot_timer = 0.0
         self.shot_duration = 0.1
 
+        # lifewave 애니메이션 상태 추가
+        self.lifewave_frame = 0
+        self.lifewave_timer = 0.0
+        self.lifewave_frame_interval = 0.1
+
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
         self.map_manager = map_manager
@@ -92,7 +97,14 @@ class Banshee:
 
 
     def render(self, camera_x=0, camera_y=0, zoom=1.0):
+        # 애니메이션 정보 안전 처리: frame_count가 0이면 1로 보정하여 0으로 나누는 것을 방지
         image, frame_count, width, height = ResourceManager.get_image(f"banshee_{self.state}")
+        if not image:
+            # 이미지가 없으면 렌더링을 건너뛴다
+            self.render_hp_bar(camera_x, camera_y, zoom)
+            return
+
+        frame_count = max(1, frame_count)
         frame = self.frame_count % frame_count
         draw_x = int((self.x - camera_x) * zoom)
         draw_y = int((self.y - camera_y) * zoom) + int(height // 2 * zoom)
@@ -151,6 +163,39 @@ class Banshee:
                                   draw_x - int((gage_width - gage_draw_width) / 2 * zoom * bar_scale),
                                   draw_y,
                                   int(gage_draw_width * zoom * bar_scale), int(gage_height * zoom))
+
+        # lifewave 애니메이션: 체력이 70 이하일 때만 표시
+        try:
+            lifewave_img, lifewave_frame_count, lw_width, lw_height = ResourceManager.get_image("lifewave")
+        except Exception:
+            lifewave_img = None
+            lifewave_frame_count = 0
+            lw_width = lw_height = 0
+
+        if lifewave_img and self.health <= 70:
+            # 프레임 카운트 안전 처리
+            lifewave_frame_count = max(1, lifewave_frame_count)
+
+            # 타이머 업데이트
+            dt = Time.DeltaTime()
+            self.lifewave_timer += dt
+            if self.lifewave_timer >= self.lifewave_frame_interval:
+                self.lifewave_frame = (self.lifewave_frame + 1) % lifewave_frame_count
+                self.lifewave_timer = 0.0
+
+            # 체력바의 오른쪽 끝 위치 계산 (hp_bar_base는 중심 기준으로 그려짐)
+            total_bar_w = int(bar_width * zoom * bar_scale)
+            right_end_x = draw_x + total_bar_w // 2
+            # lifewave 이미지를 체력바 오른쪽 끝에 붙이기
+            lw_draw_w = int((lw_width // lifewave_frame_count) * zoom)
+            lw_draw_h = int(lw_height * zoom)
+            lw_draw_x = right_end_x + lw_draw_w // 2  # 오른쪽으로 반폭 오프셋
+            lw_draw_y = draw_y
+
+            # clip_draw 사용하여 애니메이션 프레임 렌더
+            frame_x = self.lifewave_frame * (lw_width // lifewave_frame_count)
+            lifewave_img.clip_draw(frame_x, 0, lw_width // lifewave_frame_count, lw_height,
+                                   lw_draw_x, lw_draw_y, lw_draw_w, lw_draw_h)
 
     def is_dead(self):
         return self.health <= 0
