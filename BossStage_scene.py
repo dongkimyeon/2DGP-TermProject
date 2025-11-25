@@ -22,12 +22,12 @@ class BossStageScene:
         self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16*1.5, filename='map2.txt')
 
         # 보스 생성
-        boss = Boss(1200, 400)
+        boss = Boss(593, 500)
         boss.set_map_manager(self.map_manager)
         self.gameobjs.append(boss)
 
         # 포탈 생성 (보스를 처치하면 활성화될 포탈)
-        self.portal = Portal(2483, 1172)
+        self.portal = Portal(593, 344)
         self.gameobjs.append(self.portal)
 
         self.camera = Camera()
