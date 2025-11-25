@@ -15,6 +15,7 @@ from HpFairy import HpFairy
 from PlayerUI import PlayerUI
 import random
 from ResourceManager import ResourceManager
+from ObjectLoader import ObjectLoader
 
 
 class Stage2Scene:
@@ -25,36 +26,12 @@ class Stage2Scene:
         # MapManager 초기화
         self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16*1.5, filename='map1.txt')
 
-        for _ in range(1):
-            newBanshee = Banshee()
-            rand_x = 400
-            rand_y = random.randint(100, 400)
-            newBanshee.set_position(rand_x, rand_y)
-            newBanshee.set_map_manager(self.map_manager)  # 맵 매니저 설정
-            self.gameobjs.append(newBanshee)
-        for _ in range(1):
-            newBat = Bat()
-            rand_x = 300
-            rand_y = random.randint(100, 400)
-            newBat.set_position(rand_x, rand_y)
-            newBat.set_map_manager(self.map_manager)  # 맵 매니저 설정
-            self.gameobjs.append(newBat)
-        for _ in range(1):
-            newGhost = Ghost()
-            rand_x = 200
-            rand_y = random.randint(100, 400)
-            newGhost.set_position(rand_x, rand_y)
-            newGhost.set_map_manager(self.map_manager)  # 맵 매니저 설정
-            self.gameobjs.append(newGhost)
-        for _ in range(1):
-            newSkel = Skel()
-            rand_x = 100
-            rand_y = random.randint(100, 400)
-            newSkel.set_position(rand_x, rand_y)
-            newSkel.set_map_manager(self.map_manager)  # 맵 매니저 설정
-            self.gameobjs.append(newSkel)
+        # ObjectLoader를 사용하여 오브젝트 로드 (stage2_object_coord.txt)
+        loaded_objects = ObjectLoader.load_from_file('stage2_object_coord.txt', self.map_manager)
+        self.gameobjs.extend(loaded_objects)
 
-        self.portal = Portal(2483,1172)
+
+        self.portal = Portal(2663, 1460)
         self.gameobjs.append(self.portal)
 
         self.camera = Camera()
