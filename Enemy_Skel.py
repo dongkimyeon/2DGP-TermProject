@@ -111,6 +111,22 @@ class Skel:
         self.x = x
         self.y = y
 
+    def get_attack_hitbox(self):
+        """공격 시 스켈 앞에 생성되는 히트박스 반환"""
+        hitbox_width = 60  # 히트박스 너비 (조정 가능)
+        hitbox_height = 40  # 히트박스 높이 (조정 가능)
+        if self.direction == 1:
+            # 오른쪽
+            left = self.x + self.width // 2
+            right = left + hitbox_width
+        else:
+            # 왼쪽
+            right = self.x - self.width // 2
+            left = right - hitbox_width
+        bottom = self.y - hitbox_height // 2
+        top = self.y + hitbox_height // 2
+        return (left, bottom, right, top)
+
     def update(self):
         dt = Time.DeltaTime()
 
@@ -145,10 +161,9 @@ class Skel:
             # 공격 애니메이션 3번째 프레임(인덱스 2)에서 플레이어와 충돌 체크
             current_frame = self.frame_count % self.attack_frame_max if self.attack_frame_max > 0 else 0
             if current_frame == 2 and not self.attack_hit_applied:
-                # 플레이어와 충돌 체크
+                # 공격 히트박스 생성
+                left_b, bottom_b, right_b, top_b = self.get_attack_hitbox()
                 left_a, bottom_a, right_a, top_a = player.get_bb()
-                left_b, bottom_b, right_b, top_b = self.get_bb()
-
                 # 충돌 확인
                 if not (left_a > right_b or right_a < left_b or top_a < bottom_b or bottom_a > top_b):
                     print(f"Skel이 플레이어를 공격! 데미지: {self.attack_power}")
