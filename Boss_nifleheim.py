@@ -3,6 +3,7 @@ from Time import Time
 from Player import player
 from IceBullet import IceBullet
 from Icicle import Icicle
+from IceSpear import IceSpear
 import SceneManager
 import math
 import random
@@ -128,15 +129,27 @@ class Boss:
                 #     bullet_angle = angle + offset_rad
                 #     IceBullet().shot(self.x, self.y, bullet_angle, speed=350)
 
-                count = 8
-                x_offset = 200  # 총알 간격 (픽셀)
-                #랜덤으로 스타트 지점 100 or 200
-                import random
-                random_start = random.choice([1, 2])
-                start_x = random_start * 100
+                # count = 8
+                # x_offset = 200  # 총알 간격 (픽셀)
+                # #랜덤으로 스타트 지점 100 or 200
+                # import random
+                # random_start = random.choice([1, 2])
+                # start_x = random_start * 100
+                # for i in range(count):
+                #     Icicle().shot(start_x)
+                #     start_x = start_x + x_offset
+                # self.has_shot = True
+
+                count = 3
+                y_offset = 200  # 총알 간격 (픽셀)
+                # 랜덤으로 스타트 지점 100 or 200
+                # import random
+                # random_start = random.choice([1, 2])
+                start_x = 50
+                start_y = 0
                 for i in range(count):
-                    Icicle().shot(start_x)
-                    start_x = start_x + x_offset
+                    IceSpear().shot(start_x, start_y)
+                    start_y = start_y + y_offset
                 self.has_shot = True
 
             if self.frame_count >= 11:
