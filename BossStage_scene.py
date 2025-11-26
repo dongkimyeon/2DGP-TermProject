@@ -38,6 +38,8 @@ class BossStageScene:
 
         # 플레이어에게 맵 매니저 설정
         player.set_map_manager(self.map_manager)
+        player.x = 100
+        player.y = 200
 
     def enter(self):
         print("[BossStageScene] enter()")

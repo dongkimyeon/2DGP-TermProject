@@ -90,7 +90,7 @@ class Stage2Scene:
             if isinstance(obj, Portal):
                 # 포탈과 충돌 중
                 player.near_portal = obj
-                print("Player near Portal! Press F to enter Boss Stage")
+
 
             elif isinstance(obj, Ghost):
                 # 데미지 쿨타임 체크

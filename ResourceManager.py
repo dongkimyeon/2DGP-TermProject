@@ -99,7 +99,6 @@ class ResourceManager:
         # 투사체
         self.load_image("niflheim_ice_bullet", "resources/images/boss/Niflheim/IceBullet.png")
         self.load_image("niflheim_icicle", "resources/images/boss/Niflheim/icicle.png", 10)
-        self.load_image("niflheim_pillar", "resources/images/boss/Niflheim/안쓰는이미지.png", 20)
         self.load_image("niflheim_spear", "resources/images/boss/Niflheim/spear.png", 13)
         # gate
         self.load_image("gate", "resources/images/map/gate.png", 0)
