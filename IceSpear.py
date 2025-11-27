@@ -10,7 +10,7 @@ class IceSpear:
         self.y = 0
         self.width = 25
         self.height = 113
-        self.speed = 800
+        self.speed = 1200
         self.attack_power = 12
         self.scale = 1.5
         self.frame_count = 0

@@ -10,7 +10,7 @@ class Icicle:
         self.y = 0
         self.width = 27
         self.height = 40
-        self.speed = 500
+        self.speed = 700
         self.attack_power = 12
         self.scale = 2.0
         self.frame_count = 0

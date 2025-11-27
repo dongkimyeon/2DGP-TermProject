@@ -25,10 +25,8 @@ class BossStageScene:
         boss = Boss(593, 500)
         boss.set_map_manager(self.map_manager)
         self.gameobjs.append(boss)
+        self.is_created_portal = False
 
-        # 포탈 생성 (보스를 처치하면 활성화될 포탈)
-        self.portal = Portal(593, 344)
-        self.gameobjs.append(self.portal)
 
         self.camera = Camera()
         self.camera.set_target(player)
@@ -67,6 +65,15 @@ class BossStageScene:
         for obj in self.gameobjs:
             if hasattr(obj, 'set_map_manager') and obj.map_manager is None:
                 obj.set_map_manager(self.map_manager)
+
+        #보스가 죽으면 포탈 생성
+        if not self.is_created_portal:
+            boss_exists = any(isinstance(obj, Boss) for obj in self.gameobjs)
+            if not boss_exists:
+                portal = Portal(593, 495)
+                self.gameobjs.append(portal)
+                self.is_created_portal = True
+
 
     def handle_collisions(self):
         # 먼저 플레이어의 포탈 근처 상태 초기화

@@ -26,16 +26,16 @@ class Boss:
         self.height = 60
 
         self.attack_timer = 0.0
-        # 같은 공격 동안 여러 발사 방지를 위한 플래그
+
         self.has_shot = False
 
         # idle 시 한 번 이동 관련 변수
         self.is_moving = False
         self.move_target_x = self.x
         self.move_target_y = self.y
-        self.move_speed = 400.0  # 이동 속도 (픽셀/s)
-        self.move_distance = 200.0  # 이동할 거리 (픽셀)
-        # 플레이어와의 최대 허용 거리(이동 후 이 거리보다 멀어지면 그 쪽으로 이동하지 않고 최대 거리로 제한)
+        self.move_speed = 400.0
+        self.move_distance = 400.0
+
         self.max_distance_from_player = 500.0
         self.has_moved = False
 
@@ -52,6 +52,7 @@ class Boss:
         return self.x - half_width, self.y - half_height + 7, self.x + half_width, self.y + half_height + 5
     def take_damage(self, damage):
         self.health -= damage
+
     def start_idle_movement(self, player_x, player_y):
         # 범위(move_distance) 내에서 랜덤한 좌표를 목표로 설정
         # 랜덤 반경과 각도를 선택
@@ -121,8 +122,8 @@ class Boss:
 
                 # 랜덤 패턴 선택
                 import random
-                #self.pattern = random.choice(['ice_bullet', 'ice_spear', 'icicle_fall'])
-                self.pattern = 'icicle_fall'  # 테스트용 고정 패턴
+                self.pattern = random.choice(['ice_bullet', 'ice_spear', 'icicle_fall'])
+                #self.pattern = 'ice_spear' # 디버그용 고정 패턴
                 if self.pattern == 'ice_bullet':
                     # # 총알 개수와 스프레드 각도(라디안)
                     count = 5
@@ -138,7 +139,6 @@ class Boss:
                     pass
                 if self.pattern == 'ice_spear':
                     # 맵의 양끝에서 창이 좌우로 날아오는 패턴
-
                     count = 4
                     y_offset = 200  # 총알 간격 (픽셀)
                     # 랜덤으로 스타트 지점 100 or 200
@@ -168,10 +168,6 @@ class Boss:
                         Icicle().shot(start_x)
                         start_x = start_x + x_offset
                     # self.has_shot = True
-
-
-
-
 
                 self.has_shot = True
 
@@ -218,9 +214,6 @@ class Boss:
         if self.frame_timer > 0.1:
             self.frame_count += 1
             self.frame_timer = 0.0
-
-
-
 
 
     def render(self, camera_x=0, camera_y=0, zoom=1.0):
