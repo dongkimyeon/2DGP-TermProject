@@ -7,14 +7,14 @@ class PlayerUI:
     def __init__(self):
         self.player = player
         # UI 스케일 (각각 분리)
-        self.hp_bar_scale = 2.0
-        self.dash_bar_scale = 3.0
+        self.hp_bar_scale = 5.0
+        self.dash_bar_scale = 7.0
 
         # 좌상단 위치로 조정 (피코투디는 왼쪽 아래가 0,0이므로 화면 높이 기준으로 계산)
-        self.hp_bar_x = 100
-        self.hp_bar_y = SceneManager.screen_height - 100  # 화면 상단에서 20픽셀 아래
-        self.dash_bar_x = 30
-        self.dash_bar_y = SceneManager.screen_height - 150  # HP바 아래 50픽셀
+        self.hp_bar_x = 200
+        self.hp_bar_y = SceneManager.screen_height- 50  # 화면 상단에서 20픽셀 아래
+        self.dash_bar_x = 50
+        self.dash_bar_y = SceneManager.screen_height - 125  # HP바 아래 50픽셀
 
         # LifeWave 애니메이션 프레임
         self.wave_frame = 0
@@ -47,7 +47,7 @@ class PlayerUI:
         life_bar, _, bar_width, bar_height = ResourceManager.get_image("LifeBar")
         life_wave, frame_count, wave_width, wave_height = ResourceManager.get_image("LifeWave")
         life_base, _, base_width, base_height = ResourceManager.get_image("PlayerLifeBase")
-        font = ResourceManager.get_font("default")
+        font = ResourceManager.get_font("HpText")
 
         # 체력바 배경 (뒤쪽)
         if life_back:
@@ -106,10 +106,10 @@ class PlayerUI:
 
         # HP 숫자 표시
         if font:
-            hp_text = f"{int(self.player.hp)}/{int(self.player.max_hp)}"
+            hp_text = f"{int(self.player.hp)}  /  {int(self.player.max_hp)}"
             font.draw(
-                self.hp_bar_x - int(30 * self.hp_bar_scale),
-                self.hp_bar_y - int(5 * self.hp_bar_scale),
+                self.hp_bar_x - int(9 * self.hp_bar_scale),
+                self.hp_bar_y - int(0 * self.hp_bar_scale),
                 hp_text,
                 (255, 255, 255)
             )
@@ -129,7 +129,7 @@ class PlayerUI:
 
         # 왼쪽 베이스 (base0)
         if dash_base0:
-            left_x = self.dash_bar_x
+            left_x = self.dash_bar_x + 4
             dash_base0.draw(
                 left_x,
                 self.dash_bar_y,

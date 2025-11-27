@@ -104,6 +104,7 @@ class ResourceManager:
         self.load_image("gate", "resources/images/map/gate.png", 0)
         # Font 로드
         self.load_font("default", 'resources/font/alagard.ttf', 16)
+        self.load_font("HpText", 'resources/font/AaCassiopeia.ttf', 50)
 
     @staticmethod
     def load_font(name, path, size):
