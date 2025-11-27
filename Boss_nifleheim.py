@@ -123,7 +123,7 @@ class Boss:
                 # 랜덤 패턴 선택
                 import random
                 self.pattern = random.choice(['ice_bullet', 'ice_spear', 'icicle_fall'])
-                #self.pattern = 'ice_spear' # 디버그용 고정 패턴
+                self.pattern = 'ice_bullet' # 디버그용 고정 패턴
                 if self.pattern == 'ice_bullet':
                     # # 총알 개수와 스프레드 각도(라디안)
                     count = 5

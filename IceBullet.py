@@ -68,6 +68,14 @@ class IceBullet:
         #             SceneManager.active_scene.gameobjs.remove(self)
         #         return
 
+        # 화면 밖으로 나가면 제거
+        if (self.x < -50 or self.x > SceneManager.screen_width + 100
+            or self.y < -50 or self.y > SceneManager.screen_height + 100):
+            if self in SceneManager.active_scene.gameobjs:
+                SceneManager.active_scene.gameobjs.remove(self)
+                # print ("IceBullet removed for going out of bounds")
+            return
+
         # 프레임 애니메이션
         self.frame_timer += dt
         if self.frame_timer > 0.1:
