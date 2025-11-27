@@ -24,6 +24,7 @@ class Camera:
             if is_boss:
                 self.mX = max(0.0, min(self.mX, 16))
                 self.mY = max(0.0, min(self.mY, 100))
+                self.zoom = 1.0
             else:
                 self.mX = max(0.0, min(self.mX, 3200.0 - 1280.0))
                 self.mY = max(0.0, min(self.mY, 1600-720))

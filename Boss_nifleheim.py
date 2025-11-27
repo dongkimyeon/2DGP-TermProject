@@ -140,13 +140,18 @@ class Boss:
                 #     start_x = start_x + x_offset
                 # self.has_shot = True
 
-                count = 3
+                count = 4
                 y_offset = 200  # 총알 간격 (픽셀)
                 # 랜덤으로 스타트 지점 100 or 200
-                # import random
-                # random_start = random.choice([1, 2])
-                start_x = 50
-                start_y = 0
+                import random
+                random_start = random.choice([1, 2])
+                start_x = 0
+                if random_start == 1:
+                    start_x = 50
+                else:
+                    start_x = 1250
+
+                start_y = 70
                 for i in range(count):
                     IceSpear().shot(start_x, start_y)
                     start_y = start_y + y_offset
