@@ -52,21 +52,21 @@ class IceBullet:
         self.x += math.cos(self.direction) * self.speed * dt
         self.y += math.sin(self.direction) * self.speed * dt
 
-        # 맵 타일과의 충돌 체크
-        if self.map_manager:
-            half_width = 18 // 2
-            half_height = 18 // 2
-            left = self.x - half_width
-            bottom = self.y - half_height + 5
-            right = self.x + half_width
-            top = self.y + half_height + 5
-
-            colliding_tiles = self.map_manager.check_collision(left, bottom, right, top)
-            if colliding_tiles:
-                # 벽에 닿으면 사라짐
-                if self in SceneManager.active_scene.gameobjs:
-                    SceneManager.active_scene.gameobjs.remove(self)
-                return
+        # # 맵 타일과의 충돌 체크
+        # if self.map_manager:
+        #     half_width = 18 // 2
+        #     half_height = 18 // 2
+        #     left = self.x - half_width
+        #     bottom = self.y - half_height + 5
+        #     right = self.x + half_width
+        #     top = self.y + half_height + 5
+        #
+        #     colliding_tiles = self.map_manager.check_collision(left, bottom, right, top)
+        #     if colliding_tiles:
+        #         # 벽에 닿으면 사라짐
+        #         if self in SceneManager.active_scene.gameobjs:
+        #             SceneManager.active_scene.gameobjs.remove(self)
+        #         return
 
         # 프레임 애니메이션
         self.frame_timer += dt
