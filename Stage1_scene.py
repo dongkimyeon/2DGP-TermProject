@@ -100,7 +100,8 @@ class Stage1Scene:
                 objects_to_remove.append(obj)
 
             elif isinstance(obj, Gold):
-                print("Player collected Gold!")
+                player.coin_count+=1
+                print (player.coin_count)
                 objects_to_remove.append(obj)
 
             elif isinstance(obj, HpFairy):

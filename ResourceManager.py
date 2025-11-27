@@ -90,6 +90,8 @@ class ResourceManager:
         self.load_image("enemy_hp_bar", 'resources/images/gameScene/ui/EnemyHpBar.png')
         self.load_image("enemy_hp_bar_gage", 'resources/images/gameScene/ui/EnemyHpBarGage.png')
 
+        self.load_image("CoinIcon", 'resources/images/gameScene/ui/CoinIcon.png')
+
         # Boss 관련 이미지 로드
         # Niflheim
         self.load_image("niflheim_idle", "resources/images/boss/Niflheim/idle.png", 6)
@@ -105,6 +107,7 @@ class ResourceManager:
         # Font 로드
         self.load_font("default", 'resources/font/alagard.ttf', 16)
         self.load_font("HpText", 'resources/font/AaCassiopeia.ttf', 50)
+
 
     @staticmethod
     def load_font(name, path, size):

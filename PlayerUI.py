@@ -33,7 +33,10 @@ class PlayerUI:
     def render(self):
         # HP 바 렌더링
         self.render_hp_bar()
-        
+
+        # 코인 개수 렌더링
+        self.render_coin()
+
         # 대쉬 게이지 렌더링
         self.render_dash_bar()
     
@@ -184,13 +187,30 @@ class PlayerUI:
                     int(count_height * self.dash_bar_scale)
                 )
 
-        # 대쉬 카운트 숫자 표시
+    def render_coin(self):
+        """코인 개수 렌더링"""
+        coin_img, _, coin_width, coin_height = ResourceManager.get_image("CoinIcon")
         font = ResourceManager.get_font("default")
-        if font:
-            dash_text = f"Dash: {self.player.dash_count}/3"
-            font.draw(
-                self.dash_bar_x + int(5 * self.dash_bar_scale),
-                self.dash_bar_y - int(35 * self.dash_bar_scale),
-                dash_text,
-                (255, 255, 255)
+
+        if coin_img:
+            coin_x = 50
+            coin_y = SceneManager.screen_height - 175
+
+            # 코인 아이콘 렌더링
+            coin_img.draw(
+                coin_x,
+                coin_y,
+                int(coin_width * 2.0),
+                int(coin_height * 2.0)
             )
+
+
+            if font:
+                coin_text = f"x {self.player.coin_count}"
+                font.draw(
+                    coin_x + 30,
+                    coin_y ,
+                    coin_text,
+                    (255, 255, 255)
+                )
+

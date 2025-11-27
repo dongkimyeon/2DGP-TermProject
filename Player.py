@@ -50,6 +50,7 @@ class Player:
         self.attack_speed = 2.0 # 공격 속도 (1.0이 기본 속도)
         self.damage_cooldown = 0.0  # 적에게 데미지 받는 쿨타임
         self.damage_cooldown_time = 0.5  # 데미지 쿨타임 (0.5초)
+        self.coin_count = 0  # 플레이어가 가진 코인 수
 
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
@@ -61,10 +62,9 @@ class Player:
         return (self.x - half_width, self.y - half_height + 5, self.x + half_width, self.y + half_height + 5)
 
     def handle_collision(self, group, other):
-        """충돌 처리"""
-        if group == 'player:tile':
-            # 타일과의 충돌 처리
-            pass
+
+        pass
+
 
     def check_tile_collision(self, new_x, new_y):
         """타일 충돌 체크 및 위치 보정"""
@@ -348,8 +348,7 @@ class Player:
                 (right - camera_x) * zoom, (top - camera_y) * zoom
             )
 
-        font = ResourceManager.get_font("default")
-        font.draw(10, SceneManager.screen_height - 30, f'{self.x, self.y}', (255, 0, 0))
+
 
 
 
