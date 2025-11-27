@@ -73,7 +73,7 @@ class BossStageScene:
             boss_exists = any(isinstance(obj, Boss) for obj in self.gameobjs)
             if not boss_exists:
                 SceneManager.play_timerOn = False
-                portal = Portal(593, 495)
+                portal = Portal(593, 395)
                 self.gameobjs.append(portal)
                 self.is_created_portal = True
 
@@ -125,6 +125,28 @@ class BossStageScene:
         for obj in objects_to_remove:
             if obj in self.gameobjs:
                 self.gameobjs.remove(obj)
+
+        # 카타나 이펙트와 보스의 충돌 체크
+        if player.katana_effect.active:
+            katana_left, katana_bottom, katana_right, katana_top = player.katana_effect.get_bb()
+            for obj in self.gameobjs:
+                if isinstance(obj, Boss):
+                    obj_left, obj_bottom, obj_right, obj_top = obj.get_bb()
+                    if not (katana_left > obj_right or katana_right < obj_left or
+                            katana_top < obj_bottom or katana_bottom > obj_top):
+                        obj.handle_collision('katana_effect:boss', player.katana_effect)
+
+                        # 보스 체력 <= 0 이면 제거 리스트에 추가 (포탈은 update에서 생성)
+                        if obj.health <= 0 and obj not in objects_to_remove:
+                            objects_to_remove.append(obj)
+
+        # 보스가 죽어 objects_to_remove에 추가된 경우 제거
+        for obj in objects_to_remove:
+            if obj in self.gameobjs:
+                try:
+                    self.gameobjs.remove(obj)
+                except ValueError:
+                    pass
 
     def handle_events(self, events):
         """이벤트 처리"""

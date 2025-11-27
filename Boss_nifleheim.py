@@ -239,5 +239,15 @@ class Boss:
         pass
 
     def handle_collision(self, group, other):
-        #충돌처리를 위한 함수 아직 미구현
-        pass
+        """충돌 처리: 카타나 이펙트와의 충돌을 처리합니다."""
+        # 카타나 이펙트와 충돌한 경우 처리
+        if group == 'katana_effect:boss':
+            # 아직 해당 공격에 맞지 않았다면 데미지 적용
+            try:
+                if other.can_hit(self):
+                    damage = other.get_damage()
+                    self.take_damage(damage)
+                    other.mark_hit(self)
+            except Exception:
+                # 안전망: other 객체에 해당 메서드가 없을 경우 무시
+                pass
