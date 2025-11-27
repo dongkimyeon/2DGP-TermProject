@@ -12,7 +12,7 @@ import random
 
 class Boss:
     def __init__(self, x, y):
-        self.health = 1000
+        self.health = 100
         self.x = x
         self.y = y
         self.frame = 0

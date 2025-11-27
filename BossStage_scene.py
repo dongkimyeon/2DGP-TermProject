@@ -101,7 +101,7 @@ class BossStageScene:
 
             elif isinstance(obj, Boss):
                 print("Player collided with Boss!")
-                player.hp -= 5
+                #player.hp -= 5
 
             elif isinstance(obj, IceBullet):
 
@@ -154,6 +154,12 @@ class BossStageScene:
 
         # 플레이어 이벤트 처리
         result = player.handel_event(events)
+
+        # 포탈 진입 신호 처리: 보스 스테이지에서는 랭킹 씬으로 이동
+        if result == 'enter_portal':
+           
+            SceneManager.load_scene("RankingScene")
+            return True
 
         return False
 
