@@ -10,8 +10,8 @@ class IceBullet:
         self.y = 0
         self.width = 18
         self.height = 36
-        self.speed = 0
-        self.rotation = 0  # 렌더 시 사용할 고정 회전값(발사 직후 방향)
+        self.speed = 500
+        self.rotation = 0
         self.direction = 0
         self.attack_power = 12
 
@@ -35,7 +35,7 @@ class IceBullet:
     def get_damage(self):
         return self.attack_power
 
-    def shot(self, x, y, direction, speed=300):
+    def shot(self, x, y, direction):
         self.x = x
         self.y = y
         self.rotation = direction  # 발사 시 방향으로 초기 회전 고정
@@ -43,7 +43,6 @@ class IceBullet:
         # 프레임 초기화하여 새로 발사될 때 애니메이션이 처음부터 재생되게 함
         self.frame_count = 0
         self.frame_timer = 0.0
-        self.speed = speed
         SceneManager.active_scene.gameobjs.append(self)
         return self
 

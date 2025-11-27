@@ -134,7 +134,7 @@ class Boss:
                         offset_deg = -half_span + i * step_deg
                         offset_rad = math.radians(offset_deg)
                         bullet_angle = angle + offset_rad
-                        IceBullet().shot(self.x, self.y, bullet_angle, speed=350)
+                        IceBullet().shot(self.x, self.y, bullet_angle)
 
                     pass
                 if self.pattern == 'ice_spear':

@@ -6,6 +6,8 @@ from Player import player
 from MapManager import MapManager
 from Boss_nifleheim import Boss
 from IceBullet import IceBullet
+from IceSpear import IceSpear
+from Icicle import Icicle
 from Camera import Camera
 from Portal import Portal
 from PlayerUI import PlayerUI
@@ -37,7 +39,7 @@ class BossStageScene:
         # 플레이어에게 맵 매니저 설정
         player.set_map_manager(self.map_manager)
         player.x = 100
-        player.y = 200
+        player.y = 128
 
     def enter(self):
         print("[BossStageScene] enter()")
@@ -45,7 +47,7 @@ class BossStageScene:
         player.set_map_manager(self.map_manager)
         # 플레이어 위치 초기화 (필요시)
         player.x = 100
-        player.y = 200
+        player.y = 128
 
     def exit(self):
         print("[BossStageScene] exit()")
@@ -101,8 +103,20 @@ class BossStageScene:
                 player.hp -= 5
 
             elif isinstance(obj, IceBullet):
+
+                player.hp -= 12
+                # IceBullet을 제거 리스트에 추가
+                objects_to_remove.append(obj)
+
+            elif isinstance(obj, IceSpear):
                 print("Player collided with IceBullet!")
-                player.hp -= 10
+                player.hp -= 15
+                # IceBullet을 제거 리스트에 추가
+                objects_to_remove.append(obj)
+
+            elif isinstance(obj, Icicle):
+                print("Player collided with IceBullet!")
+                player.hp -= 14
                 # IceBullet을 제거 리스트에 추가
                 objects_to_remove.append(obj)
 
