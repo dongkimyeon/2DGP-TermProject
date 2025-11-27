@@ -118,60 +118,65 @@ class Boss:
         elif self.state == 'attack':
             # 프레임 타이밍에 맞춰 아이스불렛 발사 (부채꼴 5발, 한 번만)
             if self.frame_count == 6 and not self.has_shot:
-                # # 총알 개수와 스프레드 각도(라디안)
-                # count = 5
-                # step_deg = 10  # 각 탄 사이의 간격(도)
-                # half_span = (step_deg * (count - 1)) / 2.0
-                # # 생성
-                # for i in range(count):
-                #     offset_deg = -half_span + i * step_deg
-                #     offset_rad = math.radians(offset_deg)
-                #     bullet_angle = angle + offset_rad
-                #     IceBullet().shot(self.x, self.y, bullet_angle, speed=350)
 
-                # count = 8
-                # x_offset = 200  # 총알 간격 (픽셀)
-                # #랜덤으로 스타트 지점 100 or 200
-                # import random
-                # random_start = random.choice([1, 2])
-                # start_x = random_start * 100
-                # for i in range(count):
-                #     Icicle().shot(start_x)
-                #     start_x = start_x + x_offset
-                # self.has_shot = True
-
-                count = 4
-                y_offset = 200  # 총알 간격 (픽셀)
-                # 랜덤으로 스타트 지점 100 or 200
+                # 랜덤 패턴 선택
                 import random
-                random_start = random.choice([1, 2])
-                start_x = 0
-                if random_start == 1:
-                    start_x = 50
-                else:
-                    start_x = 1250
+                #self.pattern = random.choice(['ice_bullet', 'ice_spear', 'icicle_fall'])
+                self.pattern = 'icicle_fall'  # 테스트용 고정 패턴
+                if self.pattern == 'ice_bullet':
+                    # # 총알 개수와 스프레드 각도(라디안)
+                    count = 5
+                    step_deg = 10  # 각 탄 사이의 간격(도)
+                    half_span = (step_deg * (count - 1)) / 2.0
+                    # 생성
+                    for i in range(count):
+                        offset_deg = -half_span + i * step_deg
+                        offset_rad = math.radians(offset_deg)
+                        bullet_angle = angle + offset_rad
+                        IceBullet().shot(self.x, self.y, bullet_angle, speed=350)
 
-                start_y = 70
-                for i in range(count):
-                    IceSpear().shot(start_x, start_y)
-                    start_y = start_y + y_offset
+                    pass
+                if self.pattern == 'ice_spear':
+                    # 맵의 양끝에서 창이 좌우로 날아오는 패턴
+
+                    count = 4
+                    y_offset = 200  # 총알 간격 (픽셀)
+                    # 랜덤으로 스타트 지점 100 or 200
+                    import random
+                    random_start = random.choice([1, 2])
+                    start_x = 0
+                    if random_start == 1:
+                        start_x = 50
+                    else:
+                        start_x = 1250
+
+                    start_y = 70
+                    for i in range(count):
+                        IceSpear().shot(start_x, start_y)
+                        start_y = start_y + y_offset
+
+
+                if self.pattern == 'icicle_fall':
+                    # 맵의 상단에서 아래로 얼음 조각이 떨어지는 패턴
+                    count = 6
+                    x_offset = 200  # 총알 간격 (픽셀)
+                    # 랜덤으로 스타트 지점 100 or 200
+                    import random
+                    random_start = random.choice([1, 2])
+                    start_x = random_start * 100
+                    for i in range(count):
+                        Icicle().shot(start_x)
+                        start_x = start_x + x_offset
+                    # self.has_shot = True
+
+
+
+
+
                 self.has_shot = True
 
             if self.frame_count >= 11:
                 self.state = 'idle'
-                # 랜덤 패턴 선택
-                import random
-                self.pattern = random.choice(['ice_bullet', 'ice_spear', 'icicle_fall'])
-                if self.pattern == 'ice_bullet':
-                    # 추가적인 패턴 동작이 필요하면 여기에 구현
-                    pass
-                if self.pattern == 'ice_spear':
-                    # 맵의 양끝에서 창이 좌우로 날아오는 패턴
-                    pass
-                if self.pattern == 'icicle_fall':
-                    # 맵의 상단에서 아래로 얼음 조각이 떨어지는 패턴
-                    pass
-
                 self.frame_count = 0
                 self.attack_timer = 0.0
                 # 공격 종료 시 플래그 리셋
