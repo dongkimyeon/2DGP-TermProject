@@ -72,6 +72,7 @@ class BossStageScene:
         if not self.is_created_portal:
             boss_exists = any(isinstance(obj, Boss) for obj in self.gameobjs)
             if not boss_exists:
+                SceneManager.play_timerOn = False
                 portal = Portal(593, 495)
                 self.gameobjs.append(portal)
                 self.is_created_portal = True
