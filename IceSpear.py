@@ -60,6 +60,15 @@ class IceSpear:
                 self.frame_count += 1
                 self.frame_timer = 0.0
 
+        if self.dir == 0:
+            if self.x < -50:
+                if self in SceneManager.active_scene.gameobjs:
+                    SceneManager.active_scene.gameobjs.remove(self)
+        else:
+            if self.x > 1500:
+                if self in SceneManager.active_scene.gameobjs:
+                    SceneManager.active_scene.gameobjs.remove(self)
+
         # 10번째 프레임부터 떨어지기
         if self.frame_count >= 12:
             self.frame_count = 12 # 고정 (이제 애니메이션 로직이 안 타서 유지됨)

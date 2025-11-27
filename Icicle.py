@@ -51,6 +51,10 @@ class Icicle:
             if self.frame_timer > 0.1:
                 self.frame_count += 1
                 self.frame_timer = 0.0
+        if self.y <= -50:
+            # 화면 밖으로 나가면 제거
+            if self in SceneManager.active_scene.gameobjs:
+                SceneManager.active_scene.gameobjs.remove(self)
 
         # 10번째 프레임부터 떨어지기
         if self.frame_count >= 9:

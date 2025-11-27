@@ -13,7 +13,7 @@ SceneManager.CreateScene("Stage2Scene", Stage2Scene)
 SceneManager.CreateScene("BossStageScene", BossStageScene)
 
 
-SceneManager.load_scene("TitleScene")
+SceneManager.load_scene("BossStageScene")
 
 SceneManager.run()
 
