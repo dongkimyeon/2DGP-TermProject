@@ -6,7 +6,9 @@ screen_height = 1080
 from ResourceManager import ResourceManager
 scenes = {}
 active_scene = None
-mfont = None
+
+play_time = 0.0
+play_timerOn = False
 def CreateScene(name, scene_class):
     print(f"[SceneManager] CreateScene: {name} 인스턴스 생성")
     scenes[name] = scene_class()
@@ -24,13 +26,14 @@ def load_scene(name):
 
 def run():
     print("[SceneManager] run")
-    global mfont
-    mfont = pico2d.load_font('resources/font/alagard.ttf', 50)
+
 
     while active_scene:
         Time.update()
         events = pico2d.get_events()
-
+        if play_timerOn:
+            global play_time
+            play_time += Time.DeltaTime()
         # 씬의 handle_events 메서드 호출 (씬 전환 처리 포함)
         if active_scene and hasattr(active_scene, 'handle_events'):
             scene_changed = active_scene.handle_events(events)
@@ -40,20 +43,6 @@ def run():
         update()
         render()
 
-
-def change_scene(new_scene):
-    """씬을 변경하는 함수"""
-    global active_scene
-
-    if active_scene and hasattr(active_scene, 'exit'):
-        print(f"[SceneManager] exit: {type(active_scene).__name__}")
-        active_scene.exit()
-
-    active_scene = new_scene
-
-    if active_scene and hasattr(active_scene, 'enter'):
-        print(f"[SceneManager] enter: {type(active_scene).__name__}")
-        active_scene.enter()
 
 def update():
     if active_scene:

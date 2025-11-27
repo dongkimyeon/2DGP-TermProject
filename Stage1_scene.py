@@ -43,6 +43,8 @@ class Stage1Scene:
 
     def enter(self):
         print("[Stage1Scene] enter()")
+        SceneManager.play_time = 0.0
+        SceneManager.play_timerOn = True
         player.set_map_manager(self.map_manager)
         player.x = 100
         player.y = 200

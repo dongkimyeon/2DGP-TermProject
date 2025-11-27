@@ -36,7 +36,8 @@ class PlayerUI:
 
         # 코인 개수 렌더링
         self.render_coin()
-
+        # 플레이 타임 렌더링
+        self.render_playtime()
         # 대쉬 게이지 렌더링
         self.render_dash_bar()
     
@@ -213,4 +214,19 @@ class PlayerUI:
                     coin_text,
                     (255, 255, 255)
                 )
+
+    def render_playtime(self):
+        """플레이 타임 렌더링"""
+        font = ResourceManager.get_font("HpText")
+        if font:
+            minutes = int(SceneManager.play_time) // 60
+            seconds = int(SceneManager.play_time) % 60
+            time_text = f"Time: {minutes:02}:{seconds:02}"
+            font.draw(
+                SceneManager.screen_width - 250,
+                SceneManager.screen_height - 50,
+                time_text,
+                (255, 255, 255)
+            )
+
 
