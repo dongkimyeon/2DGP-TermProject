@@ -111,7 +111,7 @@ class ResourceManager:
 
         # RankingSceneImage
         self.load_image("ranking_background", 'resources/images/RankingSceneImage.png')
-        self.load_image("Dead_bacground", 'resources/images/DeadSceneImage.png')
+        self.load_image("Dead_background", 'resources/images/DeadSceneImage.png')
 
 
     @staticmethod
