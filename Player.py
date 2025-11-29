@@ -227,6 +227,9 @@ class Player:
         if self.katana_effect:
             self.katana_effect.update()
 
+        if self.hp <= 0:
+            SceneManager.load_scene("DeadScene")
+
     def handel_event(self, events):
         # 카메라와 SceneManager.mouse_world를 한 번만 읽음
         camera = Camera.Camera()
