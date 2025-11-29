@@ -15,7 +15,7 @@ SceneManager.CreateScene("BossStageScene", BossStageScene)
 SceneManager.CreateScene("RankingScene", RankingScene)
 
 
-SceneManager.load_scene("TitleScene")
+SceneManager.load_scene("RankingScene")
 
 SceneManager.run()
 

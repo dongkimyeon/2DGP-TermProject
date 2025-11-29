@@ -16,6 +16,10 @@ class RankingScene:
         pass
 
     def render(self):
+        image, frame_count, width, height = SceneManager.ResourceManager.get_image("ranking_background")
+        if image:
+            image.draw(SceneManager.screen_width // 2, SceneManager.screen_height // 2,
+                       SceneManager.screen_width, SceneManager.screen_height)
         pass
 
     def handle_events(self, events):
