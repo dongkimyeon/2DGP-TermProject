@@ -228,6 +228,9 @@ class Player:
             self.katana_effect.update()
 
         if self.hp <= 0:
+            SceneManager.play_time = 0
+            SceneManager.play_timerOn = False
+            self.hp = self.max_hp
             SceneManager.load_scene("DeadScene")
 
     def handel_event(self, events):
