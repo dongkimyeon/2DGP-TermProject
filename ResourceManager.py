@@ -109,6 +109,11 @@ class ResourceManager:
         self.load_font("HpText", 'resources/font/AaCassiopeia.ttf', 50)
 
 
+        # RankingSceneImage
+        self.load_image("ranking_background", 'resources/images/RankingSceneImage.png')
+        self.load_image("Dead_bacground", 'resources/images/DeadSceneImage.png')
+
+
     @staticmethod
     def load_font(name, path, size):
         inst = ResourceManager.instance()
