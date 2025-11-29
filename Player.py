@@ -12,8 +12,9 @@ import Camera
 
 class Player:
     def __init__(self):
-        self.hp = 80
-        self.max_hp = 80  # 최대 HP 추가
+
+        self.max_hp = 100
+        self.hp = self.max_hp
         self.dash_count = 3
         self.state = 'idle'
         self.x = SceneManager.screen_width // 2
@@ -356,11 +357,30 @@ class Player:
                 (right - camera_x) * zoom, (top - camera_y) * zoom
             )
 
+    def reset_for_stage(self, start_x=100, start_y=200, map_manager=None):
+        # 기본 스탯
+        self.hp = self.max_hp
+        self.dash_count = 3
+        self.state = 'idle'
+        self.x = start_x
+        self.y = start_y
+        self.direction = 0
 
+        # 이동 / 애니메이션
+        self.speed = 200
+        self.frame_count = 0
+        self.frame_timer = 0.0
 
+        # 점프 / 중력
+        self.jump_velocity = 0
+        self.gravity = -2000
+        self.is_jumping = False
+        self.jump_power = 800
+        self.jump_count = 2
+        self.is_grounded = False
 
-
-
-
+        # 입력 플래그
+        self.left_pressed = False
+        self.right_pressed = False
 
 player = Player()

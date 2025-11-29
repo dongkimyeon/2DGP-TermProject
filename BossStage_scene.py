@@ -51,6 +51,7 @@ class BossStageScene:
 
     def exit(self):
         print("[BossStageScene] exit()")
+        self.gameobjs.clear()
 
     def update(self):
         for obj in self.gameobjs:
@@ -70,12 +71,13 @@ class BossStageScene:
 
         #보스가 죽으면 포탈 생성
         if not self.is_created_portal:
-            boss_exists = any(isinstance(obj, Boss) for obj in self.gameobjs)
-            if not boss_exists:
-                SceneManager.play_timerOn = False
-                portal = Portal(593, 362)
-                self.gameobjs.append(portal)
-                self.is_created_portal = True
+            #보스 체력 확인
+            for obj in self.gameobjs:
+                if isinstance(obj, Boss) and obj.health <= 0:
+                    SceneManager.play_timerOn = False
+                    portal = Portal(593, 335)
+                    self.gameobjs.append(portal)
+                    self.is_created_portal = True
 
 
     def handle_collisions(self):

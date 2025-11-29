@@ -88,6 +88,12 @@ class Boss:
     def update(self):
         dt = Time.DeltaTime()
 
+        if self.health <= 0:
+            self.state = 'die'
+        if self.state == 'die':
+            if self.frame_count >= 29:
+                self.frame_count = 29
+                return
 
 
         dx = player.x - self.x
@@ -210,12 +216,9 @@ class Boss:
                     self.x += nx * move_step
                     self.y += ny * move_step
 
-        if self.health <= 0:
-            self.state = 'die'
-        if self.state == 'die':
-            if self.frame_count >= 29:
-                self.frame_count = 29
-                return
+
+
+
         self.frame_timer += dt
         self.attack_timer += dt
         if self.frame_timer > 0.1:

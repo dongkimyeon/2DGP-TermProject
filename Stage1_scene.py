@@ -46,6 +46,9 @@ class Stage1Scene:
         player.x = 100
         player.y = 200
 
+        #플레이어 모든 변수 초기화
+        player.reset_for_stage()
+
     def exit(self):
         print("[Stage1Scene] exit()")
         self.gameobjs.clear()
