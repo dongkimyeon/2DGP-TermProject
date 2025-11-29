@@ -17,7 +17,7 @@ SceneManager.CreateScene("RankingScene", RankingScene)
 SceneManager.CreateScene("DeadScene", DeadScene)
 
 
-SceneManager.load_scene("DeadScene")
+SceneManager.load_scene("RankingScene")
 
 SceneManager.run()
 

@@ -13,6 +13,7 @@ from Portal import Portal
 from PlayerUI import PlayerUI
 import random
 from ResourceManager import ResourceManager
+import os
 
 
 class BossStageScene:
@@ -157,7 +158,14 @@ class BossStageScene:
 
         # 포탈 진입 신호 처리: 보스 스테이지에서는 랭킹 씬으로 이동
         if result == 'enter_portal':
-           
+            # 플레이 타임 저장 (초 단위 소수점 3자리)
+            try:
+                path = os.path.join(os.path.dirname(__file__), 'record.txt')
+                with open(path, 'a', encoding='utf-8') as f:
+                    f.write(f"{SceneManager.play_time:.3f}\n")
+            except Exception as e:
+                print("[BossStageScene] record save failed:", e)
+
             SceneManager.load_scene("RankingScene")
             return True
 

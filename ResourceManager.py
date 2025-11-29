@@ -107,7 +107,7 @@ class ResourceManager:
         # Font 로드
         self.load_font("default", 'resources/font/alagard.ttf', 16)
         self.load_font("HpText", 'resources/font/AaCassiopeia.ttf', 50)
-
+        self.load_font("RankingFont", 'resources/font/AaCassiopeia.ttf', 80)
 
         # RankingSceneImage
         self.load_image("ranking_background", 'resources/images/RankingSceneImage.png')
