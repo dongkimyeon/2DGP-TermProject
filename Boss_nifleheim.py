@@ -182,7 +182,6 @@ class Boss:
         if prev_state != 'idle' and self.state == 'idle':
             self.start_idle_movement(player.x, player.y)
 
-
         # 이동 처리
         if self.is_moving:
             tx = self.move_target_x - self.x
@@ -208,6 +207,9 @@ class Boss:
                 else:
                     self.x += nx * move_step
                     self.y += ny * move_step
+
+        if self.health <= 0:
+            self.state = 'die'
 
         self.frame_timer += dt
         self.attack_timer += dt
@@ -235,8 +237,6 @@ class Boss:
                 image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h',
                                           draw_x, draw_y, draw_w, draw_h)
 
-    def shot_ice_bullet(self):
-        pass
 
     def handle_collision(self, group, other):
         """충돌 처리: 카타나 이펙트와의 충돌을 처리합니다."""
@@ -251,3 +251,4 @@ class Boss:
             except Exception:
                 # 안전망: other 객체에 해당 메서드가 없을 경우 무시
                 pass
+

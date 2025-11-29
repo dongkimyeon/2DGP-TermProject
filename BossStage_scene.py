@@ -24,12 +24,15 @@ class BossStageScene:
         # MapManager 초기화 - 보스 스테이지용 맵 사용
         self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16*1.5, filename='map2.txt')
 
+
+
+    def enter(self):
+        print("[BossStageScene] enter()")
         # 보스 생성
         boss = Boss(593, 500)
         boss.set_map_manager(self.map_manager)
         self.gameobjs.append(boss)
         self.is_created_portal = False
-
 
         self.camera = Camera()
         self.camera.set_target(player)
@@ -42,10 +45,6 @@ class BossStageScene:
         player.x = 100
         player.y = 128
 
-    def enter(self):
-        print("[BossStageScene] enter()")
-        # 씬 진입 시 플레이어에게 이 씬의 맵 매니저를 다시 설정
-        player.set_map_manager(self.map_manager)
         # 플레이어 위치 초기화 (필요시)
         player.x = 100
         player.y = 128
@@ -139,7 +138,8 @@ class BossStageScene:
 
                         # 보스 체력 <= 0 이면 제거 리스트에 추가 (포탈은 update에서 생성)
                         if obj.health <= 0 and obj not in objects_to_remove:
-                            objects_to_remove.append(obj)
+                            #objects_to_remove.append(obj)
+                            pass
 
         # 보스가 죽어 objects_to_remove에 추가된 경우 제거
         for obj in objects_to_remove:
@@ -155,6 +155,16 @@ class BossStageScene:
 
         # 플레이어 이벤트 처리
         result = player.handel_event(events)
+
+        for event in events:
+            if event.type == pico2d.SDL_KEYDOWN:
+                if event.key == pico2d.SDLK_n:
+                    print('asd')
+                    for obj in self.gameobjs:
+                        if isinstance(obj, Boss):
+                            obj.health = 0
+
+
 
         # 포탈 진입 신호 처리: 보스 스테이지에서는 랭킹 씬으로 이동
         if result == 'enter_portal':

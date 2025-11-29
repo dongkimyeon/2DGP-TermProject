@@ -23,13 +23,19 @@ class Stage2Scene:
         print("[Stage2Scene] __init__()")
 
         self.gameobjs = []
-        # MapManager 초기화
-        self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16*1.5, filename='map1.txt')
+         # MapManager 초기화
+        self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16 * 1.5, filename='map1.txt')
+
+
+
+    def enter(self):
+        print("[Stage2Scene] enter()")
+        # 씬 진입 시 플레이어에게 이 씬의 맵 매니저를 다시 설정
+        player.set_map_manager(self.map_manager)
 
         # ObjectLoader를 사용하여 오브젝트 로드 (stage2_object_coord.txt)
         loaded_objects = ObjectLoader.load_from_file('stage2_object_coord.txt', self.map_manager)
         self.gameobjs.extend(loaded_objects)
-
 
         self.portal = Portal(2663, 1460)
         self.gameobjs.append(self.portal)
@@ -39,20 +45,13 @@ class Stage2Scene:
 
         # PlayerUI 초기화
         self.player_ui = PlayerUI()
-
-        # 플레이어에게 맵 매니저 설정
-        player.set_map_manager(self.map_manager)
-
-    def enter(self):
-        print("[Stage2Scene] enter()")
-        # 씬 진입 시 플레이어에게 이 씬의 맵 매니저를 다시 설정
-        player.set_map_manager(self.map_manager)
         # 플레이어 위치 초기화
         player.x = 100
         player.y = 200
 
     def exit(self):
         print("[Stage2Scene] exit()")
+        self.gameobjs.clear()
 
     def update(self):
         for obj in self.gameobjs:

@@ -234,7 +234,7 @@ class Player:
             SceneManager.load_scene("DeadScene")
 
     def handel_event(self, events):
-        # 카메라와 SceneManager.mouse_world를 한 번만 읽음
+
         camera = Camera.Camera()
         camera_x, camera_y = camera.get_position()
         zoom = camera.get_zoom()
@@ -271,6 +271,8 @@ class Player:
                 elif event.key == pico2d.SDLK_f:
                     if self.near_portal:
                         return 'enter_portal'  # 포탈 진입 신호 반환
+                elif event.key == pico2d.SDLK_q:
+                    SceneManager.load_scene("DeadScene")
             if event.type == pico2d.SDL_MOUSEBUTTONDOWN:
                 if mouse_world:
                     world_x, world_y = mouse_world

@@ -1,5 +1,5 @@
 import SceneManager
-
+from Player import player
 
 
 class DeadScene:
@@ -8,6 +8,7 @@ class DeadScene:
 
     def enter(self):
         print("[DeadScene] enter")
+        player.coin_count = 0
 
     def exit(self):
         print("[DeadScene] exit")

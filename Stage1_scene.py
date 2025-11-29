@@ -23,10 +23,11 @@ class Stage1Scene:
         print("[Stage1Scene] __init__()")
 
         self.gameobjs = []
-        # MapManager 초기화
+
         self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16*1.5, filename='map.txt')
 
-        # ObjectLoader를 사용하여 오브젝트 로드
+    def enter(self):
+        print("[Stage1Scene] enter()")
         loaded_objects = ObjectLoader.load_from_file('stage1_object_coord.txt', self.map_manager)
         self.gameobjs.extend(loaded_objects)
 
@@ -39,10 +40,6 @@ class Stage1Scene:
         # PlayerUI 초기화
         self.player_ui = PlayerUI()
 
-        player.set_map_manager(self.map_manager)
-
-    def enter(self):
-        print("[Stage1Scene] enter()")
         SceneManager.play_time = 0.0
         SceneManager.play_timerOn = True
         player.set_map_manager(self.map_manager)
@@ -51,6 +48,7 @@ class Stage1Scene:
 
     def exit(self):
         print("[Stage1Scene] exit()")
+        self.gameobjs.clear()
 
     def update(self):
         for obj in self.gameobjs:

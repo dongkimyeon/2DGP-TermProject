@@ -27,7 +27,6 @@ def load_scene(name):
 def run():
     print("[SceneManager] run")
 
-
     while active_scene:
         Time.update()
         events = pico2d.get_events()
