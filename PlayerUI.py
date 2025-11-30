@@ -112,7 +112,7 @@ class PlayerUI:
         if font:
             hp_text = f"{int(self.player.hp)}  /  {int(self.player.max_hp)}"
             font.draw(
-                self.hp_bar_x - int(9 * self.hp_bar_scale),
+                self.hp_bar_x - int(11 * self.hp_bar_scale),
                 self.hp_bar_y - int(0 * self.hp_bar_scale),
                 hp_text,
                 (255, 255, 255)
