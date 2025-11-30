@@ -55,22 +55,33 @@ class Boss:
         self.health -= damage
 
     def start_idle_movement(self, player_x, player_y):
-        # 범위(move_distance) 내에서 랜덤한 좌표를 목표로 설정
-        # 랜덤 반경과 각도를 선택
-        rand_r = random.uniform(0, self.move_distance)
-        rand_theta = random.uniform(0, math.tau)
-        target_x = self.x + math.cos(rand_theta) * rand_r
-        target_y = self.y + math.sin(rand_theta) * rand_r
-
-        # 맵 경계 처리: SceneManager.active_scene.map_manager 사용
+        # 플레이어와의 거리에 따라 이동 목표 설정, 충돌 타일 피함
         try:
             mm = SceneManager.active_scene.map_manager
+        except:
+            mm = None
+
+        dist_to_player = math.hypot(player_x - self.x, player_y - self.y)
+        if dist_to_player > self.max_distance_from_player:
+            # 플레이어에게 가까워지도록 이동
+            angle_to_player = math.atan2(player_y - self.y, player_x - self.x)
+            target_dist = min(dist_to_player - self.max_distance_from_player + random.uniform(0, 100), self.move_distance)
+            target_x = self.x + math.cos(angle_to_player) * target_dist
+            target_y = self.y + math.sin(angle_to_player) * target_dist
+        else:
+            # 랜덤 이동
+            rand_r = random.uniform(0, self.move_distance)
+            rand_theta = random.uniform(0, math.tau)
+            target_x = self.x + math.cos(rand_theta) * rand_r
+            target_y = self.y + math.sin(rand_theta) * rand_r
+
+        # 맵 경계 처리
+        if mm:
             min_x = mm.TILE_SIZE / 2.0
             min_y = mm.TILE_SIZE / 2.0
             max_x = mm.GRID_WIDTH * mm.TILE_SIZE - mm.TILE_SIZE / 2.0
             max_y = mm.GRID_HEIGHT * mm.TILE_SIZE - mm.TILE_SIZE / 2.0
-        except Exception:
-            # 안전망: 화면 크기 기반 제한
+        else:
             min_x = 0
             min_y = 0
             max_x = SceneManager.screen_width
@@ -80,11 +91,40 @@ class Boss:
         target_x = max(min_x, min(max_x, target_x))
         target_y = max(min_y, min(max_y, target_y))
 
-        # 목표 설정 및 상태 초기화
-        self.move_target_x = target_x
-        self.move_target_y = target_y
-        self.is_moving = True
-        self.has_moved = False
+        # 충돌 타일 확인 및 재시도 (바운딩 박스 전체 확인)
+        for attempt in range(10):
+            half_width = self.width // 2
+            half_height = self.height // 2
+            left = target_x - half_width
+            bottom = target_y - half_height + 7
+            right = target_x + half_width
+            top = target_y + half_height + 5
+
+            colliding_tiles = []
+            if mm:
+                colliding_tiles = mm.check_collision(left, bottom, right, top)
+
+            if not colliding_tiles:
+                # 충돌 없음
+                self.move_target_x = target_x
+                self.move_target_y = target_y
+                self.is_moving = True
+                self.has_moved = False
+                return
+
+            # 충돌 있음, 랜덤 조정
+            rand_r = random.uniform(0, self.move_distance)
+            rand_theta = random.uniform(0, math.tau)
+            target_x = self.x + math.cos(rand_theta) * rand_r
+            target_y = self.y + math.sin(rand_theta) * rand_r
+            target_x = max(min_x, min(max_x, target_x))
+            target_y = max(min_y, min(max_y, target_y))
+
+        # 실패 시 현재 위치 유지
+        self.move_target_x = self.x
+        self.move_target_y = self.y
+        self.is_moving = False
+        self.has_moved = True
 
     def update(self):
         dt = Time.DeltaTime()
@@ -132,7 +172,7 @@ class Boss:
                 # 랜덤 패턴 선택
                 import random
                 self.pattern = random.choice(['ice_bullet', 'ice_spear', 'icicle_fall'])
-                self.pattern = 'ice_bullet' # 디버그용 고정 패턴
+                #self.pattern = 'ice_bullet' # 디버그용 고정 패턴
                 if self.pattern == 'ice_bullet':
                     # # 총알 개수와 스프레드 각도(라디안)
                     count = 5
@@ -163,8 +203,6 @@ class Boss:
                     for i in range(count):
                         IceSpear().shot(start_x, start_y)
                         start_y = start_y + y_offset
-
-
                 if self.pattern == 'icicle_fall':
                     # 맵의 상단에서 아래로 얼음 조각이 떨어지는 패턴
                     count = 6
@@ -261,3 +299,64 @@ class Boss:
                 # 안전망: other 객체에 해당 메서드가 없을 경우 무시
                 pass
 
+    def check_tile_collision(self, new_x, new_y):
+        """타일 충돌 체크 및 위치 보정"""
+        if not self.map_manager:
+            return new_x, new_y
+
+        half_width = self.width // 2
+        half_height = self.height // 2
+
+        # 현재 위치의 충돌 박스
+        old_left = self.x - half_width
+        old_right = self.x + half_width
+        old_bottom = self.y - half_height + 7
+        old_top = self.y + half_height + 5
+
+        # 새 위치에서의 충돌 박스
+        left = new_x - half_width
+        bottom = new_y - half_height + 7
+        right = new_x + half_width
+        top = new_y + half_height + 5
+
+        # 충돌하는 타일들 가져오기
+        colliding_tiles = self.map_manager.check_collision(left, bottom, right, top)
+
+        # Y축 충돌 처리 먼저 (수직 방향에서만 충돌 체크)
+        for tile in colliding_tiles:
+            # 수직 충돌인지 먼저 확인 (X축 중심이 타일과 겹치는지)
+            tile_center_x = (tile['left'] + tile['right']) / 2
+            player_center_x = (old_left + old_right) / 2
+
+            # X축 오버랩 체크 - 보스 중심이 타일 영역에 있는지
+            x_overlap = (old_left < tile['right'] and old_right > tile['left'])
+
+            if x_overlap:
+                # 수직 충돌 처리 (Y축)
+                if old_top <= tile['bottom'] and top > tile['bottom']:
+                    # 위에서 타일에 부딪힘 (천장)
+                    new_y = tile['bottom'] - half_height - 5
+                elif old_bottom >= tile['top'] and bottom < tile['top']:
+                    # 아래에서 타일에 착지
+                    new_y = tile['top'] + half_height - 7
+
+        # Y축 처리 후 업데이트된 위치로 X축 충돌 체크
+        left = new_x - half_width
+        bottom = new_y - half_height + 7
+        right = new_x + half_width
+        top = new_y + half_height + 5
+
+        colliding_tiles_x = self.map_manager.check_collision(left, bottom, right, top)
+
+        for tile in colliding_tiles_x:
+            # Y축 오버랩 체크 - 수평 충돌인지 확인
+            y_overlap = (bottom < tile['top'] and top > tile['bottom'])
+
+            if y_overlap:
+                # 수평 충돌 처리
+                if old_right <= tile['left'] and right > tile['left']:
+                    new_x = tile['left'] - half_width - 0.1
+                elif old_left >= tile['right'] and left < tile['right']:
+                    new_x = tile['right'] + half_width + 0.1
+
+        return new_x, new_y
