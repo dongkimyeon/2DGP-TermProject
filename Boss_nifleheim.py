@@ -12,7 +12,8 @@ import random
 
 class Boss:
     def __init__(self, x, y):
-        self.health = 100
+        self.max_health = 100
+        self.health = self.max_health
         self.x = x
         self.y = y
         self.frame = 0

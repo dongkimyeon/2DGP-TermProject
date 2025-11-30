@@ -1,3 +1,4 @@
+# BossStageScene.py (기존 코드에 BossUI 관련 부분만 업데이트된 버전, 전체 파일 제공)
 from pico2d import load_image
 
 import SceneManager
@@ -11,6 +12,7 @@ from Icicle import Icicle
 from Camera import Camera
 from Portal import Portal
 from PlayerUI import PlayerUI
+from BossUI import BossUI
 import random
 from ResourceManager import ResourceManager
 import os
@@ -23,7 +25,6 @@ class BossStageScene:
         self.gameobjs = []
         # MapManager 초기화 - 보스 스테이지용 맵 사용
         self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16*1.5, filename='map2.txt')
-
 
 
     def enter(self):
@@ -40,6 +41,9 @@ class BossStageScene:
         # PlayerUI 초기화
         self.player_ui = PlayerUI()
 
+        # BossUI 초기화 (보스 참조)
+        self.boss_ui = BossUI(boss)
+
         # 플레이어에게 맵 매니저 설정
         player.set_map_manager(self.map_manager)
         player.x = 100
@@ -51,6 +55,15 @@ class BossStageScene:
 
     def exit(self):
         print("[BossStageScene] exit()")
+        # UI 정리
+        try:
+            self.player_ui = None
+        except Exception:
+            pass
+        try:
+            self.boss_ui = None
+        except Exception:
+            pass
         self.gameobjs.clear()
 
     def update(self):
@@ -61,6 +74,13 @@ class BossStageScene:
 
         # PlayerUI 업데이트 (LifeWave 애니메이션용)
         self.player_ui.update()
+
+        # BossUI 업데이트
+        try:
+            if hasattr(self, 'boss_ui') and self.boss_ui is not None:
+                self.boss_ui.update()
+        except Exception:
+            pass
 
         self.handle_collisions()
 
@@ -138,18 +158,7 @@ class BossStageScene:
                             katana_top < obj_bottom or katana_bottom > obj_top):
                         obj.handle_collision('katana_effect:boss', player.katana_effect)
 
-                        # 보스 체력 <= 0 이면 제거 리스트에 추가 (포탈은 update에서 생성)
-                        if obj.health <= 0 and obj not in objects_to_remove:
-                            #objects_to_remove.append(obj)
-                            pass
 
-        # 보스가 죽어 objects_to_remove에 추가된 경우 제거
-        for obj in objects_to_remove:
-            if obj in self.gameobjs:
-                try:
-                    self.gameobjs.remove(obj)
-                except ValueError:
-                    pass
 
     def handle_events(self, events):
         """이벤트 처리"""
@@ -165,8 +174,6 @@ class BossStageScene:
                     for obj in self.gameobjs:
                         if isinstance(obj, Boss):
                             obj.health = 0
-
-
 
         # 포탈 진입 신호 처리: 보스 스테이지에서는 랭킹 씬으로 이동
         if result == 'enter_portal':
@@ -194,10 +201,7 @@ class BossStageScene:
         for gameobj in self.gameobjs:
             gameobj.render(self.camera.mX, self.camera.mY, self.camera.zoom)
             left, bottom, right, top = gameobj.get_bb()
-            pico2d.draw_rectangle(
-                (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
-                (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
-            )
+
         # 플레이어 렌더링
         player.render(self.camera.mX, self.camera.mY, self.camera.zoom)
         left, bottom, right, top = player.get_bb()
@@ -208,6 +212,10 @@ class BossStageScene:
 
         # PlayerUI 렌더링
         self.player_ui.render()
+
+        self.boss_ui.render()
+
+
 
         # 포탈 근처에 있을 때 UI 표시
         if player.near_portal:

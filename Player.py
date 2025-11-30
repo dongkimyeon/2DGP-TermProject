@@ -13,7 +13,7 @@ import Camera
 class Player:
     def __init__(self):
 
-        self.max_hp = 100
+        self.max_hp = 500
         self.hp = self.max_hp
         self.dash_count = 3
         self.state = 'idle'
