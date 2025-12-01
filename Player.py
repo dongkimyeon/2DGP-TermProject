@@ -8,6 +8,7 @@ import math
 from Player_Katana import Katana
 from Player_Katana_Effect import KatanaEffect
 from Player_Gun import Gun
+from Player_Gun_Bullet import Player_Gun_Bullet
 
 import Camera
 
@@ -294,21 +295,37 @@ class Player:
                         self.dash_timer = self.dash_duration
                         self.dash_count -= 1
                 elif event.button == pico2d.SDL_BUTTON_LEFT:
-                    self.is_charging = True
+                    # 무기 타입에 따라 동작 분기
+                    if isinstance(self.weapon, Katana):
+                        # 카타나는 좌클릭으로 차징 시작
+                        self.is_charging = True
+                    # Gun은 버튼 업에서 발사 처리 (또는 클릭으로 바로 발사해도 됨)
             if event.type == pico2d.SDL_MOUSEBUTTONUP:
-                if event.button == pico2d.SDL_BUTTON_LEFT and self.is_charging:
-                    # 공격 쿨타임 체크
-                    if self.attack_cooldown <= 0:
-                        print("공격 실행")
-                        self.katana_effect.start()
-                        self.is_charging = False
-                        self.chargingGage = 0.0
-                        # 공격속도에 따른 쿨타임 설정 (공격속도가 높을수록 쿨타임이 짧아짐)
-                        self.attack_cooldown = self.base_attack_cooldown / self.attack_speed
-                    else:
-                        # 쿨타임 중에는 차징만 취소
-                        self.is_charging = False
-                        self.chargingGage = 0.0
+                if event.button == pico2d.SDL_BUTTON_LEFT:
+                    # 카타나: 차징이 되어 있으면 업에서 공격 실행
+                    if isinstance(self.weapon, Katana) and self.is_charging:
+                        if self.attack_cooldown <= 0:
+                            print("카타나 공격 실행")
+                            self.katana_effect.start()
+                            self.is_charging = False
+                            self.chargingGage = 0.0
+                            self.attack_cooldown = self.base_attack_cooldown / self.attack_speed
+                        else:
+                            self.is_charging = False
+                            self.chargingGage = 0.0
+                    # Gun: 좌클릭 업 시 총알 발사
+                    elif isinstance(self.weapon, Gun):
+                        if self.attack_cooldown <= 0:
+                            print("총알 발사")
+                            bullet = Player_Gun_Bullet()
+                            if self.map_manager:
+                                bullet.set_map_manager(self.map_manager)
+                            bx = self.x + math.cos(self.weapon.angle) * 30
+                            by = self.y + math.sin(self.weapon.angle) * 10
+                            bullet.shot(bx, by, self.weapon.angle)
+                            self.attack_cooldown = self.base_attack_cooldown / self.attack_speed
+                        else:
+                            pass
             if event.type == pico2d.SDL_KEYUP:
                 if event.key == pico2d.SDLK_a:
                     self.left_pressed = False

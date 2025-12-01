@@ -13,7 +13,7 @@ class PlayerUI:
         self.weapon_ui_scale = 2.0
 
         self.katana_icon_scale = 4.0
-        self.gun_icon_scale = 2.0
+        self.gun_icon_scale = 4.0
         # 좌상단 위치로 조정 (피코투디는 왼쪽 아래가 0,0이므로 화면 높이 기준으로 계산)
         self.hp_bar_x = 200
         self.hp_bar_y = SceneManager.screen_height- 50  # 화면 상단에서 20픽셀 아래
@@ -240,7 +240,7 @@ class PlayerUI:
 
         weapon_ui_img, _, ui_width, ui_height = ResourceManager.get_image("weapon_ui")
         katana_img, _, _, _ = ResourceManager.get_image("katana_right")
-        gun_img, _, _, _ = ResourceManager.get_image("GunRight")
+        gun_img, _, _, _ = ResourceManager.get_image("gun_right")
         #스케일 반영해서 그리기
         if weapon_ui_img:
             weapon_ui_img.draw(
