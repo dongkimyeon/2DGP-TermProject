@@ -1,3 +1,4 @@
+from Player_Katana import Katana
 from ResourceManager import ResourceManager
 import pico2d
 from Player import player
@@ -10,6 +11,9 @@ class PlayerUI:
         self.hp_bar_scale = 5.0
         self.dash_bar_scale = 7.0
         self.weapon_ui_scale = 2.0
+
+        self.katana_icon_scale = 4.0
+        self.gun_icon_scale = 2.0
         # 좌상단 위치로 조정 (피코투디는 왼쪽 아래가 0,0이므로 화면 높이 기준으로 계산)
         self.hp_bar_x = 200
         self.hp_bar_y = SceneManager.screen_height- 50  # 화면 상단에서 20픽셀 아래
@@ -235,6 +239,8 @@ class PlayerUI:
     def render_weapon_ui(self):
 
         weapon_ui_img, _, ui_width, ui_height = ResourceManager.get_image("weapon_ui")
+        katana_img, _, _, _ = ResourceManager.get_image("katana_right")
+        gun_img, _, _, _ = ResourceManager.get_image("GunRight")
         #스케일 반영해서 그리기
         if weapon_ui_img:
             weapon_ui_img.draw(
@@ -243,4 +249,22 @@ class PlayerUI:
                 int(ui_width + 90 * self.weapon_ui_scale),
                 int(ui_height + 30 * self.weapon_ui_scale)
             )
+
+        #플레이어 무기에 따라서 아이콘 그리기
+        if isinstance(self.player.weapon, Katana):
+            if katana_img:
+                katana_img.draw(
+                    SceneManager.screen_width - ui_width * self.katana_icon_scale / 2 - 65,
+                    ui_height  * self.katana_icon_scale / 2 + 20,
+                    int(katana_img.w * self.katana_icon_scale),
+                    int(katana_img.h * self.katana_icon_scale)
+                )
+        else:
+            if gun_img:
+                gun_img.draw(
+                    SceneManager.screen_width - ui_width * self.gun_icon_scale / 2 - 65,
+                    ui_height * self.gun_icon_scale / 2 + 20,
+                    int(gun_img.w * self.gun_icon_scale),
+                    int(gun_img.h * self.gun_icon_scale)
+                )
 
