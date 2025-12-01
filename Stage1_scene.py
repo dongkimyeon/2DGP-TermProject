@@ -168,6 +168,34 @@ class Stage1Scene:
                             if drop_item:
                                 self.gameobjs.append(drop_item)
 
+        # 총알과 적의 충돌 처리 (Player_Gun_Bullet)
+        from Player_Gun_Bullet import Player_Gun_Bullet
+        for obj in list(self.gameobjs):
+            if isinstance(obj, Player_Gun_Bullet):
+                b_left, b_bottom, b_right, b_top = obj.get_bb()
+                for target in self.gameobjs:
+                    if target is obj: continue
+                    # 적 타입 검사
+                    if isinstance(target, (Ghost, Banshee, Bat, Skel)):
+                        t_left, t_bottom, t_right, t_top = target.get_bb()
+                        if not (b_left > t_right or b_right < t_left or b_top < t_bottom or b_bottom > t_top):
+                            # 충돌 발생: 적에게 데미지 적용, 총알 제거
+                            try:
+                                dmg = obj.get_damage()
+                                target.take_damage(dmg)
+                            except Exception:
+                                pass
+                            if obj in self.gameobjs:
+                                self.gameobjs.remove(obj)
+                            # 적이 처치되었으면 제거 및 드랍
+                            if hasattr(target, 'health') and target.health <= 0:
+                                if target in self.gameobjs:
+                                    self.gameobjs.remove(target)
+                                drop_item = self.drop_item(target.x, target.y)
+                                if drop_item:
+                                    self.gameobjs.append(drop_item)
+                            break
+
         for obj in objects_to_remove:
             if obj in self.gameobjs:
                 self.gameobjs.remove(obj)

@@ -185,6 +185,36 @@ class Stage2Scene:
             if obj in self.gameobjs:
                 self.gameobjs.remove(obj)
 
+        # 플레이어 총알과 적 충돌 처리
+        from Player_Gun_Bullet import Player_Gun_Bullet
+        for obj in list(self.gameobjs):
+            if isinstance(obj, Player_Gun_Bullet):
+                b_left, b_bottom, b_right, b_top = obj.get_bb()
+                for target in self.gameobjs:
+                    if target is obj: continue
+                    if isinstance(target, (Ghost, Banshee, Bat, Skel,)):
+                        t_left, t_bottom, t_right, t_top = target.get_bb()
+                        if not (b_left > t_right or b_right < t_left or b_top < t_bottom or b_bottom > t_top):
+                            try:
+                                dmg = obj.get_damage()
+                                target.take_damage(dmg)
+                            except Exception:
+                                pass
+                            if obj in self.gameobjs:
+                                self.gameobjs.remove(obj)
+                            if hasattr(target, 'health') and target.health <= 0:
+                                if target in self.gameobjs:
+                                    self.gameobjs.remove(target)
+                                drop_item = self.drop_item(target.x, target.y)
+                                if drop_item:
+                                    self.gameobjs.append(drop_item)
+                            break
+
+        # 충돌한 객체들을 gameobjs에서 제거
+        for obj in objects_to_remove:
+            if obj in self.gameobjs:
+                self.gameobjs.remove(obj)
+
     def drop_item(self, x, y):
         """30% 확률로 HP 페어리, 70% 확률로 골드 드랍"""
         rand = random.random()
