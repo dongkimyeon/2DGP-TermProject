@@ -7,6 +7,8 @@ import SceneManager
 import math
 from Player_Katana import Katana
 from Player_Katana_Effect import KatanaEffect
+from Player_Gun import Gun
+
 import Camera
 
 
@@ -38,7 +40,7 @@ class Player:
         self.jump_count = 2
         self.width = 50
         self.height = 50
-        self.weapon = Katana(self)
+        self.weapon = Gun(self)
         self.katana_effect = KatanaEffect(self)
         self.chargingGage = 0.0
         self.is_charging = False
