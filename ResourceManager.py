@@ -91,6 +91,13 @@ class ResourceManager:
         self.load_image("enemy_hp_bar_gage", 'resources/images/gameScene/ui/EnemyHpBarGage.png')
 
         self.load_image("CoinIcon", 'resources/images/gameScene/ui/CoinIcon.png')
+        self.load_image("weapon_ui", 'resources/images/gameScene/ui/EquippedWeaponBase.png')
+
+
+        # 원거리 무기
+        self.load_image("gun_left", 'resources/images/weapon/longDistanceWeapon/GunLeft.png')
+        self.load_image("gun_right", 'resources/images/weapon/longDistanceWeapon/GunRight.png')
+        self.load_image("gun_bullet", 'resources/images/weapon/longDistanceWeapon/Bullet.png')
 
         # Boss 관련 이미지 로드
         # Niflheim
