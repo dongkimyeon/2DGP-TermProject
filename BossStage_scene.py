@@ -148,6 +148,25 @@ class BossStageScene:
             if obj in self.gameobjs:
                 self.gameobjs.remove(obj)
 
+        # 플레이어 총알과 보스 충돌 처리
+        from Player_Gun_Bullet import Player_Gun_Bullet
+        for obj in list(self.gameobjs):
+            if isinstance(obj, Player_Gun_Bullet):
+                b_left, b_bottom, b_right, b_top = obj.get_bb()
+                for target in self.gameobjs:
+                    if target is obj: continue
+                    if isinstance(target, Boss):
+                        t_left, t_bottom, t_right, t_top = target.get_bb()
+                        if not (b_left > t_right or b_right < t_left or b_top < t_bottom or b_bottom > t_top):
+                            try:
+                                dmg = obj.get_damage()
+                                target.take_damage(dmg)
+                            except Exception:
+                                pass
+                            if obj in self.gameobjs:
+                                self.gameobjs.remove(obj)
+                            break
+
         # 카타나 이펙트와 보스의 충돌 체크
         if player.katana_effect.active:
             katana_left, katana_bottom, katana_right, katana_top = player.katana_effect.get_bb()
