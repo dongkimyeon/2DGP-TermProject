@@ -9,8 +9,8 @@ class Player_Gun_Bullet:
     def __init__(self):
         self.x = 0
         self.y = 0
-        self.width = 14
-        self.height = 5
+        self.width = 14 * 3
+        self.height = 5 * 3
         self.speed = 0
         self.direction = 0
         self.attack_power = 12
@@ -28,9 +28,40 @@ class Player_Gun_Bullet:
         self.map_manager = map_manager
 
     def get_bb(self):
-        half_width = self.width // 2
-        half_height = self.height // 2
-        return (self.x - half_width, self.y - half_height + 2 , self.x + half_width - 5, self.y + half_height )
+        # 회전된 총알의 네 모서리를 계산해서 축 정렬 경계 상자(AABB)를 반환합니다.
+        # 기존에 사용하던 좌표 오프셋(하단 +2, 우측 -5)을 보존하여 계산합니다.
+        cx = self.x
+        cy = self.y
+        # 오프셋 포함한 로컬 좌표
+        left_off = - (self.width / 2)
+        right_off = (self.width / 2) - 5
+        bottom_off = - (self.height / 2) + 2
+        top_off = (self.height / 2)
+
+        corners = [
+            (left_off, bottom_off),
+            (right_off, bottom_off),
+            (right_off, top_off),
+            (left_off, top_off)
+        ]
+
+        cos_a = math.cos(self.direction)
+        sin_a = math.sin(self.direction)
+
+        rx = []
+        ry = []
+        for px, py in corners:
+            # 회전 행렬 적용 (중심이 cx,cy)
+            x_world = cx + (px * cos_a - py * sin_a)
+            y_world = cy + (px * sin_a + py * cos_a)
+            rx.append(x_world)
+            ry.append(y_world)
+
+        left = min(rx)
+        right = max(rx)
+        bottom = min(ry)
+        top = max(ry)
+        return (left, bottom, right, top)
 
     def get_damage(self):
         return self.attack_power
@@ -39,7 +70,7 @@ class Player_Gun_Bullet:
         self.x = x
         self.y = y
         self.direction = direction
-        self.speed = speed
+        self.speed = 1000
         SceneManager.active_scene.gameobjs.append(self)
         return self
 
@@ -51,12 +82,8 @@ class Player_Gun_Bullet:
 
         # 맵 타일과의 충돌 체크
         if self.map_manager:
-            half_width = self.width // 2
-            half_height = self.height // 2
-            left = self.x - half_width
-            bottom = self.y - half_height + 2
-            right = self.x + half_width - 5
-            top = self.y + half_height
+            # get_bb()를 사용해 회전된 AABB로 충돌 체크
+            left, bottom, right, top = self.get_bb()
 
             colliding_tiles = self.map_manager.check_collision(left, bottom, right, top)
             if colliding_tiles:
@@ -83,8 +110,15 @@ class Player_Gun_Bullet:
         draw_w = int(self.width * zoom)
         draw_h = int(self.height * zoom)
         if image:
-            image.clip_draw(frame * width // frame_count, 0, width // frame_count, height, draw_x,
-                            draw_y, draw_w, draw_h)
+            # 발사 방향(self.direction, 라디안)에 따라 총알 이미지를 회전하여 그리기
+            # clip_composite_draw(left, bottom, w, h, angle, flip, x, y, w, h)
+            # angle은 라디안 단위이며 이미지 기본 방향이 오른쪽(0 라디안)이라고 가정함
+            try:
+                image.clip_composite_draw(frame * (width // frame_count), 0, width // frame_count, height,
+                                          self.direction, '', draw_x, draw_y, draw_w, draw_h)
+            except Exception:
+                # pico2d 구현에 따라 함수명이 다를 수 있으므로 기본 clip_draw로 폴백
+                image.clip_draw(frame * (width // frame_count), 0, width // frame_count, height, draw_x, draw_y, draw_w, draw_h)
 
     def handle_collision(self, group, other):
         """충돌 처리 - 플레이어와 충돌 시 사라짐"""
