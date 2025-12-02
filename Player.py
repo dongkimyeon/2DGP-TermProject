@@ -277,6 +277,11 @@ class Player:
                         return 'enter_portal'  # 포탈 진입 신호 반환
                 elif event.key == pico2d.SDLK_q:
                     SceneManager.load_scene("DeadScene")
+                elif event.key == pico2d.SDLK_1:
+                    self.weapon = Gun(self)
+                elif event.key == pico2d.SDLK_2:
+                    self.weapon = Katana(self)    
+
             if event.type == pico2d.SDL_MOUSEBUTTONDOWN:
                 if mouse_world:
                     world_x, world_y = mouse_world
