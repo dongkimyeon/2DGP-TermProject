@@ -55,7 +55,6 @@ class Player:
         self.coin_count = 0  # 플레이어가 가진 코인 수
 
 
-
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
         self.map_manager = map_manager
