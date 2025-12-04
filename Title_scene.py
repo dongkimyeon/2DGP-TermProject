@@ -33,13 +33,18 @@ class TitleScene:
         self.play_button_hover = False
         self.exit_button_hover = False
 
+        self.bgm = pico2d.load_music('resources/sound/title.wav')
+        self.bgm.set_volume(32)
+
 
     def enter(self):
         print("[TitleScene] enter()")
+        self.bgm.repeat_play()
 
 
     def exit(self):
         print("[TitleScene] exit()")
+        self.bgm.stop()
 
 
     def update(self):

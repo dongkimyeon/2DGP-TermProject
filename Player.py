@@ -1,5 +1,3 @@
-from pico2d import draw_rectangle
-
 from Time import Time
 from ResourceManager import ResourceManager
 import pico2d
@@ -55,6 +53,8 @@ class Player:
         self.damage_cooldown = 0.0  # 적에게 데미지 받는 쿨타임
         self.damage_cooldown_time = 0.5  # 데미지 쿨타임 (0.5초)
         self.coin_count = 0  # 플레이어가 가진 코인 수
+
+
 
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
@@ -265,6 +265,7 @@ class Player:
                 elif event.key == pico2d.SDLK_d:
                     self.right_pressed = True
                 elif event.key == pico2d.SDLK_SPACE and self.jump_count > 0:
+                    #self.jumpSound.play()
                     self.jump_velocity = self.jump_power
                     self.jump_count -= 1
                     self.is_jumping = True

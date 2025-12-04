@@ -33,6 +33,12 @@ class Bat:
         self.shot_timer = 0.0
         self.shot_duration = 0.1
 
+        self.player_detected_sound = pico2d.load_wav('resources/sound/bat/Bat2.wav')
+        self.player_detected_sound.set_volume(32)
+
+        self.hit_sound = pico2d.load_wav('resources/sound/Hit_Monster.wav')
+        self.hit_sound.set_volume(32)
+
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
         self.map_manager = map_manager
@@ -56,6 +62,7 @@ class Bat:
         # 플레이어 감지 체크
         if not self.player_detected and dist2 < max_dist2:
             self.player_detected = True
+            self.player_detected_sound.play()
             if '_shot' not in self.state:
                 self.state = 'move'
             print(f"Bat detected player at distance: {math.sqrt(dist2)}")
@@ -151,6 +158,7 @@ class Bat:
         temp = self.state
         self.state = temp + '_shot'
         self.shot_timer = 0.0
+        self.hit_sound.play()
 
     def get_bb(self):
         half_width = self.width // 2

@@ -1,3 +1,5 @@
+from pico2d import load_wav
+
 import SceneManager
 import pico2d
 from Player import player
@@ -25,6 +27,7 @@ class Stage1Scene:
         self.gameobjs = []
 
         self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16*1.5, filename='map.txt')
+
 
     def enter(self):
         print("[Stage1Scene] enter()")
