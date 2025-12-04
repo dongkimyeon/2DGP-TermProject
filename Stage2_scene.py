@@ -26,7 +26,11 @@ class Stage2Scene:
          # MapManager 초기화
         self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16 * 1.5, filename='map1.txt')
 
+        self.dead_sound = pico2d.load_wav('resources/sound/MonsterDie.wav')
+        self.dead_sound.set_volume(32)
 
+        self.exit_sound = pico2d.load_wav('resources/sound/DungeonOut.wav')
+        self.exit_sound.set_volume(32)
 
     def enter(self):
         print("[Stage2Scene] enter()")
@@ -51,6 +55,7 @@ class Stage2Scene:
 
     def exit(self):
         print("[Stage2Scene] exit()")
+        self.exit_sound.play()
         self.gameobjs.clear()
 
     def update(self):
@@ -216,6 +221,7 @@ class Stage2Scene:
                 self.gameobjs.remove(obj)
 
     def drop_item(self, x, y):
+        self.dead_sound.play()
         """30% 확률로 HP 페어리, 70% 확률로 골드 드랍"""
         rand = random.random()
         if rand < 0.3:  # 30% 확률

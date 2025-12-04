@@ -32,6 +32,9 @@ class Ghost:
         self.shot_timer = 0.0
         self.shot_duration = 0.1
 
+        self.hit_sound = pico2d.load_wav('resources/sound/Hit_Monster.wav')
+        self.hit_sound.set_volume(32)
+
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
         self.map_manager = map_manager
@@ -59,6 +62,7 @@ class Ghost:
 
     def take_damage(self, damage):
         self.health -= damage
+        self.hit_sound.play()
         temp = self.state
         self.state = temp + '_shot'
         self.shot_timer = 0.0

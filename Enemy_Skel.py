@@ -40,6 +40,12 @@ class Skel:
         self.shot_timer = 0.0
         self.shot_duration = 0.1
 
+        self.attack_sound = pico2d.load_wav('resources/sound/Skel/SkelSwish.wav')
+        self.attack_sound.set_volume(32)
+        self.attack_sound_played = False
+        self.hit_sound = pico2d.load_wav('resources/sound/Hit_Monster.wav')
+        self.hit_sound.set_volume(32)
+
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
         self.map_manager = map_manager
@@ -95,6 +101,7 @@ class Skel:
 
 
     def take_damage(self, damage):
+        self.hit_sound.play()
         self.health -= damage
         temp = self.state
         self.state = temp + '_shot'
@@ -158,9 +165,13 @@ class Skel:
         if self.is_attacking:
             if '_shot' not in self.state:
                 self.state = 'attack'
+
             # 공격 애니메이션 3번째 프레임(인덱스 2)에서 플레이어와 충돌 체크
             current_frame = self.frame_count % self.attack_frame_max if self.attack_frame_max > 0 else 0
             if current_frame == 2 and not self.attack_hit_applied:
+                if not self.attack_sound_played:
+                    self.attack_sound.play()
+                    self.attack_sound_played = True
                 # 공격 히트박스 생성
                 left_b, bottom_b, right_b, top_b = self.get_attack_hitbox()
                 left_a, bottom_a, right_a, top_a = player.get_bb()
@@ -173,10 +184,12 @@ class Skel:
             # 플레이어 감지
             if (player.x - self.x) ** 2 + (player.y - self.y) ** 2 < self.detection_radius ** 2:
                 if '_shot' not in self.state:
+                    self.attack_sound_played = False
                     self.state = 'move'
                 self.move()
             else:
                 if '_shot' not in self.state:
+                    self.attack_sound_played = False
                     self.state = 'idle'
 
         # 공격 딜레이 처리

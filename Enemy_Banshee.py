@@ -35,6 +35,10 @@ class Banshee:
         self.lifewave_timer = 0.0
         self.lifewave_frame_interval = 0.1
 
+        self.attack_sound = pico2d.load_wav('resources/sound/banshee/banshee_attack.wav')
+        self.attack_sound.set_volume(64)
+        self.hit_sound = pico2d.load_wav('resources/sound/Hit_Monster.wav')
+        self.hit_sound.set_volume(32)
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
         self.map_manager = map_manager
@@ -43,6 +47,7 @@ class Banshee:
         return self.attack_power
 
     def take_damage(self, damage):
+        self.hit_sound.play()
         self.health -= damage
         temp = self.state
         self.state = temp + '_shot'
@@ -81,6 +86,7 @@ class Banshee:
         #플레이어 감지
         if(player.x - self.x)**2 + (player.y - self.y)**2 < self.detection_radius**2:
             if '_shot' not in self.state and self.state != 'attack' and self.state != 'attack_shot':
+
                 self.state = 'attack'
                 self.frame_count = 0
                 self.note_fired = False
@@ -121,9 +127,11 @@ class Banshee:
                 if self.attack_cooldown <= 0:
                     if frame == frame_count - 1 and not self.note_fired:
                         # 16방향으로 Note 발사 (한 번만)
+                        self.attack_sound.play()
                         for i in range(16):
                             angle = (2 * math.pi / 16) * i
                             Note().shot(self.x, self.y, angle, 300)
+
                         self.note_fired = True
                         self.attack_cooldown = 3.0 # 쿨타임 리셋
                     if frame == frame_count - 1:

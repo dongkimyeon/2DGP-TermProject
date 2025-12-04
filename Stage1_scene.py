@@ -28,7 +28,11 @@ class Stage1Scene:
 
         self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16*1.5, filename='map.txt')
 
+        self.dead_sound = pico2d.load_wav('resources/sound/MonsterDie.wav')
+        self.dead_sound.set_volume(32)
 
+        self.exit_sound = pico2d.load_wav('resources/sound/DungeonOut.wav')
+        self.exit_sound.set_volume(32)
     def enter(self):
         print("[Stage1Scene] enter()")
         loaded_objects = ObjectLoader.load_from_file('stage1_object_coord.txt', self.map_manager)
@@ -54,6 +58,7 @@ class Stage1Scene:
 
     def exit(self):
         print("[Stage1Scene] exit()")
+        self.exit_sound.play()
         self.gameobjs.clear()
 
     def update(self):
@@ -128,6 +133,7 @@ class Stage1Scene:
 
                         if obj.health <= 0:
                             objects_to_remove.append(obj)
+                            self.dead_sound.play()
                             drop_item = self.drop_item(obj.x, obj.y)
                             if drop_item:
                                 self.gameobjs.append(drop_item)
@@ -193,6 +199,7 @@ class Stage1Scene:
                             # 적이 처치되었으면 제거 및 드랍
                             if hasattr(target, 'health') and target.health <= 0:
                                 if target in self.gameobjs:
+
                                     self.gameobjs.remove(target)
                                 drop_item = self.drop_item(target.x, target.y)
                                 if drop_item:
@@ -205,6 +212,7 @@ class Stage1Scene:
 
     def drop_item(self, x, y):
         """30% 확률로 HP 페어리, 70% 확률로 골드 드랍"""
+        self.dead_sound.play()
         rand = random.random()
         if rand < 0.3:
             print(f"HP Fairy dropped at ({x}, {y})")

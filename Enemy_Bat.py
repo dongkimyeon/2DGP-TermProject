@@ -39,6 +39,8 @@ class Bat:
         self.hit_sound = pico2d.load_wav('resources/sound/Hit_Monster.wav')
         self.hit_sound.set_volume(32)
 
+
+
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
         self.map_manager = map_manager
