@@ -16,6 +16,7 @@ from BossUI import BossUI
 import random
 from ResourceManager import ResourceManager
 import os
+import game_world
 
 
 class BossStageScene:
@@ -49,9 +50,17 @@ class BossStageScene:
         player.x = 100
         player.y = 128
 
-        # 플레이어 위치 초기화 (필요시)
-        player.x = 100
-        player.y = 128
+        # collision pairs 초기화 후 등록
+        game_world.clear_collision_pairs()
+
+        # 플레이어와 보스
+        game_world.add_collision_pair('player:enemy', player, boss)
+        # 카타나 이펙트와 보스
+        game_world.add_collision_pair('katana_effect:enemy', player.katana_effect, boss)
+        # 플레이어 무기와 보스
+        game_world.add_collision_pair('weapon:enemy', None, boss)
+        # 플레이어와 보스 발사체
+        game_world.add_collision_pair('player:enemy_projectile', player, None)
 
     def exit(self):
         print("[BossStageScene] exit()")
@@ -65,6 +74,7 @@ class BossStageScene:
         except Exception:
             pass
         self.gameobjs.clear()
+        game_world.clear_collision_pairs()
 
     def update(self):
         for obj in self.gameobjs:
@@ -82,7 +92,8 @@ class BossStageScene:
         except Exception:
             pass
 
-        self.handle_collisions()
+        # 중앙화된 충돌 처리
+        game_world.handle_collisions()
 
         # 새로 생성된 발사체들에도 맵 매니저 설정
         for obj in self.gameobjs:
@@ -97,85 +108,9 @@ class BossStageScene:
                     SceneManager.play_timerOn = False
                     portal = Portal(593, 335)
                     self.gameobjs.append(portal)
+                    # 포탈을 collision pair에 등록
+                    game_world.add_collision_pair('player:portal', player, portal)
                     self.is_created_portal = True
-
-
-    def handle_collisions(self):
-        # 먼저 플레이어의 포탈 근처 상태 초기화
-        player.near_portal = None
-
-        # 충돌 시 제거할 객체 리스트
-        objects_to_remove = []
-
-        left_a, bottom_a, right_a, top_a = player.get_bb()
-        for obj in self.gameobjs:
-            left_b, bottom_b, right_b, top_b = obj.get_bb()
-            if left_a > right_b: continue
-            if right_a < left_b: continue
-            if top_a < bottom_b: continue
-            if bottom_a > top_b: continue
-
-            # 각 객체마다 충돌처리 코드 추가
-            if isinstance(obj, Portal):
-                # 포탈과 충돌 중
-                player.near_portal = obj
-                print("Player near Portal!")
-
-            elif isinstance(obj, Boss):
-                print("Player collided with Boss!")
-                #player.hp -= 5
-
-            elif isinstance(obj, IceBullet):
-
-                player.hp -= 12
-                # IceBullet을 제거 리스트에 추가
-                objects_to_remove.append(obj)
-
-            elif isinstance(obj, IceSpear):
-                print("Player collided with IceBullet!")
-                player.hp -= 15
-                # IceBullet을 제거 리스트에 추가
-                objects_to_remove.append(obj)
-
-            elif isinstance(obj, Icicle):
-                print("Player collided with IceBullet!")
-                player.hp -= 14
-                # IceBullet을 제거 리스트에 추가
-                objects_to_remove.append(obj)
-
-        # 충돌한 객체들을 gameobjs에서 제거
-        for obj in objects_to_remove:
-            if obj in self.gameobjs:
-                self.gameobjs.remove(obj)
-
-        # 플레이어 총알과 보스 충돌 처리
-        from Player_Gun_Bullet import Player_Gun_Bullet
-        for obj in list(self.gameobjs):
-            if isinstance(obj, Player_Gun_Bullet):
-                b_left, b_bottom, b_right, b_top = obj.get_bb()
-                for target in self.gameobjs:
-                    if target is obj: continue
-                    if isinstance(target, Boss):
-                        t_left, t_bottom, t_right, t_top = target.get_bb()
-                        if not (b_left > t_right or b_right < t_left or b_top < t_bottom or b_bottom > t_top):
-                            try:
-                                dmg = obj.get_damage()
-                                target.take_damage(dmg)
-                            except Exception:
-                                pass
-                            if obj in self.gameobjs:
-                                self.gameobjs.remove(obj)
-                            break
-
-        # 카타나 이펙트와 보스의 충돌 체크
-        if player.katana_effect.active:
-            katana_left, katana_bottom, katana_right, katana_top = player.katana_effect.get_bb()
-            for obj in self.gameobjs:
-                if isinstance(obj, Boss):
-                    obj_left, obj_bottom, obj_right, obj_top = obj.get_bb()
-                    if not (katana_left > obj_right or katana_right < obj_left or
-                            katana_top < obj_bottom or katana_bottom > obj_top):
-                        obj.handle_collision('katana_effect:boss', player.katana_effect)
 
 
 

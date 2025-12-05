@@ -3,6 +3,7 @@ from ResourceManager import ResourceManager
 import pico2d
 import SceneManager
 import math
+import game_world
 
 class IceSpear:
     def __init__(self):
@@ -15,15 +16,10 @@ class IceSpear:
         self.scale = 1.5
         self.frame_count = 0
         self.frame_timer = 0.0
-        self.map_manager = None  # 맵 매니저 참조
         self.dir = 0
     def set_position(self, x, y):
         self.x = x
         self.y = y
-
-    def set_map_manager(self, map_manager):
-        """맵 매니저 설정"""
-        self.map_manager = map_manager
 
     def get_bb(self):
         # 90도 회전 시 width와 height를 바꿔서 적용
@@ -49,6 +45,8 @@ class IceSpear:
         self.frame_count = 0
         self.frame_timer = 0.0
         SceneManager.active_scene.gameobjs.append(self)
+        # game_world에 플레이어-적 발사체 충돌 페어에 등록
+        game_world.add_collision_pair('player:enemy_projectile', None, self)
         return self
 
     def update(self):
@@ -60,16 +58,7 @@ class IceSpear:
                 self.frame_count += 1
                 self.frame_timer = 0.0
 
-        if self.dir == 0:
-            if self.x < -50:
-                if self in SceneManager.active_scene.gameobjs:
-                    SceneManager.active_scene.gameobjs.remove(self)
-        else:
-            if self.x > 1500:
-                if self in SceneManager.active_scene.gameobjs:
-                    SceneManager.active_scene.gameobjs.remove(self)
-
-        # 10번째 프레임부터 떨어지기
+        # 10번째 프레임부터 이동하기
         if self.frame_count >= 12:
             self.frame_count = 12 # 고정 (이제 애니메이션 로직이 안 타서 유지됨)
             if self.dir == 0:
@@ -77,11 +66,19 @@ class IceSpear:
             else:
                 self.x += self.speed * dt
 
+        # 범위를 벗어나면 제거
+        if self.x < -200 or self.x > 2500:
+            if self in SceneManager.active_scene.gameobjs:
+                SceneManager.active_scene.gameobjs.remove(self)
+            game_world.remove_collision_object(self)
+
     def handle_collision(self, group, other):
         """충돌 처리 - 플레이어와 충돌 시 사라짐"""
         # 플레이어와 충돌하면 사라짐
         if self in SceneManager.active_scene.gameobjs:
             SceneManager.active_scene.gameobjs.remove(self)
+        # collision pair에서 제거
+        game_world.remove_collision_object(self)
 
     def render(self, camera_x=0, camera_y=0, zoom=1.0):
         image, frame_count, width, height = ResourceManager.get_image(f"niflheim_spear")

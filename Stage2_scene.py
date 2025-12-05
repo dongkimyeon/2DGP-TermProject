@@ -16,6 +16,7 @@ from PlayerUI import PlayerUI
 import random
 from ResourceManager import ResourceManager
 from ObjectLoader import ObjectLoader
+import game_world
 
 
 class Stage2Scene:
@@ -53,10 +54,43 @@ class Stage2Scene:
         player.x = 100
         player.y = 200
 
+        # collision pairs 초기화 후 등록
+        game_world.clear_collision_pairs()
+
+        # 플레이어와 적
+        game_world.add_collision_pair('player:enemy', player, None)
+        # 카타나 이펙트와 적
+        game_world.add_collision_pair('katana_effect:enemy', player.katana_effect, None)
+        # 플레이어와 아이템
+        game_world.add_collision_pair('player:gold', player, None)
+        game_world.add_collision_pair('player:hpfairy', player, None)
+        # 플레이어와 포탈
+        game_world.add_collision_pair('player:portal', player, self.portal)
+        # 플레이어와 적 발사체
+        game_world.add_collision_pair('player:enemy_projectile', player, None)
+
+        from Enemy_Ghost import Ghost
+        from Enemy_Banshee import Banshee
+        from Enemy_Bat import Bat
+        from Enemy_Skel import Skel
+        from Gold import Gold
+        from HpFairy import HpFairy
+
+        for obj in self.gameobjs:
+            if isinstance(obj, (Ghost, Banshee, Bat, Skel)):
+                game_world.add_collision_pair('player:enemy', None, obj)
+                game_world.add_collision_pair('katana_effect:enemy', None, obj)
+                game_world.add_collision_pair('weapon:enemy', None, obj)
+            if isinstance(obj, Gold):
+                game_world.add_collision_pair('player:gold', None, obj)
+            if isinstance(obj, HpFairy):
+                game_world.add_collision_pair('player:hpfairy', None, obj)
+
     def exit(self):
         print("[Stage2Scene] exit()")
         self.exit_sound.play()
         self.gameobjs.clear()
+        game_world.clear_collision_pairs()
 
     def update(self):
         for obj in self.gameobjs:
@@ -68,157 +102,38 @@ class Stage2Scene:
         # PlayerUI 업데이트 (LifeWave 애니메이션용)
         self.player_ui.update()
 
-        self.handle_collisions()
+        # 중앙화된 충돌 처리
+        game_world.handle_collisions()
+
+        # 적 체력이 0 이하인 경우 제거 및 드랍 처리
+        objects_to_remove = []
+        for obj in list(self.gameobjs):
+            if hasattr(obj, 'health') and obj.health <= 0:
+                from Enemy_Ghost import Ghost
+                from Enemy_Banshee import Banshee
+                from Enemy_Bat import Bat
+                from Enemy_Skel import Skel
+                if isinstance(obj, (Ghost, Banshee, Bat, Skel)):
+                    objects_to_remove.append(obj)
+                    drop_item = self.drop_item(obj.x, obj.y)
+                    if drop_item:
+                        self.gameobjs.append(drop_item)
+                        from Gold import Gold
+                        from HpFairy import HpFairy
+                        if isinstance(drop_item, Gold):
+                            game_world.add_collision_pair('player:gold', None, drop_item)
+                        elif isinstance(drop_item, HpFairy):
+                            game_world.add_collision_pair('player:hpfairy', None, drop_item)
+
+        for obj in objects_to_remove:
+            if obj in self.gameobjs:
+                self.gameobjs.remove(obj)
+                game_world.remove_collision_object(obj)
 
         # 새로 생성된 발사체들에도 맵 매니저 설정
         for obj in self.gameobjs:
             if hasattr(obj, 'set_map_manager') and obj.map_manager is None:
                 obj.set_map_manager(self.map_manager)
-
-    def handle_collisions(self):
-        # 먼저 플레이어의 포탈 근처 상태 초기화
-        player.near_portal = None
-
-        # 충돌 시 제거할 객체 리스트
-        objects_to_remove = []
-
-        left_a, bottom_a, right_a, top_a = player.get_bb()
-        for obj in self.gameobjs:
-            left_b, bottom_b, right_b, top_b = obj.get_bb()
-            if left_a > right_b: continue
-            if right_a < left_b: continue
-            if top_a < bottom_b: continue
-            if bottom_a > top_b: continue
-
-            #각 객체마다 충돌처리 코드 추가
-            if isinstance(obj, Portal):
-                # 포탈과 충돌 중
-                player.near_portal = obj
-
-
-            elif isinstance(obj, Ghost):
-                # 데미지 쿨타임 체크
-                if player.damage_cooldown <= 0:
-                    print("Player collided with Ghost!")
-                    player.hp -= obj.get_damage()
-                    player.damage_cooldown = player.damage_cooldown_time
-
-            elif isinstance(obj, Note):
-                print("Player collided with Note!")
-                player.hp -= obj.get_damage()
-                # Note를 제거 리스트에 추가
-                objects_to_remove.append(obj)
-
-            elif isinstance(obj, Bullet):
-                print("Player collided with Bullet!")
-                player.hp -= obj.get_damage()
-                # Bullet도 제거 리스트에 추가
-                objects_to_remove.append(obj)
-
-            elif isinstance(obj, Gold):
-                print("Player collected Gold!")
-                # 골드 획득 처리
-                objects_to_remove.append(obj)
-
-            elif isinstance(obj, HpFairy):
-                print("Player collected HP Fairy!")
-                player.hp = min(player.hp + 30, player.max_hp)  # HP 30 회복
-                objects_to_remove.append(obj)
-
-        # 카타나 이펙트와 적들의 충돌 체크
-        if player.katana_effect.active:
-            katana_left, katana_bottom, katana_right, katana_top = player.katana_effect.get_bb()
-            for obj in self.gameobjs:
-                if isinstance(obj, Ghost):
-                    obj_left, obj_bottom, obj_right, obj_top = obj.get_bb()
-
-                    if not (katana_left > obj_right or katana_right < obj_left or
-                            katana_top < obj_bottom or katana_bottom > obj_top):
-                        obj.handle_collision('katana_effect:ghost', player.katana_effect)
-
-                        if obj.health <= 0:
-                            objects_to_remove.append(obj)
-                            # 30% 확률로 HP 페어리, 70% 확률로 골드 드랍
-                            drop_item = self.drop_item(obj.x, obj.y)
-                            if drop_item:
-                                self.gameobjs.append(drop_item)
-
-                elif isinstance(obj, Banshee):
-                    obj_left, obj_bottom, obj_right, obj_top = obj.get_bb()
-
-                    if not (katana_left > obj_right or katana_right < obj_left or
-                            katana_top < obj_bottom or katana_bottom > obj_top):
-                        obj.handle_collision('katana_effect:banshee', player.katana_effect)
-
-                        if obj.health <= 0:
-                            objects_to_remove.append(obj)
-                            # 30% 확률로 HP 페어리, 70% 확률로 골드 드랍
-                            drop_item = self.drop_item(obj.x, obj.y)
-                            if drop_item:
-                                self.gameobjs.append(drop_item)
-
-                elif isinstance(obj, Bat):
-                    obj_left, obj_bottom, obj_right, obj_top = obj.get_bb()
-
-                    if not (katana_left > obj_right or katana_right < obj_left or
-                            katana_top < obj_bottom or katana_bottom > obj_top):
-                        obj.handle_collision('katana_effect:bat', player.katana_effect)
-
-                        if obj.health <= 0:
-                            objects_to_remove.append(obj)
-                            # 30% 확률로 HP 페어리, 70% 확률로 골드 드랍
-                            drop_item = self.drop_item(obj.x, obj.y)
-                            if drop_item:
-                                self.gameobjs.append(drop_item)
-
-                elif isinstance(obj, Skel):
-                    obj_left, obj_bottom, obj_right, obj_top = obj.get_bb()
-
-                    if not (katana_left > obj_right or katana_right < obj_left or
-                            katana_top < obj_bottom or katana_bottom > obj_top):
-                        obj.handle_collision('katana_effect:skel', player.katana_effect)
-
-                        if obj.health <= 0:
-                            objects_to_remove.append(obj)
-                            # 30% 확률로 HP 페어리, 70% 확률로 골드 드랍
-                            drop_item = self.drop_item(obj.x, obj.y)
-                            if drop_item:
-                                self.gameobjs.append(drop_item)
-
-        # 충돌한 객체들을 gameobjs에서 제거
-        for obj in objects_to_remove:
-            if obj in self.gameobjs:
-                self.gameobjs.remove(obj)
-
-        # 플레이어 총알과 적 충돌 처리
-        from Player_Gun_Bullet import Player_Gun_Bullet
-        for obj in list(self.gameobjs):
-            if isinstance(obj, Player_Gun_Bullet):
-                b_left, b_bottom, b_right, b_top = obj.get_bb()
-                for target in self.gameobjs:
-                    if target is obj: continue
-                    if isinstance(target, (Ghost, Banshee, Bat, Skel,)):
-                        t_left, t_bottom, t_right, t_top = target.get_bb()
-                        if not (b_left > t_right or b_right < t_left or b_top < t_bottom or b_bottom > t_top):
-                            try:
-                                dmg = obj.get_damage()
-                                target.take_damage(dmg)
-                            except Exception:
-                                pass
-                            if obj in self.gameobjs:
-                                self.gameobjs.remove(obj)
-                            if hasattr(target, 'health') and target.health <= 0:
-                                if target in self.gameobjs:
-                                    self.gameobjs.remove(target)
-                                drop_item = self.drop_item(target.x, target.y)
-                                if drop_item:
-                                    self.gameobjs.append(drop_item)
-                            break
-
-        # 충돌한 객체들을 gameobjs에서 제거
-        for obj in objects_to_remove:
-            if obj in self.gameobjs:
-                self.gameobjs.remove(obj)
 
     def drop_item(self, x, y):
         self.dead_sound.play()

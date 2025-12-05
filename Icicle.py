@@ -3,6 +3,7 @@ from ResourceManager import ResourceManager
 import pico2d
 import SceneManager
 import math
+import game_world
 
 class Icicle:
     def __init__(self):
@@ -41,6 +42,8 @@ class Icicle:
         self.frame_count = 0
         self.frame_timer = 0.0
         SceneManager.active_scene.gameobjs.append(self)
+        # game_world에 플레이어-적 발사체 충돌 페어에 등록
+        game_world.add_collision_pair('player:enemy_projectile', None, self)
         return self
 
     def update(self):
@@ -51,21 +54,25 @@ class Icicle:
             if self.frame_timer > 0.1:
                 self.frame_count += 1
                 self.frame_timer = 0.0
-        if self.y <= -50:
-            # 화면 밖으로 나가면 제거
-            if self in SceneManager.active_scene.gameobjs:
-                SceneManager.active_scene.gameobjs.remove(self)
 
         # 10번째 프레임부터 떨어지기
         if self.frame_count >= 9:
             self.frame_count = 9  # 고정 (이제 애니메이션 로직이 안 타서 유지됨)
             self.y -= self.speed * dt
 
+        # 범위를 벗어나면 제거 (바닥 아래로 떨어지면)
+        if self.y < -200:
+            if self in SceneManager.active_scene.gameobjs:
+                SceneManager.active_scene.gameobjs.remove(self)
+            game_world.remove_collision_object(self)
+
     def handle_collision(self, group, other):
         """충돌 처리 - 플레이어와 충돌 시 사라짐"""
         # 플레이어와 충돌하면 사라짐
         if self in SceneManager.active_scene.gameobjs:
             SceneManager.active_scene.gameobjs.remove(self)
+        # collision pair에서 제거
+        game_world.remove_collision_object(self)
 
     def render(self, camera_x=0, camera_y=0, zoom=1.0):
         image, frame_count, width, height = ResourceManager.get_image(f"niflheim_icicle")

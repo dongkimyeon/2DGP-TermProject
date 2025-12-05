@@ -3,6 +3,7 @@ from ResourceManager import ResourceManager
 import pico2d
 import SceneManager
 import math
+import game_world
 
 
 class Bullet:
@@ -41,6 +42,8 @@ class Bullet:
         self.direction = direction
         self.speed = speed
         SceneManager.active_scene.gameobjs.append(self)
+        # game_world에 플레이어-적 발사체 충돌 페어에 이 총알을 등록
+        game_world.add_collision_pair('player:enemy_projectile', None, self)
         return self
 
     def update(self):
@@ -63,6 +66,8 @@ class Bullet:
                 # 벽에 닿으면 사라짐
                 if self in SceneManager.active_scene.gameobjs:
                     SceneManager.active_scene.gameobjs.remove(self)
+                # collision pair에서 제거
+                game_world.remove_collision_object(self)
                 return
 
         # 프레임 애니메이션
@@ -90,3 +95,5 @@ class Bullet:
         """충돌 처리 - 플레이어와 충돌 시 사라짐"""
         if self in SceneManager.active_scene.gameobjs:
             SceneManager.active_scene.gameobjs.remove(self)
+        # collision pair에서 제거
+        game_world.remove_collision_object(self)

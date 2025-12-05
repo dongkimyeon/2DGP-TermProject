@@ -210,9 +210,15 @@ class Banshee:
 
     def handle_collision(self, group, other):
         """충돌 처리"""
-        if group == 'katana_effect:banshee':
+        if group in ('katana_effect:banshee', 'katana_effect:enemy'):
             # 카타나 이펙트와 충돌
             if other.can_hit(self):  # 아직 맞지 않았다면
                 damage = other.get_damage()
                 self.take_damage(damage)
                 other.mark_hit(self)  # 맞은 것으로 표시
+        elif group == 'weapon:enemy':
+            try:
+                dmg = other.get_damage() if hasattr(other, 'get_damage') else getattr(other, 'attack_power', 0)
+                self.take_damage(dmg)
+            except Exception:
+                pass

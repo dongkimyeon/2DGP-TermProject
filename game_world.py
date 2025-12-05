@@ -61,8 +61,16 @@ def handle_collisions():
         for a in pairs[0]:
             for b in pairs[1]:
                 if collide(a, b):
-                    a.handle_collision(group, b)
-                    b.handle_collision(group, a)
+                    if hasattr(a, 'handle_collision'):
+                        try:
+                            a.handle_collision(group, b)
+                        except Exception:
+                            pass
+                    if hasattr(b, 'handle_collision'):
+                        try:
+                            b.handle_collision(group, a)
+                        except Exception:
+                            pass
 
 def remove_collision_object(o):
     for group, pairs in collision_pairs.items():
@@ -71,3 +79,7 @@ def remove_collision_object(o):
         if o in pairs[1]:
             pairs[1].remove(o)
 
+
+def clear_collision_pairs():
+    """모든 충돌 페어를 초기화합니다."""
+    collision_pairs.clear()

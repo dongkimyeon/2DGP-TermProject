@@ -3,6 +3,7 @@ from ResourceManager import ResourceManager
 import pico2d
 import SceneManager
 import math
+import game_world
 
 
 class Player_Gun_Bullet:
@@ -72,6 +73,8 @@ class Player_Gun_Bullet:
         self.direction = direction
         self.speed = 1000
         SceneManager.active_scene.gameobjs.append(self)
+        # game_world에 무기-적 충돌 페어에 이 총알을 등록
+        game_world.add_collision_pair('weapon:enemy', self, None)
         return self
 
     def update(self):
@@ -90,6 +93,8 @@ class Player_Gun_Bullet:
                 # 벽에 닿으면 사라짐
                 if self in SceneManager.active_scene.gameobjs:
                     SceneManager.active_scene.gameobjs.remove(self)
+                # collision pair에서 제거
+                game_world.remove_collision_object(self)
                 return
 
         # 프레임 애니메이션
@@ -121,6 +126,23 @@ class Player_Gun_Bullet:
                 image.clip_draw(frame * (width // frame_count), 0, width // frame_count, height, draw_x, draw_y, draw_w, draw_h)
 
     def handle_collision(self, group, other):
-        """충돌 처리 - 플레이어와 충돌 시 사라짐"""
-        if self in SceneManager.active_scene.gameobjs:
-            SceneManager.active_scene.gameobjs.remove(self)
+        """충돌 처리 - 적과 충돌 시 데미지를 주고 사라짐"""
+        if group == 'weapon:enemy':
+            # 적에게 데미지 적용
+            if hasattr(other, 'health'):
+                damage = self.get_damage()
+                other.health -= damage
+
+                # 적의 피격 상태 설정
+                if hasattr(other, 'is_hit'):
+                    other.is_hit = True
+
+                # 적의 피격 사운드 재생
+                if hasattr(other, 'hit_sound'):
+                    other.hit_sound.play()
+
+            # 총알 제거
+            if self in SceneManager.active_scene.gameobjs:
+                SceneManager.active_scene.gameobjs.remove(self)
+            # collision pair에서 제거
+            game_world.remove_collision_object(self)

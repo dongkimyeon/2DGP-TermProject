@@ -298,6 +298,13 @@ class Boss:
             except Exception:
                 # 안전망: other 객체에 해당 메서드가 없을 경우 무시
                 pass
+        elif group == 'weapon:enemy':
+            # 플레이어 총알과 충돌
+            try:
+                dmg = other.get_damage() if hasattr(other, 'get_damage') else getattr(other, 'attack_power', 0)
+                self.take_damage(dmg)
+            except Exception:
+                pass
 
     def check_tile_collision(self, new_x, new_y):
         """타일 충돌 체크 및 위치 보정"""

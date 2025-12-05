@@ -3,6 +3,7 @@ from ResourceManager import ResourceManager
 import pico2d
 import SceneManager
 import math
+import game_world
 
 class IceBullet:
     def __init__(self):
@@ -44,6 +45,8 @@ class IceBullet:
         self.frame_count = 0
         self.frame_timer = 0.0
         SceneManager.active_scene.gameobjs.append(self)
+        # game_world에 플레이어-적 발사체 충돌 페어에 등록
+        game_world.add_collision_pair('player:enemy_projectile', None, self)
         return self
 
     def update(self):
@@ -52,28 +55,11 @@ class IceBullet:
         self.x += math.cos(self.direction) * self.speed * dt
         self.y += math.sin(self.direction) * self.speed * dt
 
-        # # 맵 타일과의 충돌 체크
-        # if self.map_manager:
-        #     half_width = 18 // 2
-        #     half_height = 18 // 2
-        #     left = self.x - half_width
-        #     bottom = self.y - half_height + 5
-        #     right = self.x + half_width
-        #     top = self.y + half_height + 5
-        #
-        #     colliding_tiles = self.map_manager.check_collision(left, bottom, right, top)
-        #     if colliding_tiles:
-        #         # 벽에 닿으면 사라짐
-        #         if self in SceneManager.active_scene.gameobjs:
-        #             SceneManager.active_scene.gameobjs.remove(self)
-        #         return
-
-        # 화면 밖으로 나가면 제거
-        if (self.x < -50 or self.x > SceneManager.screen_width + 100
-            or self.y < -50 or self.y > SceneManager.screen_height + 100):
+        # 범위를 벗어나면 제거 (맵 크기의 2배 정도로 충분히 큰 범위)
+        if (self.x < -200 or self.x > 2500 or self.y < -200 or self.y > 1500):
             if self in SceneManager.active_scene.gameobjs:
                 SceneManager.active_scene.gameobjs.remove(self)
-                # print ("IceBullet removed for going out of bounds")
+            game_world.remove_collision_object(self)
             return
 
         # 프레임 애니메이션
@@ -87,6 +73,8 @@ class IceBullet:
         # 플레이어와 충돌하면 사라짐
         if self in SceneManager.active_scene.gameobjs:
             SceneManager.active_scene.gameobjs.remove(self)
+        # collision pair에서 제거
+        game_world.remove_collision_object(self)
 
     def render(self, camera_x=0, camera_y=0, zoom=1.0):
         image, frame_count, width, height = ResourceManager.get_image(f"niflheim_ice_bullet")

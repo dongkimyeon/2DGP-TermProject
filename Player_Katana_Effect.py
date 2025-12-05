@@ -106,3 +106,26 @@ class KatanaEffect:
         else:
             self.image.clip_composite_draw(self.frame_count * (self.width // frame_count), 0, self.width // frame_count, self.height,
                                       self.angle, 'v', draw_x, draw_y, draw_w, draw_h)
+
+    def handle_collision(self, group, other):
+        """적과의 충돌 처리"""
+        if not self.active:
+            return
+
+        # 이미 맞은 적인지 체크
+        if not self.can_hit(other):
+            return
+
+        # 적에게 데미지 적용
+        if hasattr(other, 'health'):
+            damage = self.get_damage()
+            other.health -= damage
+            self.mark_hit(other)  # 이 적을 히트 리스트에 추가
+
+            # 적의 피격 상태 설정
+            if hasattr(other, 'is_hit'):
+                other.is_hit = True
+
+            # 적의 피격 사운드 재생
+            if hasattr(other, 'hit_sound'):
+                other.hit_sound.play()

@@ -69,8 +69,55 @@ class Player:
 
     def handle_collision(self, group, other):
 
-        pass
+        # 플레이어가 적 또는 적 발사체에 맞았을 때
+        if group in ('player:enemy', 'player:enemy_projectile'):
+            # 데미지 쿨타임 적용
+            if self.damage_cooldown <= 0:
+                try:
+                    dmg = other.get_damage() if hasattr(other, 'get_damage') else getattr(other, 'attack_power', 0)
+                    self.hp -= dmg
+                    self.damage_cooldown = self.damage_cooldown_time
+                    # 데미지 사운드 재생
+                    ps = getattr(SceneManager, 'ps', None)
+                    if ps and hasattr(ps, 'damage'):
+                        try:
+                            ps.damage.play()
+                        except Exception:
+                            pass
+                except Exception:
+                    pass
 
+        # 골드 획득
+        elif group == 'player:gold':
+            try:
+                self.coin_count += 1
+                # 씬에서 오브젝트 제거
+                if other in SceneManager.active_scene.gameobjs:
+                    SceneManager.active_scene.gameobjs.remove(other)
+                import game_world
+                game_world.remove_collision_object(other)
+            except Exception:
+                pass
+
+        # HP 페어리 획득
+        elif group == 'player:hpfairy':
+            try:
+                self.hp = min(self.hp + 30, self.max_hp)
+                if other in SceneManager.active_scene.gameobjs:
+                    SceneManager.active_scene.gameobjs.remove(other)
+                import game_world
+                game_world.remove_collision_object(other)
+            except Exception:
+                pass
+
+        # 포탈 근처 체크
+        elif group == 'player:portal':
+            try:
+                self.near_portal = other
+            except Exception:
+                pass
+
+        # 무기(총알)로 적을 맞췄을 때는 적이 handle_collision에서 처리함
 
     def check_tile_collision(self, new_x, new_y):
         """타일 충돌 체크 및 위치 보정"""
