@@ -117,7 +117,6 @@ class Player:
             except Exception:
                 pass
 
-        # 무기(총알)로 적을 맞췄을 때는 적이 handle_collision에서 처리함
 
     def check_tile_collision(self, new_x, new_y):
         """타일 충돌 체크 및 위치 보정"""

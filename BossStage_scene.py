@@ -171,11 +171,7 @@ class BossStageScene:
 
 
 
-        # 포탈 근처에 있을 때 UI 표시
-        if player.near_portal:
-            font = ResourceManager.get_font("default")
-            font.draw(SceneManager.screen_width // 2 - 100, SceneManager.screen_height - 50,
-                     "Press F to Enter", (255, 255, 255))
+      
 
     def update_mouse_from_events(self, events):
         """이벤트에서 마우스 좌표를 읽어 월드 좌표로 변환"""

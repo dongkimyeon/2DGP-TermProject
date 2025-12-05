@@ -140,10 +140,10 @@ class Stage1Scene:
         self.dead_sound.play()
         rand = random.random()
         if rand < 0.3:
-            print(f"HP Fairy dropped at ({x}, {y})")
+            #print(f"HP Fairy dropped at ({x}, {y})")
             return HpFairy(x, y)
         else:
-            print(f"Gold dropped at ({x}, {y})")
+            #print(f"Gold dropped at ({x}, {y})")
             return Gold(x, y)
 
     def handle_events(self, events):
@@ -152,7 +152,7 @@ class Stage1Scene:
         result = player.handel_event(events)
 
         if result == 'enter_portal':
-            print("Entering Stage 2...")
+            #print("Entering Stage 2...")
             SceneManager.load_scene("Stage2Scene")
             return True
 
@@ -179,10 +179,7 @@ class Stage1Scene:
         # PlayerUI 렌더링
         self.player_ui.render()
 
-        if player.near_portal:
-            font = ResourceManager.get_font("default")
-            font.draw(SceneManager.screen_width // 2 - 100, SceneManager.screen_height - 50,
-                     "Press F to Enter", (255, 255, 255))
+
 
     def update_mouse_from_events(self, events):
         for event in events:
