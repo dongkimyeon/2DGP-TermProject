@@ -1,4 +1,5 @@
 import pico2d
+import playerSound
 from Time import Time
 screen_width = 1920
 screen_height = 1080
@@ -9,6 +10,8 @@ active_scene = None
 
 play_time = 0.0
 play_timerOn = False
+
+ps = None
 def CreateScene(name, scene_class):
     print(f"[SceneManager] CreateScene: {name} 인스턴스 생성")
     scenes[name] = scene_class()
@@ -26,7 +29,8 @@ def load_scene(name):
 
 def run():
     print("[SceneManager] run")
-
+    global ps
+    ps = playerSound.PlayerSound()
     while active_scene:
         Time.update()
         events = pico2d.get_events()

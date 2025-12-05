@@ -14,6 +14,7 @@ import Camera
 class Player:
     def __init__(self):
 
+
         self.max_hp = 120
         self.hp = self.max_hp
         self.dash_count = 3
@@ -39,7 +40,7 @@ class Player:
         self.jump_count = 2
         self.width = 50
         self.height = 50
-        self.weapon = Gun(self)
+        self.weapon = Katana(self)
         self.katana_effect = KatanaEffect(self)
         self.chargingGage = 0.0
         self.is_charging = False
@@ -53,7 +54,9 @@ class Player:
         self.damage_cooldown = 0.0  # 적에게 데미지 받는 쿨타임
         self.damage_cooldown_time = 0.5  # 데미지 쿨타임 (0.5초)
         self.coin_count = 0  # 플레이어가 가진 코인 수
-
+        self.sound_delay = 0.0
+        self.step_interval = 0.4  # 발걸음 사운드 최소 재생 간격(초)
+        self.step_sound_index = 0  # 현재 재생할 발걸음 소리 인덱스 (0~3)
 
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
@@ -150,17 +153,48 @@ class Player:
 
     def update(self, camera_x, camera_y, zoom):
         dt = Time.DeltaTime()
-
+        # 사운드 딜레이 감소
+        if self.sound_delay > 0:
+            self.sound_delay -= dt
+            if self.sound_delay < 0:
+                self.sound_delay = 0.0
         # 공격 쿨타임 감소
         if self.attack_cooldown > 0:
             self.attack_cooldown -= dt
         if self.damage_cooldown > 0:
             self.damage_cooldown -= dt
         new_x = self.x
+
         if not self.is_dashing:
-            if self.left_pressed and not self.right_pressed:
+            moving_left = self.left_pressed and not self.right_pressed
+            moving_right = self.right_pressed and not self.left_pressed
+
+            # 이동 시작 시, 지상이고 딜레이가 끝났으면 발걸음 소리 재생
+            if (moving_left or moving_right) and self.is_grounded and self.sound_delay <= 0:
+                ps = getattr(SceneManager, 'ps', None)
+                if ps:
+                    try:
+                        # 순차적으로 step1 -> step2 -> step3 -> step4 재생
+                        if self.step_sound_index == 0:
+                            ps.step_lth1.play()
+                        elif self.step_sound_index == 1:
+                            ps.step_lth2.play()
+                        elif self.step_sound_index == 2:
+                            ps.step_lth3.play()
+                        elif self.step_sound_index == 3:
+                            ps.step_lth4.play()
+
+                        # 인덱스 증가 및 순환 (0~3)
+                        self.step_sound_index = (self.step_sound_index + 1) % 4
+                        # 딜레이 재설정
+                        self.sound_delay = self.step_interval
+                    except AttributeError:
+                        # stepX 사운드가 없으면 무시 (디버깅용)
+                        pass
+
+            if moving_left:
                 new_x = self.x - self.speed * dt
-            elif self.right_pressed and not self.left_pressed:
+            elif moving_right:
                 new_x = self.x + self.speed * dt
 
         # 중력 적용
@@ -237,7 +271,6 @@ class Player:
             SceneManager.load_scene("DeadScene")
 
     def handel_event(self, events):
-
         camera = Camera.Camera()
         camera_x, camera_y = camera.get_position()
         zoom = camera.get_zoom()
@@ -264,7 +297,7 @@ class Player:
                 elif event.key == pico2d.SDLK_d:
                     self.right_pressed = True
                 elif event.key == pico2d.SDLK_SPACE and self.jump_count > 0:
-                    #self.jumpSound.play()
+                    SceneManager.ps.jump.play()
                     self.jump_velocity = self.jump_power
                     self.jump_count -= 1
                     self.is_jumping = True
@@ -278,9 +311,11 @@ class Player:
                 elif event.key == pico2d.SDLK_q:
                     SceneManager.load_scene("DeadScene")
                 elif event.key == pico2d.SDLK_1:
-                    self.weapon = Gun(self)
+                    SceneManager.ps.swap.play()
+                    self.weapon = Katana(self)
                 elif event.key == pico2d.SDLK_2:
-                    self.weapon = Katana(self)    
+                    SceneManager.ps.swap.play()
+                    self.weapon = Gun(self)
 
             if event.type == pico2d.SDL_MOUSEBUTTONDOWN:
                 if mouse_world:
@@ -294,6 +329,7 @@ class Player:
                 dy = world_y - self.y
                 distance = math.hypot(dx, dy)
                 if event.button == pico2d.SDL_BUTTON_RIGHT and self.dash_count > 0:
+                    SceneManager.ps.dash.play()
                     if distance != 0:
                         self.dash_direction = (dx / distance, dy / distance)
                         self.is_dashing = True
@@ -304,13 +340,13 @@ class Player:
                     if isinstance(self.weapon, Katana):
                         # 카타나는 좌클릭으로 차징 시작
                         self.is_charging = True
-                    # Gun은 버튼 업에서 발사 처리 (또는 클릭으로 바로 발사해도 됨)
+
             if event.type == pico2d.SDL_MOUSEBUTTONUP:
                 if event.button == pico2d.SDL_BUTTON_LEFT:
                     # 카타나: 차징이 되어 있으면 업에서 공격 실행
                     if isinstance(self.weapon, Katana) and self.is_charging:
                         if self.attack_cooldown <= 0:
-                            print("카타나 공격 실행")
+                            SceneManager.ps.katana.play()
                             self.katana_effect.start()
                             self.is_charging = False
                             self.chargingGage = 0.0
@@ -321,7 +357,7 @@ class Player:
                     # Gun: 좌클릭 업 시 총알 발사
                     elif isinstance(self.weapon, Gun):
                         if self.attack_cooldown <= 0:
-                            print("총알 발사")
+                            SceneManager.ps.RifleFire.play()
                             bullet = Player_Gun_Bullet()
                             if self.map_manager:
                                 bullet.set_map_manager(self.map_manager)
