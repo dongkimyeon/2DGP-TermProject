@@ -7,7 +7,7 @@ from IceSpear import IceSpear
 import SceneManager
 import math
 import random
-
+import pico2d
 
 
 class Boss:
@@ -42,6 +42,18 @@ class Boss:
 
         self.font = ResourceManager.get_font("default")
         self.map_manager = None  # 맵 매니저 참조
+
+        self.enterSound = pico2d.load_wav('resources/sound/niflheim/niflheim_start.wav')
+        self.enterSound.set_volume(32)
+        self.icebulletSound = pico2d.load_wav('resources/sound/niflheim/ice_blast_projectile_spell_02.wav')
+        self.icebulletSound.set_volume(32)
+        self.icespearSound = pico2d.load_wav('resources/sound/niflheim/ice_spell_forming_shards_03.wav')
+        self.icespearSound.set_volume(32)
+        self.iciclefallSound = pico2d.load_wav('resources/sound/niflheim/ice_spell_freeze_small_04.wav')
+        self.iciclefallSound.set_volume(32)
+
+        
+        self.enter_sound_played = False
 
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
@@ -149,7 +161,12 @@ class Boss:
 
         #enter -> idle
         if self.state == 'enter':
-            if self.frame_count >= 16:
+            # enter 사운드는 한 번만 재생
+            if not self.enter_sound_played:
+                self.enterSound.play()
+                self.enter_sound_played = True
+
+        if self.frame_count >= 16:
                 self.state = 'idle'
                 self.frame_count = 0
         #idle -> attack
@@ -179,6 +196,7 @@ class Boss:
                     step_deg = 10  # 각 탄 사이의 간격(도)
                     half_span = (step_deg * (count - 1)) / 2.0
                     # 생성
+                    self.icebulletSound.play()
                     for i in range(count):
                         offset_deg = -half_span + i * step_deg
                         offset_rad = math.radians(offset_deg)
@@ -200,6 +218,7 @@ class Boss:
                         start_x = 1250
 
                     start_y = 70
+                    self.icespearSound.play()
                     for i in range(count):
                         IceSpear().shot(start_x, start_y)
                         start_y = start_y + y_offset
@@ -208,6 +227,7 @@ class Boss:
                     count = 6
                     x_offset = 200  # 총알 간격 (픽셀)
                     # 랜덤으로 스타트 지점 100 or 200
+                    self.iciclefallSound.play()
                     import random
                     random_start = random.choice([1, 2])
                     start_x = random_start * 100
