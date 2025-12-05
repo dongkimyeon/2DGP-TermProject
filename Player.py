@@ -68,7 +68,6 @@ class Player:
         return (self.x - half_width, self.y - half_height + 5, self.x + half_width, self.y + half_height + 5)
 
     def handle_collision(self, group, other):
-
         # 플레이어가 적 또는 적 발사체에 맞았을 때
         if group in ('player:enemy', 'player:enemy_projectile'):
             # 데미지 쿨타임 적용
@@ -76,20 +75,17 @@ class Player:
                 try:
                     dmg = other.get_damage() if hasattr(other, 'get_damage') else getattr(other, 'attack_power', 0)
                     self.hp -= dmg
+                    SceneManager.ps.Hit_Player.play()
                     self.damage_cooldown = self.damage_cooldown_time
                     # 데미지 사운드 재생
-                    ps = getattr(SceneManager, 'ps', None)
-                    if ps and hasattr(ps, 'damage'):
-                        try:
-                            ps.damage.play()
-                        except Exception:
-                            pass
+
                 except Exception:
                     pass
 
         # 골드 획득
         elif group == 'player:gold':
             try:
+                SceneManager.ps.gold_collect.play()
                 self.coin_count += 1
                 # 씬에서 오브젝트 제거
                 if other in SceneManager.active_scene.gameobjs:
@@ -102,6 +98,7 @@ class Player:
         # HP 페어리 획득
         elif group == 'player:hpfairy':
             try:
+                SceneManager.ps.Get_Fairy.play()
                 self.hp = min(self.hp + 30, self.max_hp)
                 if other in SceneManager.active_scene.gameobjs:
                     SceneManager.active_scene.gameobjs.remove(other)

@@ -171,7 +171,7 @@ class BossStageScene:
 
 
 
-      
+
 
     def update_mouse_from_events(self, events):
         """이벤트에서 마우스 좌표를 읽어 월드 좌표로 변환"""
