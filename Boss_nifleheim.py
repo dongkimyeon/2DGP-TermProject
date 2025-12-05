@@ -52,7 +52,7 @@ class Boss:
         self.iciclefallSound = pico2d.load_wav('resources/sound/niflheim/ice_spell_freeze_small_04.wav')
         self.iciclefallSound.set_volume(32)
 
-        
+
         self.enter_sound_played = False
 
     def set_map_manager(self, map_manager):

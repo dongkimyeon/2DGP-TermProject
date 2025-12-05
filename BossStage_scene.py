@@ -26,11 +26,15 @@ class BossStageScene:
         self.gameobjs = []
         # MapManager 초기화 - 보스 스테이지용 맵 사용
         self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16*1.5, filename='map2.txt')
-
+        self.bgm = pico2d.load_wav('resources/sound/bgm/boss.wav')
+        self.bgm.set_volume(8)
 
     def enter(self):
         print("[BossStageScene] enter()")
+
+        self.bgm.repeat_play()
         # 보스 생성
+
         boss = Boss(593, 500)
         boss.set_map_manager(self.map_manager)
         self.gameobjs.append(boss)
