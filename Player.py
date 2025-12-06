@@ -457,7 +457,7 @@ class Player:
         if self.katana_effect:
             self.katana_effect.render(camera_x, camera_y, zoom)
             # 카타나 이펙트 충돌 박스도 토글 설정에 따라 표시
-            if self.show_collision_box:
+            if SceneManager.debug_mode:
                 left, bottom, right, top = self.katana_effect.get_bb()
                 pico2d.draw_rectangle(
                     (left - camera_x) * zoom, (bottom - camera_y) * zoom,
@@ -465,7 +465,7 @@ class Player:
                 )
 
         # 충돌 박스 표시
-        if self.show_collision_box:
+        if SceneManager.debug_mode:
             left, bottom, right, top = self.get_bb()
             pico2d.draw_rectangle(
                 (left - camera_x) * zoom, (bottom - camera_y) * zoom,
