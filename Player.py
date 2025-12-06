@@ -349,7 +349,8 @@ class Player:
                     self.hp -= 10
                     print("플레이어 체력:", self.hp)
                 elif event.key == pico2d.SDLK_f:
-                    if self.near_portal:
+                    # 포탈이 근처에 있고 활성화 상태일 때만 진입 가능
+                    if self.near_portal and hasattr(self.near_portal, 'is_active') and self.near_portal.is_active:
                         return 'enter_portal'  # 포탈 진입 신호 반환
                 elif event.key == pico2d.SDLK_q:
                     SceneManager.load_scene("DeadScene")

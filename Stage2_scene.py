@@ -59,6 +59,10 @@ class Stage2Scene:
         player.x = 100
         player.y = 200
 
+        # 적 수 카운트 초기화
+        self.total_enemies = 0
+        self.remaining_enemies = 0
+
         # collision pairs 초기화 후 등록
         game_world.clear_collision_pairs()
 
@@ -86,10 +90,18 @@ class Stage2Scene:
                 game_world.add_collision_pair('player:enemy', None, obj)
                 game_world.add_collision_pair('katana_effect:enemy', None, obj)
                 game_world.add_collision_pair('weapon:enemy', None, obj)
+                self.total_enemies += 1
+                self.remaining_enemies += 1
             if isinstance(obj, Gold):
                 game_world.add_collision_pair('player:gold', None, obj)
             if isinstance(obj, HpFairy):
                 game_world.add_collision_pair('player:hpfairy', None, obj)
+
+        # 초기에는 포탈 비활성화 (적이 있으면)
+        if self.remaining_enemies > 0:
+            self.portal.deactivate()
+        else:
+            self.portal.activate()
 
     def exit(self):
         print("[Stage2Scene] exit()")
@@ -133,8 +145,14 @@ class Stage2Scene:
 
         for obj in objects_to_remove:
             if obj in self.gameobjs:
+                self.remaining_enemies -= 1  # 적 수 감소
                 self.gameobjs.remove(obj)
                 game_world.remove_collision_object(obj)
+
+        # 모든 적이 죽으면 포탈 활성화
+        if self.remaining_enemies <= 0 and not self.portal.is_active:
+            self.portal.activate()
+            print("[Stage2Scene] 모든 적 처치 완료! 포탈이 활성화되었습니다.")
 
         # 새로 생성된 발사체들에도 맵 매니저 설정
         for obj in self.gameobjs:
@@ -142,8 +160,8 @@ class Stage2Scene:
                 obj.set_map_manager(self.map_manager)
 
     def drop_item(self, x, y):
-        self.dead_sound.play()
         """30% 확률로 HP 페어리, 70% 확률로 골드 드랍"""
+        self.dead_sound.play()
         rand = random.random()
         if rand < 0.3:  # 30% 확률
             print(f"HP Fairy dropped at ({x}, {y})")

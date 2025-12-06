@@ -60,6 +60,10 @@ class Stage1Scene:
         #플레이어 모든 변수 초기화
         player.reset_for_stage()
 
+        # 적 수 카운트 초기화
+        self.total_enemies = 0
+        self.remaining_enemies = 0
+
         # collision pairs 초기화 후 등록
         game_world.clear_collision_pairs()
 
@@ -88,10 +92,18 @@ class Stage1Scene:
                 game_world.add_collision_pair('player:enemy', None, obj)
                 game_world.add_collision_pair('katana_effect:enemy', None, obj)
                 game_world.add_collision_pair('weapon:enemy', None, obj)
+                self.total_enemies += 1
+                self.remaining_enemies += 1
             if isinstance(obj, Gold):
                 game_world.add_collision_pair('player:gold', None, obj)
             if isinstance(obj, HpFairy):
                 game_world.add_collision_pair('player:hpfairy', None, obj)
+
+        # 초기에는 포탈 비활성화 (적이 있으면)
+        if self.remaining_enemies > 0:
+            self.portal.deactivate()
+        else:
+            self.portal.activate()
 
     def exit(self):
         print("[Stage1Scene] exit()")
@@ -134,8 +146,14 @@ class Stage1Scene:
 
         for obj in objects_to_remove:
             if obj in self.gameobjs:
+                self.remaining_enemies -= 1  # 적 수 감소
                 self.gameobjs.remove(obj)
                 game_world.remove_collision_object(obj)
+
+        # 모든 적이 죽으면 포탈 활성화
+        if self.remaining_enemies <= 0 and not self.portal.is_active:
+            self.portal.activate()
+            print("[Stage1Scene] 모든 적 처치 완료! 포탈이 활성화되었습니다.")
 
         for obj in self.gameobjs:
             if hasattr(obj, 'set_map_manager') and obj.map_manager is None:
