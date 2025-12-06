@@ -20,12 +20,9 @@ class KatanaEffect:
         self.width = 62
         self.height = 81
         self.special_attack = False
-        self.special_attack_damage = 25  # 차지 공격 데미지 20 ~ 25
-        self.default_damage = 13  # 기본 공격 데미지 10 ~ 13
         self.image = None
         self.hit_enemies = set()  # 이번 공격에서 이미 맞은 적들을 추적
-        #기본 공격 데미지 10 ~ 13
-        #차지 공격 데미지 20 ~ 25
+
 
     def start(self):
         self.active = True
@@ -53,7 +50,7 @@ class KatanaEffect:
     def get_damage(self):
         # 랜덤 데미지 적용
         if self.special_attack:
-            return random.randint(20, 25)  # 풀차지: 20~25
+            return random.randint(25, 35)  # 풀차지: 50 ± 5
         else:
             return random.randint(10, 13)  # 기본: 10~13
 

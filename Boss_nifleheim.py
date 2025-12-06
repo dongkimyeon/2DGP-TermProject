@@ -12,7 +12,7 @@ import pico2d
 
 class Boss:
     def __init__(self, x, y):
-        self.max_health = 100
+        self.max_health = 500
         self.health = self.max_health
         self.x = x
         self.y = y
@@ -52,6 +52,9 @@ class Boss:
         self.iciclefallSound = pico2d.load_wav('resources/sound/niflheim/ice_spell_freeze_small_04.wav')
         self.iciclefallSound.set_volume(32)
 
+        self.hit_sound = pico2d.load_wav('resources/sound/Hit_Monster.wav')
+        self.hit_sound.set_volume(32)
+
 
         self.enter_sound_played = False
 
@@ -67,6 +70,7 @@ class Boss:
         # die 상태일 때는 데미지를 받지 않음
         if self.state == 'die':
             return
+        self.hit_sound.play()
         self.health -= damage
         # 체력이 0 이하가 되면 die 상태로 전환
         if self.health <= 0:

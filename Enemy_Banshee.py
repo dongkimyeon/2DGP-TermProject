@@ -8,8 +8,9 @@ from Banshee_Attack_note import Note
 
 class Banshee:
     def __init__(self):
-        self.health = 50
+
         self.max_health = 50  # 최대 체력 추가
+        self.health = self.max_health
         self.attack_power = 12
         self.x = 0
         self.y = 0
