@@ -1,17 +1,21 @@
 import SceneManager
+import pico2d
 from Player import player
 
 
 class DeadScene:
     def __init__(self):
-        pass
+        self.bgm = pico2d.load_music('resources/sound/Character/dead.wav')
+        self.bgm.set_volume(32)
 
     def enter(self):
         print("[DeadScene] enter")
+        self.bgm.play()
         player.coin_count = 0
 
     def exit(self):
         print("[DeadScene] exit")
+        self.bgm.stop()
 
     def update(self):
         pass
