@@ -483,6 +483,7 @@ class Player:
         self.y = start_y
         self.direction = 0
 
+        self.cur_bullet = self.max_bullet
         # 이동 / 애니메이션
         self.speed = 200
         self.frame_count = 0
@@ -499,5 +500,7 @@ class Player:
         # 입력 플래그
         self.left_pressed = False
         self.right_pressed = False
+
+
 
 player = Player()
