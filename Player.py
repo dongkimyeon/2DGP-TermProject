@@ -57,7 +57,7 @@ class Player:
         self.sound_delay = 0.0
         self.step_interval = 0.4  # 발걸음 사운드 최소 재생 간격(초)
         self.step_sound_index = 0  # 현재 재생할 발걸음 소리 인덱스 (0~3)
-        self.max_bullet = 10
+        self.max_bullet = 100
         self.cur_bullet = self.max_bullet
 
     def set_map_manager(self, map_manager):
