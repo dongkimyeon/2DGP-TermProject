@@ -48,8 +48,9 @@ class PlayerUI:
         #플레이어 무기 ui 렌더링
         self.render_weapon_ui()
 
-        # 총알 수 렌더링 (우하단)
-        self.render_bullet_count()
+        # 총알 수 렌더링
+        if isinstance(self.player.weapon, Katana) == False:
+            self.render_bullet_count()
 
     def render_hp_bar(self):
         """체력바 렌더링"""
@@ -273,27 +274,14 @@ class PlayerUI:
 
     def render_bullet_count(self):
         """총알 수 렌더링"""
-        bullet_img, _, bullet_width, bullet_height = ResourceManager.get_image("BulletIcon")
-        font = ResourceManager.get_font("default")
+        font = ResourceManager.get_font("HpText")
+        bullet_text = f"Bullets: {self.player.cur_bullet}"
+        font.draw(
+            SceneManager.screen_width - 230,
+            150,
+            bullet_text,
+            (255, 255, 255)
+        )
 
-        if bullet_img:
-            bullet_x = SceneManager.screen_width - 150
-            bullet_y = 50
 
-            # 총알 아이콘 렌더링
-            bullet_img.draw(
-                bullet_x,
-                bullet_y,
-                int(bullet_width * 2.0),
-                int(bullet_height * 2.0)
-            )
-
-            if font:
-                bullet_text = f"x {self.player.bullet_count}"
-                font.draw(
-                    bullet_x + 30,
-                    bullet_y ,
-                    bullet_text,
-                    (255, 255, 255)
-                )
 

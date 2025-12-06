@@ -57,7 +57,8 @@ class Player:
         self.sound_delay = 0.0
         self.step_interval = 0.4  # 발걸음 사운드 최소 재생 간격(초)
         self.step_sound_index = 0  # 현재 재생할 발걸음 소리 인덱스 (0~3)
-        self.show_collision_box = False  # 충돌 박스 표시 여부 추가
+        self.max_bullet = 10
+        self.cur_bullet = self.max_bullet
 
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
@@ -401,7 +402,8 @@ class Player:
                             self.chargingGage = 0.0
                     # Gun: 좌클릭 업 시 총알 발사
                     elif isinstance(self.weapon, Gun):
-                        if self.attack_cooldown <= 0:
+                        if self.attack_cooldown <= 0 and self.cur_bullet > 0:
+                            self.cur_bullet -= 1
                             SceneManager.ps.RifleFire.play()
                             bullet = Player_Gun_Bullet()
                             if self.map_manager:
