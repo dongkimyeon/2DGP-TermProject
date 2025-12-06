@@ -64,7 +64,17 @@ class Boss:
         half_height = self.height // 2
         return self.x - half_width, self.y - half_height + 7, self.x + half_width, self.y + half_height + 5
     def take_damage(self, damage):
+        # die 상태일 때는 데미지를 받지 않음
+        if self.state == 'die':
+            return
         self.health -= damage
+        # 체력이 0 이하가 되면 die 상태로 전환
+        if self.health <= 0:
+            self.health = 0
+            self.state = 'die'
+            self.frame_count = 0
+            self.is_moving = False
+            self.has_moved = True
 
     def start_idle_movement(self, player_x, player_y):
         # 플레이어와의 거리에 따라 이동 목표 설정, 충돌 타일 피함
@@ -141,14 +151,24 @@ class Boss:
     def update(self):
         dt = Time.DeltaTime()
 
-        if self.health <= 0:
+        # 체력이 0 이하면 die 상태로 전환
+        if self.health <= 0 and self.state != 'die':
             self.state = 'die'
+            self.frame_count = 0
+            self.is_moving = False
+            self.has_moved = True
+            self.has_shot = False
+
+        # die 상태일 때는 프레임 애니메이션만 처리하고 리턴
         if self.state == 'die':
-            if self.frame_count >= 29:
-                self.frame_count = 29
-                return
+            self.frame_timer += dt
+            if self.frame_timer > 0.1:
+                if self.frame_count < 29:
+                    self.frame_count += 1
+                self.frame_timer = 0.0
+            return
 
-
+        # 살아있을 때만 방향 전환 및 행동 처리
         dx = player.x - self.x
         dy = player.y - self.y
         angle = math.atan2(dy, dx)
@@ -166,7 +186,7 @@ class Boss:
                 self.enterSound.play()
                 self.enter_sound_played = True
 
-        if self.frame_count >= 16:
+            if self.frame_count >= 16:
                 self.state = 'idle'
                 self.frame_count = 0
         #idle -> attack
@@ -274,9 +294,6 @@ class Boss:
                 else:
                     self.x += nx * move_step
                     self.y += ny * move_step
-
-
-
 
         self.frame_timer += dt
         self.attack_timer += dt

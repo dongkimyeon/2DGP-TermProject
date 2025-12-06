@@ -26,7 +26,7 @@ class BossStageScene:
         self.gameobjs = []
         # MapManager 초기화 - 보스 스테이지용 맵 사용
         self.map_manager = MapManager(grid_width=100, grid_height=50, tile_size=16*1.5, filename='map2.txt')
-        self.bgm = pico2d.load_wav('resources/sound/bgm/boss.wav')
+        self.bgm = pico2d.load_music('resources/sound/bgm/boss.wav')
         self.bgm.set_volume(8)
 
     def enter(self):
@@ -68,6 +68,7 @@ class BossStageScene:
 
     def exit(self):
         print("[BossStageScene] exit()")
+        self.bgm.stop()
         # UI 정리
         try:
             self.player_ui = None
@@ -170,6 +171,7 @@ class BossStageScene:
 
         # PlayerUI 렌더링
         self.player_ui.render()
+
 
         self.boss_ui.render()
 

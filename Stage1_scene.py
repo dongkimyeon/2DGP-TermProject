@@ -32,10 +32,15 @@ class Stage1Scene:
 
         self.exit_sound = pico2d.load_wav('resources/sound/DungeonOut.wav')
         self.exit_sound.set_volume(32)
+
+        self.bgm = pico2d.load_music('resources/sound/bgm/normalStage.wav')
+        self.bgm.set_volume(16)
+
     def enter(self):
         print("[Stage1Scene] enter()")
         loaded_objects = ObjectLoader.load_from_file('stage1_object_coord.txt', self.map_manager)
         self.gameobjs.extend(loaded_objects)
+        self.bgm.repeat_play()
 
         self.portal = Portal(2483, 1172)
         self.gameobjs.append(self.portal)
@@ -90,6 +95,7 @@ class Stage1Scene:
 
     def exit(self):
         print("[Stage1Scene] exit()")
+        self.bgm.stop()
         self.exit_sound.play()
         self.gameobjs.clear()
         game_world.clear_collision_pairs()

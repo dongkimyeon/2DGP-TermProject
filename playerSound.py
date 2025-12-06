@@ -16,6 +16,8 @@ class PlayerSound:
         self.step_lth4 = pico2d.load_wav('resources/sound/Character/step_lth4.wav')
         self.swap = pico2d.load_wav('resources/sound/Character/swap.wav')
 
+
+
         self.dash.set_volume(32)
         self.Get_Fairy.set_volume(32)
         self.gold_collect.set_volume(32)

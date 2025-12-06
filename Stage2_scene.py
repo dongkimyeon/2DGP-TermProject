@@ -17,6 +17,7 @@ import random
 from ResourceManager import ResourceManager
 from ObjectLoader import ObjectLoader
 import game_world
+import Stage1_scene
 
 
 class Stage2Scene:
@@ -33,11 +34,15 @@ class Stage2Scene:
         self.exit_sound = pico2d.load_wav('resources/sound/DungeonOut.wav')
         self.exit_sound.set_volume(32)
 
+        self.bgm = pico2d.load_music('resources/sound/bgm/Stage2.wav')
+        self.bgm.set_volume(16)
+
     def enter(self):
         print("[Stage2Scene] enter()")
         # 씬 진입 시 플레이어에게 이 씬의 맵 매니저를 다시 설정
         player.set_map_manager(self.map_manager)
 
+        self.bgm.repeat_play()
         # ObjectLoader를 사용하여 오브젝트 로드 (stage2_object_coord.txt)
         loaded_objects = ObjectLoader.load_from_file('stage2_object_coord.txt', self.map_manager)
         self.gameobjs.extend(loaded_objects)
@@ -88,6 +93,7 @@ class Stage2Scene:
 
     def exit(self):
         print("[Stage2Scene] exit()")
+        self.bgm.stop()
         self.exit_sound.play()
         self.gameobjs.clear()
         game_world.clear_collision_pairs()

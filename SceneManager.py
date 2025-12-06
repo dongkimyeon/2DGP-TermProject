@@ -11,7 +11,9 @@ active_scene = None
 play_time = 0.0
 play_timerOn = False
 
+
 ps = None
+
 def CreateScene(name, scene_class):
     print(f"[SceneManager] CreateScene: {name} 인스턴스 생성")
     scenes[name] = scene_class()
@@ -26,6 +28,8 @@ def load_scene(name):
     if active_scene and hasattr(active_scene, 'enter'):
         print(f"[SceneManager] enter: {type(active_scene).__name__}")
         active_scene.enter()
+
+
 
 def run():
     print("[SceneManager] run")

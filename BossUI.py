@@ -29,8 +29,15 @@ class BossUI:
 
     def render(self):
         """체력바 렌더링"""
-        # 체력 비율 계산
-        hp_ratio = max(0, min(1, self.boss.health / self.boss.max_health))
+        # 보스가 죽었으면 UI를 렌더링하지 않음
+        if self.boss.state == 'die':
+            return
+
+        # 체력 비율 계산 (안전하게 처리)
+        if self.boss.max_health <= 0:
+            hp_ratio = 0
+        else:
+            hp_ratio = max(0, min(1, self.boss.health / self.boss.max_health))
 
         # 이미지 로드
         life_back, _, back_width, back_height = ResourceManager.get_image("BossLifeBaseBack")
@@ -49,32 +56,38 @@ class BossUI:
             )
 
         # 체력 게이지
-        if life_bar:
+        if life_bar and base_width > 0:
             # 체력 게이지 길이 계산 (비율에 따라)
-            gauge_width = int(bar_width * hp_ratio) + 45
+            gauge_width = int(bar_width * hp_ratio * 1.6)
             gauge_height = bar_height
 
             # 클리핑 영역을 이용한 부분 렌더링
             if gauge_width > 0:
+                # BossLifeBase 프레임의 실제 크기 기준으로 체력바 위치 계산
+                # base_width와 bar_width의 차이를 고려하여 오프셋 계산
+                base_scaled_width = int(base_width * self.hp_bar_scale)
+                bar_scaled_full_width = int(bar_width * self.hp_bar_scale)
+
+                # 체력바가 시작되는 왼쪽 끝 위치
+                bar_start_x = self.hp_bar_x - base_scaled_width // 2 + 15  # 프레임 안쪽 여백 고려
+
                 # 원본 이미지에서 체력 비율만큼만 잘라서 그리기
                 life_bar.clip_draw(
                     0, 0,  # 원본 이미지의 시작 위치
                     gauge_width, gauge_height,  # 잘라낼 크기
-                    self.hp_bar_x - int((bar_width - gauge_width) * self.hp_bar_scale / 2) - 120,  # 왼쪽 정렬을 위한 위치 조정
+                    bar_start_x + int(gauge_width * self.hp_bar_scale / 2),  # 중심 위치
                     self.hp_bar_y,
                     int(gauge_width * self.hp_bar_scale),
                     int(gauge_height * self.hp_bar_scale)
                 )
 
                 # LifeWave 애니메이션 (체력바의 오른쪽 끝에 붙여서 렌더링)
-                # 체력이 70 이하일 때만 표시
-                if life_wave and frame_count > 0 and hp_ratio > 0 :
+                if life_wave and frame_count > 0 and hp_ratio > 0:
                     # 프레임 루프 처리
                     current_frame = self.wave_frame % frame_count
 
                     # 체력바의 오른쪽 끝 위치 계산
-                    wave_x = self.hp_bar_x - int((bar_width - gauge_width) * self.hp_bar_scale / 2)- 120 + int(
-                        gauge_width * self.hp_bar_scale / 2)
+                    wave_x = bar_start_x + int(gauge_width * self.hp_bar_scale)
 
                     # 프레임 단위로 잘라서 그리기
                     frame_width = wave_width // frame_count
@@ -97,7 +110,10 @@ class BossUI:
 
         # HP 숫자 표시
         if font:
-            hp_text = f"{int(self.boss.health)}  /  {int(self.boss.max_health)}"
+            # 체력이 음수가 되지 않도록 보장
+            current_hp = max(0, int(self.boss.health))
+            max_hp = max(0, int(self.boss.max_health))
+            hp_text = f"{current_hp}  /  {max_hp}"
             font.draw(
                 self.hp_bar_x - int(9 * self.hp_bar_scale),
                 self.hp_bar_y - int(0 * self.hp_bar_scale),
