@@ -47,7 +47,10 @@ class PlayerUI:
 
         #플레이어 무기 ui 렌더링
         self.render_weapon_ui()
-    
+
+        # 총알 수 렌더링 (우하단)
+        self.render_bullet_count()
+
     def render_hp_bar(self):
         """체력바 렌더링"""
         # 체력 비율 계산
@@ -266,5 +269,31 @@ class PlayerUI:
                     ui_height * self.gun_icon_scale / 2 + 20,
                     int(gun_img.w * self.gun_icon_scale),
                     int(gun_img.h * self.gun_icon_scale)
+                )
+
+    def render_bullet_count(self):
+        """총알 수 렌더링"""
+        bullet_img, _, bullet_width, bullet_height = ResourceManager.get_image("BulletIcon")
+        font = ResourceManager.get_font("default")
+
+        if bullet_img:
+            bullet_x = SceneManager.screen_width - 150
+            bullet_y = 50
+
+            # 총알 아이콘 렌더링
+            bullet_img.draw(
+                bullet_x,
+                bullet_y,
+                int(bullet_width * 2.0),
+                int(bullet_height * 2.0)
+            )
+
+            if font:
+                bullet_text = f"x {self.player.bullet_count}"
+                font.draw(
+                    bullet_x + 30,
+                    bullet_y ,
+                    bullet_text,
+                    (255, 255, 255)
                 )
 

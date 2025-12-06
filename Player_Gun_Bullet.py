@@ -14,7 +14,7 @@ class Player_Gun_Bullet:
         self.height = 5 * 3
         self.speed = 0
         self.direction = 0
-        self.attack_power = 100
+        self.attack_power = 4
 
         self.frame_count = 0
         self.frame_timer = 0.0

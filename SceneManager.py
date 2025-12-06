@@ -11,6 +11,8 @@ active_scene = None
 play_time = 0.0
 play_timerOn = False
 
+# 디버그 모드 플래그 (히트박스 표시 여부)
+debug_mode = False
 
 ps = None
 
@@ -28,8 +30,6 @@ def load_scene(name):
     if active_scene and hasattr(active_scene, 'enter'):
         print(f"[SceneManager] enter: {type(active_scene).__name__}")
         active_scene.enter()
-
-
 
 def run():
     print("[SceneManager] run")

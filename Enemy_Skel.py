@@ -121,7 +121,7 @@ class Skel:
 
     def get_attack_hitbox(self):
         """공격 시 스켈 앞에 생성되는 히트박스 반환"""
-        hitbox_width = 60  # 히트박스 너비 (조정 가능)
+        hitbox_width = 70  # 히트박스 너비 (조정 가능)
         hitbox_height = 40  # 히트박스 높이 (조정 가능)
         if self.direction == 1:
             # 오른쪽
@@ -250,6 +250,19 @@ class Skel:
                 else:
                     image.clip_composite_draw(frame * width // frame_count, 0, width // frame_count, height, 0, 'h',
                                           draw_x, draw_y, int(self.width * 1.5 * zoom), int(self.height * 1.5 * zoom))
+
+        # 공격 히트박스 렌더링 (공격 중이고 디버그 모드일 때만)
+        if self.is_attacking and SceneManager.debug_mode:
+            current_frame = self.frame_count % self.attack_frame_max if self.attack_frame_max > 0 else 0
+            # 2번 프레임(히트 판정 프레임)에서 히트박스 표시
+            if current_frame == 2:
+                left, bottom, right, top = self.get_attack_hitbox()
+                pico2d.draw_rectangle(
+                    (left - camera_x) * zoom,
+                    (bottom - camera_y) * zoom,
+                    (right - camera_x) * zoom,
+                    (top - camera_y) * zoom
+                )
 
         # 체력바 렌더링
         self.render_hp_bar(camera_x, camera_y, zoom)

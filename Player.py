@@ -57,6 +57,7 @@ class Player:
         self.sound_delay = 0.0
         self.step_interval = 0.4  # 발걸음 사운드 최소 재생 간격(초)
         self.step_sound_index = 0  # 현재 재생할 발걸음 소리 인덱스 (0~3)
+        self.show_collision_box = False  # 충돌 박스 표시 여부 추가
 
     def set_map_manager(self, map_manager):
         """맵 매니저 설정"""
@@ -346,8 +347,8 @@ class Player:
                     self.is_jumping = True
                     self.state = 'jump'
                 elif event.key == pico2d.SDLK_p:
-                    self.hp -= 10
-                    print("플레이어 체력:", self.hp)
+                    # P키로 충돌 박스 표시 토글
+                    SceneManager.debug_mode = not SceneManager.debug_mode
                 elif event.key == pico2d.SDLK_f:
                     # 포탈이 근처에 있고 활성화 상태일 때만 진입 가능
                     if self.near_portal and hasattr(self.near_portal, 'is_active') and self.near_portal.is_active:
@@ -455,7 +456,17 @@ class Player:
             self.weapon.render(camera_x, camera_y, zoom)
         if self.katana_effect:
             self.katana_effect.render(camera_x, camera_y, zoom)
-            left, bottom, right, top = self.katana_effect.get_bb()
+            # 카타나 이펙트 충돌 박스도 토글 설정에 따라 표시
+            if self.show_collision_box:
+                left, bottom, right, top = self.katana_effect.get_bb()
+                pico2d.draw_rectangle(
+                    (left - camera_x) * zoom, (bottom - camera_y) * zoom,
+                    (right - camera_x) * zoom, (top - camera_y) * zoom
+                )
+
+        # 충돌 박스 표시
+        if self.show_collision_box:
+            left, bottom, right, top = self.get_bb()
             pico2d.draw_rectangle(
                 (left - camera_x) * zoom, (bottom - camera_y) * zoom,
                 (right - camera_x) * zoom, (top - camera_y) * zoom

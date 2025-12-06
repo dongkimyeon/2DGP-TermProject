@@ -154,20 +154,28 @@ class BossStageScene:
         self.background.draw(SceneManager.screen_width // 2, SceneManager.screen_height // 2, SceneManager.screen_width,
                              SceneManager.screen_height)
 
-        self.map_manager.render(self.camera.mX, self.camera.mY, self.camera.zoom, draw_collision_box=True)
+        self.map_manager.render(self.camera.mX, self.camera.mY, self.camera.zoom, draw_collision_box=SceneManager.debug_mode)
 
         # 게임 오브젝트 렌더링
         for gameobj in self.gameobjs:
             gameobj.render(self.camera.mX, self.camera.mY, self.camera.zoom)
-            left, bottom, right, top = gameobj.get_bb()
+            # 디버그 모드일 때만 히트박스 표시
+            if SceneManager.debug_mode:
+                left, bottom, right, top = gameobj.get_bb()
+                pico2d.draw_rectangle(
+                    (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
+                    (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
+                )
 
         # 플레이어 렌더링
         player.render(self.camera.mX, self.camera.mY, self.camera.zoom)
-        left, bottom, right, top = player.get_bb()
-        pico2d.draw_rectangle(
-            (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
-            (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
-        )
+        # 디버그 모드일 때만 플레이어 히트박스 표시
+        if SceneManager.debug_mode:
+            left, bottom, right, top = player.get_bb()
+            pico2d.draw_rectangle(
+                (left - self.camera.mX) * self.camera.zoom, (bottom - self.camera.mY) * self.camera.zoom,
+                (right - self.camera.mX) * self.camera.zoom, (top - self.camera.mY) * self.camera.zoom
+            )
 
         # PlayerUI 렌더링
         self.player_ui.render()
