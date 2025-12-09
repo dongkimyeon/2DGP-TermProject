@@ -1,4 +1,5 @@
 import pico2d
+import os
 import SceneManager
 from BossStage_scene import BossStageScene
 from Title_scene import TitleScene
@@ -7,6 +8,7 @@ from Stage2_scene import Stage2Scene
 from RankingScene import RankingScene
 from DeadScene import DeadScene
 
+print(os.getenv('PYSDL2_DLL_PATH'))
 pico2d.open_canvas(SceneManager.screen_width, SceneManager.screen_height)
 
 SceneManager.CreateScene("TitleScene", TitleScene)

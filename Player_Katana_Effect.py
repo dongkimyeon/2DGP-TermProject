@@ -6,6 +6,7 @@ import pico2d
 from Time import Time
 import math
 import random
+import SceneManager
 
 class KatanaEffect:
     def __init__(self, player):
@@ -22,6 +23,7 @@ class KatanaEffect:
         self.special_attack = False
         self.image = None
         self.hit_enemies = set()  # 이번 공격에서 이미 맞은 적들을 추적
+
 
 
     def start(self):
@@ -49,10 +51,13 @@ class KatanaEffect:
 
     def get_damage(self):
         # 랜덤 데미지 적용
-        if self.special_attack:
-            return random.randint(25, 35)  # 풀차지: 50 ± 5
+        if SceneManager.debug_mode:
+            return 100
         else:
-            return random.randint(10, 13)  # 기본: 10~13
+            if self.special_attack:
+                return random.randint(25, 35)  # 풀차지: 50 ± 5
+            else:
+                return random.randint(10, 13)  # 기본: 10~13
 
     def can_hit(self, enemy):
         return id(enemy) not in self.hit_enemies

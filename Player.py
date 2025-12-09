@@ -198,6 +198,7 @@ class Player:
 
     def update(self, camera_x, camera_y, zoom):
         dt = Time.DeltaTime()
+
         # 사운드 딜레이 감소
         if self.sound_delay > 0:
             self.sound_delay -= dt
@@ -341,6 +342,9 @@ class Player:
                     self.left_pressed = True
                 elif event.key == pico2d.SDLK_d:
                     self.right_pressed = True
+                elif event.key == pico2d.SDLK_ESCAPE:
+                    SceneManager.active_scene = None
+                    exit(0)
                 elif event.key == pico2d.SDLK_SPACE and self.jump_count > 0:
                     SceneManager.ps.jump.play()
                     self.jump_velocity = self.jump_power

@@ -65,7 +65,10 @@ class Player_Gun_Bullet:
         return (left, bottom, right, top)
 
     def get_damage(self):
-        return self.attack_power
+        if SceneManager.debug_mode:
+            return 100
+        else:
+            return self.attack_power
 
     def shot(self, x, y, direction, speed=300):
         self.x = x
