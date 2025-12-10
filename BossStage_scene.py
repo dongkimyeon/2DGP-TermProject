@@ -116,6 +116,7 @@ class BossStageScene:
                     # 포탈을 collision pair에 등록
                     game_world.add_collision_pair('player:portal', player, portal)
                     self.is_created_portal = True
+                    portal.is_active = True
 
 
 
